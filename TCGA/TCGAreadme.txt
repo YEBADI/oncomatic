@@ -2,6 +2,10 @@
 
 This is the TCGA readme.
 
+## How to use bioconductor TCGA biolinks to download and analyse data
+http://bioconductor.org/packages/devel/bioc/vignettes/TCGAbiolinks/inst/doc/tcgaBiolinks.html
+
+
 ## Paper summaries
 
 TCGAbiolinks: an R/Bioconductor package for integrative analysis of TCGA data
