@@ -8,6 +8,10 @@ http://bioconductor.org/packages/devel/bioc/vignettes/TCGAbiolinks/inst/doc/tcga
 
 ## Paper summaries
 
+### TCGA Workflow: Analyze cancer genomics and epigenomics data using Bioconductor packages
+
+https://f1000research.com/articles/5-1542/v1
+
 ### TCGAbiolinks: an R/Bioconductor package for integrative analysis of TCGA data
 
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4856967/
