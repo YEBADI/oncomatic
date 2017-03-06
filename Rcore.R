@@ -12,6 +12,7 @@ biocLite("limma")
 biocLite("edgeR")
 biocLite("dendextend")
 biocLite("calibrate")
+biocLite("survival")
 
 ###########   setting up libraries  #########
 
@@ -24,4 +25,6 @@ library(limma)
 library(edgeR)
 library(dendextend)
 library(calibrate)
+library(survival)
 
+#### read in gene names from table data input ###
