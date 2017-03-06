@@ -1,6 +1,8 @@
 # BCCTBbp: Breast Cancer Campaign Tissue Bank bioinformatics portal
 
-This is a readme of BCNTB.
+BCCTBbp can be accessed through this link:
+
+http://bioinformatics.breastcancertissuebank.org/
 
 ## Paper Summaries
 
