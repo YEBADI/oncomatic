@@ -8,7 +8,8 @@ http://bioconductor.org/packages/devel/bioc/vignettes/TCGAbiolinks/inst/doc/tcga
 
 ## Paper summaries
 
-TCGAbiolinks: an R/Bioconductor package for integrative analysis of TCGA data
+### TCGAbiolinks: an R/Bioconductor package for integrative analysis of TCGA data
+
 https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4856967/
 
 TCGA is a large collection of clinical and molecular phenotypes of more than 10 000 tumor patients across 33 different tumor types. 
