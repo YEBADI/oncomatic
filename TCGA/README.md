@@ -30,3 +30,4 @@ Obtain mutations data from TCGA (breast or pancreatic)
 
 play around with R analysis
 
+need to subset data to obtain top hit dif gene expression + genes of interest to end-user
