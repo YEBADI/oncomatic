@@ -1,7 +1,8 @@
-# msc_project_2017
-Initial stages of MSc Project 2017.
+# Yusef Badi MSc Project 2017
 
 Supervisor(s): Dr Claude Chelala, Dr Emanuela Gadaleta, Dr Jacek Marzec, Bioinformatics Unit, Barts Cancer Institute
+
+## Project Summary:
 
 The Breast Cancer Now Tissue Bank (BCNTB) and the Pancreatic Cancer Research Fund Tissue Bank (PCRFTB) are two vital resources that support and promote cutting-edge research by providing access to high-quality and fully annotated tissues. Each Tissue Bank hosts specialised bioinformatics resources (BCNTB:bioinformatics portal and the Pancreatic Expression Database) from which the research community can access information about genomics, methylomics, transcriptomics, proteomics, and microRNA data that has been mined from the literature and link them to pathways and mechanisms involved in breast/pancreatic cancer.
 
@@ -14,3 +15,7 @@ a. Sequencing data: Conduct differential expression analysis to identify the mos
 b. Mutation data: Identify the top mutated genes between user-defined biological conditions and present these in tabular and graphical format
 c. All code must be generic and developed to run on the command line.
 2) Research software/resources available to enhance the graphical options available currently from the BCNTB: bioinformatics portal.
+
+## Initial stages of MSc Project 2017:
+
+1. Background Reading
