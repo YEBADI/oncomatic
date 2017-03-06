@@ -23,3 +23,10 @@ Mining the TCGA data presents several bioinformatics challenges, like data retri
 An R/Bioconductor package was developed (TCGAbiolinks) to address these challenges and offer bioinformatics solutions by using a guided workflow to allow users to query, download and perform integrative analyses of TCGA data.
 
 Four different TCGA tumor types (Kidney, Brain, Breast and Colon) were ued as case studies to illustrate examples of reproducibility, integrative analysis and utilization of different Bioconductor packages to advance and accelerate novel discoveries.
+
+# initial investigation
+
+Obtain mutations data from TCGA (breast or pancreatic)
+
+play around with R analysis
+
