@@ -1,1 +1,3 @@
+# Pancreatic Expression Database
+
 We conducted a comprehensive meta-analysis of pancreatic cancer-expression space by integrating data from otherwise disparate studies. Currently, the most comprehensive analysis of pancreatic cancer to date, our study primarily serves to highlight limitations inherent with a lack of raw data availability, insufficient clinical/histopathological information and ambiguous data processing. It stresses the importance of a global-systems approach to assess and maximise findings from expression profiling of malignant and non-malignant diseases.The results of this meta-analysis are freely available and can be queried and visualised below. 
