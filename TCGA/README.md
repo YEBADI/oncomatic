@@ -28,6 +28,33 @@ An R/Bioconductor package was developed (TCGAbiolinks) to address these challeng
 
 Four different TCGA tumor types (Kidney, Brain, Breast and Colon) were ued as case studies to illustrate examples of reproducibility, integrative analysis and utilization of different Bioconductor packages to advance and accelerate novel discoveries.
 
+# Cancer Genomics from Discovery science to Personalised Medicine
+
+http://www.nature.com/nm/journal/v17/n3/full/nm.2323.html
+
+development of genomics has turned cancer medicine from morphology-based to genetics-based taxonomy.
+increasingly customised care for patient depending on proteomics and genomics of tumour.
+personalised medicine is a maturing reality and no longer fantasy
+level of genomic complexity is far beyond expectations: practical utilisation of genetic information is unrealised in medicine
+2 main challenges causing slow down in translation from science to medicine:
+1. incomplete catalogue of genomic alterations
+2. lack of understanding of how alterations affect pathways / signal transduction / what the biological consequences are etc.
+- hard to obtain this as specific assays are not always available + cancer context is very complex and hard to identify which driver events cause what (as intertwined)...
+
+this paper highlights importance of biological significance and how personalised medicine is achivable.
+
+first cancer mutation discovered HRAS gene gly12 to val12, then others (KRAS, NRAS) discovered: this ushered in cancer genomics study
+
+RAS proteins are important for transduction of proliferation and survival
+- after 30 years of trying to inhibit it unsuccessfully, only NOW is being used as some kind of marker...
+mutant cancer genes can be targets for therapy
+
+most early efforts for cancer genetics research focused on druggable targets (protein/lipid kinases)
+V600 mutation linked to BRAF mutation (kinase central to MAPK cascade, transduces growth factors via RAS proteins to phosphorylate MEK proteins)
+BRAF inhibition was developed after 8 years; effective in tumours with V600E mutation
+PIK3 is most commonly mutated gene in breast cancer: drives AKT signalling for growth and stability
+
+
 # initial investigation
 
 Obtain mutations data from TCGA (breast or pancreatic)
