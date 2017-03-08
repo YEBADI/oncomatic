@@ -9,12 +9,21 @@ The Breast Cancer Now Tissue Bank (BCNTB) and the Pancreatic Cancer Research Fun
 We are in the process of enhancing our integrated analytical layers to facilitate tailored analysis of key datasets, thus allowing users to pose questions not addressed in the original publications simply and efficiently.
 
 This project aims to expand the options available within the analytical framework of these bioinformatic tools and investigate means to enhance the presentation of results currently available. 
-The student will:
-1) Develop an analytical framework to access, download and query sequencing and mutation data from the TCGA. 
-a. Sequencing data: Conduct differential expression analysis to identify the most variable genes between user-defined biological conditions and present these in tabular and graphical format
-b. Mutation data: Identify the top mutated genes between user-defined biological conditions and present these in tabular and graphical format
-c. All code must be generic and developed to run on the command line.
-2) Research software/resources available to enhance the graphical options available currently from the BCNTB: bioinformatics portal.
+
+
+
+## Aims and objectives
+
+In order to improve BCNTB and the PED we must:
+
+### Utilise TCGA
+Develop an analytical framework to access, download and query sequencing and mutation data
+- Sequencing data will be analysed by differential expression analysis to identify the most variable genes between user-defined biological conditions and present these in tabular and graphical format
+ - Mutation data will be analysed to identify the top mutated genes between user-defined biological conditions and present these in tabular and graphical format
+
+Improve the visualisation / graphical options available in the BCNTB:bp (and PED if enough time)
+
+All code will be soft-coded, generic and developed to run on the command line.
 
 ## Initial stages of MSc Project 2017:
 
