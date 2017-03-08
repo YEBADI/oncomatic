@@ -17,11 +17,10 @@ This project aims to expand the options available within the analytical framewor
 In order to improve BCNTB and the PED we must:
 
 ### Utilise TCGA
-Develop an analytical framework to access, download and query sequencing and mutation data
-- Sequencing data will be analysed by differential expression analysis to identify the most variable genes between user-defined biological conditions and present these in tabular and graphical format
+- Develop an analytical framework to access, download and query sequencing and mutation data
+ - Sequencing data will be analysed by differential expression analysis to identify the most variable genes between user-defined biological conditions and present these in tabular and graphical format
  - Mutation data will be analysed to identify the top mutated genes between user-defined biological conditions and present these in tabular and graphical format
-
-Improve the visualisation / graphical options available in the BCNTB:bp (and PED if enough time)
+- Improve the visualisation / graphical options available in the BCNTB:bp (and PED if enough time)
 
 All code will be soft-coded, generic and developed to run on the command line.
 
