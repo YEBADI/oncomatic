@@ -2,6 +2,10 @@
 
 Supervisor(s): Dr Claude Chelala, Dr Emanuela Gadaleta, Dr Jacek Marzec, Bioinformatics Unit, Barts Cancer Institute
 
+## Dissertation
+
+This is viewable at: https://docs.google.com/document/d/1DOSYfRE8wO66_ckWI6IENAdR4p_CahEa9tEZMVhgPu4/edit?usp=sharing
+
 ## Project Summary:
 
 The Breast Cancer Now Tissue Bank (BCNTB) and the Pancreatic Cancer Research Fund Tissue Bank (PCRFTB) are two vital resources that support and promote cutting-edge research by providing access to high-quality and fully annotated tissues. Each Tissue Bank hosts specialised bioinformatics resources (BCNTB:bioinformatics portal and the Pancreatic Expression Database) from which the research community can access information about genomics, methylomics, transcriptomics, proteomics, and microRNA data that has been mined from the literature and link them to pathways and mechanisms involved in breast/pancreatic cancer.
