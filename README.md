@@ -27,8 +27,4 @@ In order to improve BCNTB and the PED we must:
 
 ### 2.) Improve the visualisation / graphical options available in the BCNTB:bp (and PED if enough time)
 
-### All code will be soft-coded, generic and developed to run on the command line.
-
-## Initial stages of MSc Project 2017:
-
-1. Background Reading
+Note: All code will be soft-coded, generic and developed to run on the command line.
