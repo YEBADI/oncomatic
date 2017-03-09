@@ -9,34 +9,64 @@
 # 
 ### FUNCTIONS ############################################################################
 # install libraries if not present
+# TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
+
+# if (length(setdiff(TCGA.libs, rownames(installed.packages()))) > 0) {
+#   source("http://bioconductor.org/biocLite.R")
+#   biocLite(setdiff(TCGA.libs, rownames(installed.packages())))
+# }
+# ^ this uses setdiff to compare our libraries and see if they are installed
+# it then installs it if they are missing
+# using setdiff to do this is bad because setdiff will fail if anything else installed
+# and if it's not installed it then installs 
+# should use %in% instead 
+# also install.packages doesn't work for all R versions
+# but biocLite() function installs for all R versions
+
+# this sets working directory initially to Desktop (softcoded this)
+
+input = readline('Enter Desktop directory in full (case sensitive) e.g. /home/<username>/Desktop: ')
+# e.g. can write /home/samimonk/Desktop
+setwd(input)
+
+
+# this creats a vector with two strings in it (the library names)
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
 
-if (length(setdiff(TCGA.libs, rownames(installed.packages()))) > 0) {
-   source("http://bioconductor.org/biocLite.R")
-   biocLite(setdiff(TCGA.libs, rownames(installed.packages())))
+# this will identify if library missing from out installed libraries
+new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
+
+# this detects and installs the specific libraries if one or both are missing
+if(length(new.libs)) {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(new.libs)
 }
 
-# load libraries
+
+
+# loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
 
 
 ### MAIN #################################################################################
 # define variables
-ProjectDir <- "mutations"; # in this instance, I am already in Desktop and want to work from /Desktop/mutations/
-ProjectID <- "TCGA-BRCA"; # as defined by TCGAbiolinks
+ProjectDir <- "mutations"; # Currently in Desktop directory and want to work from /Desktop/mutations/
+ProjectID <- "TCGA-BRCA"; # the dataset name as defined by TCGAbiolinks
 ProjectName <-  "mutations";
 
 # set/create the project directory i.e. "/Desktop/mutations/"
 if (file.exists(ProjectDir)){
 
 	cat( paste("\nFolder with project [", ProjectName, "] already exists. The requested data will be stored in [", ProjectDir, "]\n", sep=" ") );
+# ^ this is just telling the user that the directory exists and we will be working in it 
+
 } else {
 	dir.create(ProjectDir);
-
+# ^ this makes the directory if it didn't exist already (and is called mutations since we assigned that earlier)
 }
 
-# change working directory to the project workspace
+# change working directory to the project workspace (mutations folder)
 setwd(ProjectDir);
 
 
