@@ -74,14 +74,20 @@ setwd(ProjectDir);
 #    Data query and download
 #===============================================================================
 # ACCESS AND DOWNLOAD THE CLINICAL DATA
+# this is a biolinks command to download the data, we assign it into the object clin.data
 clin.data <- GDCquery_clinic( "TCGA-BRCA", "clinical" );
-dim(clin.data) #1097 39
+
+
+# this command just tells us the dimensions of the datafile
+# 1097 number of rows, 39 collumns
+dim(clin.data)
 
 # Define type of tumour e.g. BRCA (breast)
 tumour.type <-  "BRCA"
 
 # Write clinical data to outfile - this is your target file
-#write.table( clin.data, file = paste(tumour.type,"_", ProjectName, "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
+
+write.table( clin.data, file = paste(tumour.type,"_", ProjectName, "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
 
 # what clinical information do you want to appear in your figure? view you options by:
 colnames(clin.data);
@@ -96,7 +102,18 @@ dim(clin.data.slimmed) #1097 5
 ## [Yusef: briefly read a little on each pipeline i.e. an overview of mutect2 / varscan etc]
 ### can you please write a couple of sentences on each? I don't mind if you do this as an overview of all the methods or a couple of lines about each
 ### in your opinion, which method would be most applicable to breast/pancreatic cancer? i.e. look at literature
+
 ### should we give users the option to choose what method they want to apply?
+# input = readline('Please key in the pipline of choice [1] mutect2, [2] varscan, [3] muse, or [4] somaticsniper: ')
+#
+# if input == 1
+#  x
+#
+# else if input == 2
+
+
+
+
 
 pipelines <- c("muse", "varscan2", "somaticsniper", "mutect2");
 
