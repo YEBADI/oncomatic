@@ -120,8 +120,38 @@ dim(clin.data.slimmed) #1097 9
 
 
 # ACCESS AND DOWNLOAD THE MUTATION DATA
-## [Yusef: briefly read a little on each pipeline i.e. an overview of mutect2 / varscan etc]
-### can you please write a couple of sentences on each? I don't mind if you do this as an overview of all the methods or a couple of lines about each
+# overview of each pipeline
+# this is a very useful paper on InDel calling software http://humgenomics.biomedcentral.com/articles/10.1186/s40246-015-0042-2
+# [1] mutect2
+# MuTect2 is a somatic SNP and indel caller that uses MuTect 1 cosomatic genotyping engine (Cibulskis et al., 2013) 
+# with the assembly-based machinery of HaplotypeCaller. 
+# The basic operation of MuTect2 proceeds similarly to that of the HaplotypeCaller.
+# BUT MuTect2 doesn't use ploidy assumption but informs its genotype likelihood and variant quality calculations 
+# by varying allelic fraction for each variant (as is often seen in tumors with purity less than 100%)
+# and also for multiple subclones, and/or copy number variation (either local or aneuploidy). 
+
+# MuTect2 applies some hard filters to variants before producing output.
+# Gene Variant Call Formaat (GVCF) generation is not available in MuTect2.
+
+# [2] varscan
+Most of the published variant callers for next-generation sequencing data employ a probabilistic framework, 
+such as Bayesian statistics, to detect variants and assess confidence in them. 
+These approaches generally work quite well, but can be confounded by numerous factors such as extreme read depth, 
+pooled samples, and contaminated or impure samples. 
+
+In contrast, VarScan employs a robust heuristic/statistic approach to call variants that meet desired thresholds for read depth, base quality, variant allele frequency, and statistical significance.
+
+VarScan is under continued development and improvement at a leading genome center with early access to new sequencing technologies, substantial computing resources, immense public/private datasets, and established expertise in sequencing, genetics, and genomics.
+
+Detecting Subclonal Mutations
+A 2013 study by Stead et al evaluated several somatic mutation callers including MuTect, Strelka, and VarScan2. They found that VarScan2 performed best overall with sequencing depths of 100x, 250x, 500x and 1000x required to accurately identify variants present at 10%, 5%, 2.5% and 1% respectively. 
+
+# [3] muse
+
+
+# [4] somaticsniper
+
+
 ### in your opinion, which method would be most applicable to breast/pancreatic cancer? i.e. look at literature
 
 ### should we give users the option to choose what method they want to apply?
@@ -131,10 +161,6 @@ dim(clin.data.slimmed) #1097 9
 #  x
 #
 # else if input == 2
-
-
-
-
 
 pipelines <- c("muse", "varscan2", "somaticsniper", "mutect2");
 
