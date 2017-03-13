@@ -1,9 +1,9 @@
 ### HISTORY ##############################################################################
 # Version		Date			Coder			Comments
-# 1.0 			07/03/2017		Emanuela		init
+# 2.0 			13/03/2017		Yusef + Emanuela		init
 #
 ### DESCRIPTION ##########################################################################
-# script for Yusef - become familiar with TCGAbiolinks
+# Edited script by Yusef (source v1.0 by Emanuela) to become familiar with TCGAbiolinks
 #
 ### PARAMETERS ###########################################################################
 # 
@@ -23,12 +23,11 @@
 # also install.packages doesn't work for all R versions
 # but biocLite() function installs for all R versions
 
-# this sets working directory initially to Desktop (softcoded this)
 
+# this sets working directory initially to Desktop (softcoded this)
 input = readline('Enter Desktop directory in full (case sensitive) e.g. /home/<username>/Desktop: ')
 # e.g. can write /home/samimonk/Desktop
 setwd(input)
-
 
 # this creats a vector with two strings in it (the library names)
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
@@ -42,12 +41,9 @@ if(length(new.libs)) {
   biocLite(new.libs)
 }
 
-
-
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
-
 
 ### MAIN #################################################################################
 # define variables
@@ -100,10 +96,27 @@ write.table( clin.data, file = paste(tumour.type,"_", ProjectName, "_clinical.tx
 
 colnames(clin.data);
 
-# Subset clinical data to covariates of interest
-clin.covariates <- c("bcr_patient_barcode","disease","gender","race","vital_status");
+# after checking this I identified the following as useful:
+
+# race = useful states if "black or african american" or "white" or "asian"
+# year_of_birth = very useful
+# bcr_patient_barcode = very useful (but is it the same as submitter Id?)
+# disease = it's all just BRCA, i guess it confirms you picked the right group since this will be soft coded
+# gender = very useful, mostly female but some male (can see data trends possibly)
+# tissue_or_organ_of_origin = seems a better indictator than site of biopsy (mainly c50.9)
+# morphology = gives cancer morphology codes (e.g. 8520/3), seems seems quite useful
+# vital_status = seems very useful, states if patient is alive or dead
+# tumor_stage = very useful (stage i, ii, iii etc.)
+
+# Subsetting the clinical data to covariates of interest
+# we assign the collumn names to the object "clin.covariates"
+clin.covariates <- c("race", "year_of_birth", "bcr_patient_barcode", "disease", "gender", "tissue_or_organ_of_origin", "morphology", "vital_status", "tumor_stage");
+# now we produce a new data matrix with only the collumns that we choose, leaving the rows as they are
 clin.data.slimmed <- clin.data[ , clin.covariates ];
-dim(clin.data.slimmed) #1097 5
+# checking the dimensions of our new "slimmed down" data matrix to confirm that we only have 9 rows
+dim(clin.data.slimmed) #1097 9
+
+# we now have our slimmed down data matrix
 
 
 # ACCESS AND DOWNLOAD THE MUTATION DATA
