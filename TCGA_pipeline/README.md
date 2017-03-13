@@ -19,48 +19,48 @@ need to subset data to obtain top hit dif gene expression + genes of interest to
 ## all the subsets available are:
 
 ### useful
-race = useful states if "black or african american" or "white" or "asian"
-year_of_birth = very useful
-bcr_patient_barcode = very useful
-disease = it's all just BRCA, i guess it confirms you picked the right group since this will be soft coded
-gender = very useful, mostly female but some male (can see data trends possibly)
-tissue_or_organ_of_origin = seems a better indictator than site of biopsy (mainly c50.9)
-morphology = gives cancer morphology codes (e.g. 8520/3), seems seems quite useful
-vital_status = seems very useful, states if patient is alive or dead
-tumor_stage = very useful (stage i, ii, iii etc.)
+- race = useful states if "black or african american" or "white" or "asian"
+- year_of_birth = very useful
+- bcr_patient_barcode = very useful
+- disease = it's all just BRCA, i guess it confirms you picked the right group since this will be soft coded
+- gender = very useful, mostly female but some male (can see data trends possibly)
+- tissue_or_organ_of_origin = seems a better indictator than site of biopsy (mainly c50.9)
+- morphology = gives cancer morphology codes (e.g. 8520/3), seems seems quite useful
+- vital_status = seems very useful, states if patient is alive or dead
+- tumor_stage = very useful (stage i, ii, iii etc.)
 
 
 ### Not useful
-submitter_id = seems unecessary to use this
-last_known_disease_status = all not reported
-classification_of_tumor = not reported
-primary_diagnosis = not sure why these are all c50.9 since tissue of origin is varied
-updated_datetime = seems irrelevent
-age_at_diagnosis = seems to be not useful in this context
-days_to_death = seems to actually be days SINCE death, mostly NA, not useful
-days_to_last_follow_up = seems a bit irrelevent especially since many are dead
-state = all NA
-days_to_last_known_disease_status = all NA
-days_to_recurrence = all NA
-tumour grade = all not reported
-diagnosis_id = seems a bit irrelevent
-treatments (Ids) = patient barcode with another code, seems a bit irrelevent
-site_of_resection_or_biopsy = possibly useful (majority are c50.9) but tissue of origin is better
-days_to_birth = irrelevent
-ethnicity = it's all either "(not) hispanic or latino" or "not reported"
-year_of_death = kind of useful
-demographic_id = seems a bit irrelevent
-progression_or_recurrence = all not reported
-prior_malignancy = all not reported
-created_datetime = all NA
-alcohol_intensity = it's a shame this is all NA as would be relevent
-alcohol_history = it's a shame this is all NA as it would be relevent
-bmi = it's a shame this is all NA as would be relevent
-weight = it's a shame this is all NA as would be relevent
-cigarettes_per_day = it's a shame this is all NA as would be relevent
-height = all NA so useless here
-years_smoked = all NA so also useless for BRCA data
-exposure_id = unsure of the significance of this
+- submitter_id = seems unecessary to use this
+- last_known_disease_status = all not reported
+- classification_of_tumor = not reported
+- primary_diagnosis = not sure why these are all c50.9 since tissue of origin is varied
+- updated_datetime = seems irrelevent
+- age_at_diagnosis = seems to be not useful in this context
+- days_to_death = seems to actually be days SINCE death, mostly NA, not useful
+- days_to_last_follow_up = seems a bit irrelevent especially since many are dead
+- state = all NA
+- days_to_last_known_disease_status = all NA
+- days_to_recurrence = all NA
+- tumour grade = all not reported
+- diagnosis_id = seems a bit irrelevent
+- treatments (Ids) = patient barcode with another code, seems a bit irrelevent
+- site_of_resection_or_biopsy = possibly useful (majority are c50.9) but tissue of origin is better
+- days_to_birth = irrelevent
+- ethnicity = it's all either "(not) hispanic or latino" or "not reported"
+- year_of_death = kind of useful
+- demographic_id = seems a bit irrelevent
+- progression_or_recurrence = all not reported
+- prior_malignancy = all not reported
+- created_datetime = all NA
+- alcohol_intensity = it's a shame this is all NA as would be relevent
+- alcohol_history = it's a shame this is all NA as it would be relevent
+- bmi = it's a shame this is all NA as would be relevent
+- weight = it's a shame this is all NA as would be relevent
+- cigarettes_per_day = it's a shame this is all NA as would be relevent
+- height = all NA so useless here
+- years_smoked = all NA so also useless for BRCA data
+- exposure_id = unsure of the significance of this
 
 ## Paper summaries
 
