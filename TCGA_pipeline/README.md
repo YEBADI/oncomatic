@@ -21,7 +21,7 @@ need to subset data to obtain top hit dif gene expression + genes of interest to
 ### useful
 - race = useful states if "black or african american" or "white" or "asian"
 - year_of_birth = very useful
-- bcr_patient_barcode = very useful
+- bcr_patient_barcode = very useful (but is it the same as submitter Id?)
 - disease = it's all just BRCA, i guess it confirms you picked the right group since this will be soft coded
 - gender = very useful, mostly female but some male (can see data trends possibly)
 - tissue_or_organ_of_origin = seems a better indictator than site of biopsy (mainly c50.9)
@@ -31,7 +31,7 @@ need to subset data to obtain top hit dif gene expression + genes of interest to
 
 
 ### Not useful
-- submitter_id = seems unecessary to use this
+- submitter_id = appears to be identical to the patient barcode value
 - last_known_disease_status = all not reported
 - classification_of_tumor = not reported
 - primary_diagnosis = not sure why these are all c50.9 since tissue of origin is varied
