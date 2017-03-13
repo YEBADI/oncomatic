@@ -86,10 +86,18 @@ dim(clin.data)
 tumour.type <-  "BRCA"
 
 # Write clinical data to outfile - this is your target file
+# write.table writes the data matrix to a file (called the target file)
+# using "\t" creates a delimited output (the default is "")
+# so this is a "tab delimited text file"
+# row.names as FALSE means that theres no extra collumn with row names in our data matrix
+# clin.data is the name of the object that represents the data matrix written into the file
+# so we can handle the data from the object data matrix by using the object name "clin.data"
 
 write.table( clin.data, file = paste(tumour.type,"_", ProjectName, "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
 
-# what clinical information do you want to appear in your figure? view you options by:
+# what clinical information do you want to appear in your figure?
+# can view the options by seeing the collumn names of our data matrix object "clin.data"
+
 colnames(clin.data);
 
 # Subset clinical data to covariates of interest
