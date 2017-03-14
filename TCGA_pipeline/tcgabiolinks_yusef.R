@@ -70,7 +70,8 @@ setwd(ProjectDir);
 #    Data query and download
 #===============================================================================
 # ACCESS AND DOWNLOAD THE CLINICAL DATA
-# this is a biolinks command to download the data, we assign it into the object clin.data
+# this is a biolinks command to download the general clinical data for all BRCA samples
+# we assign this data it into the object clin.data
 clin.data <- GDCquery_clinic( "TCGA-BRCA", "clinical" );
 
 
@@ -116,40 +117,43 @@ clin.data.slimmed <- clin.data[ , clin.covariates ];
 # checking the dimensions of our new "slimmed down" data matrix to confirm that we only have 9 rows
 dim(clin.data.slimmed) #1097 9
 
-# we now have our slimmed down data matrix
+# we now have our slimmed down clinical data matrix
 
 
 # ACCESS AND DOWNLOAD THE MUTATION DATA
+# now that we have the clinical data for the BRCA samples, we need to obtain the mutation data
+
 # overview of each pipeline
-# this is a very useful paper on InDel calling software http://humgenomics.biomedcentral.com/articles/10.1186/s40246-015-0042-2
+# The TCGAbiolinks package has four inbuilt InDel pipelines provided
+# below, we provide a summary of each one to inform and let users pick which
+# pipeline will be most effective for their research purposes.
+
 # [1] mutect2
-# MuTect2 is a somatic SNP and indel caller that uses MuTect 1 cosomatic genotyping engine (Cibulskis et al., 2013) 
-# with the assembly-based machinery of HaplotypeCaller. 
-# The basic operation of MuTect2 proceeds similarly to that of the HaplotypeCaller.
-# BUT MuTect2 doesn't use ploidy assumption but informs its genotype likelihood and variant quality calculations 
-# by varying allelic fraction for each variant (as is often seen in tumors with purity less than 100%)
-# and also for multiple subclones, and/or copy number variation (either local or aneuploidy). 
+# * Applies Bayesian classifier to detect somatic mutations with very low allele fractions
+# requires only a few supporting reads however is confounded by low tumor purity.
+# * Has high sensitivity and calls mutations with allelic fractions as low as 0.1 and below
+# * Low specifiticity
+# * Carefully tuned filters that ensures high specificity
+# * Gene Variant Call Formaat (GVCF) generation is not available in MuTect2.
 
-# MuTect2 applies some hard filters to variants before producing output.
-# Gene Variant Call Formaat (GVCF) generation is not available in MuTect2.
+# [2] Varscan2
+# * Varscan2 circumvents confounding factor of tumour purity and extreme read depth
+# as does not use probabilistic framework to detect variants and assess confidence in them
+# but uses a robust heuristic/statistic approach to call variants that meet desired thresholds 
+# for read depth, base quality, variant allele frequency, and statistical significance.
+# * Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
+# as supresses mutations below allelic threshold
+# * Sensitivity can be improved but this drastically drops specificitiy and returns high levels of false positives
+# * Has good VCF compatability / output
+# * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%at
+# at sequencing depths of 100x, 250x, 500x and 1000x respectively (Stead et al, 2013).
 
-# [2] varscan
-Most of the published variant callers for next-generation sequencing data employ a probabilistic framework, 
-such as Bayesian statistics, to detect variants and assess confidence in them. 
-These approaches generally work quite well, but can be confounded by numerous factors such as extreme read depth, 
-pooled samples, and contaminated or impure samples. 
-
-In contrast, VarScan employs a robust heuristic/statistic approach to call variants that meet desired thresholds for read depth, base quality, variant allele frequency, and statistical significance.
-
-VarScan is under continued development and improvement at a leading genome center with early access to new sequencing technologies, substantial computing resources, immense public/private datasets, and established expertise in sequencing, genetics, and genomics.
-
-Detecting Subclonal Mutations
-A 2013 study by Stead et al evaluated several somatic mutation callers including MuTect, Strelka, and VarScan2. They found that VarScan2 performed best overall with sequencing depths of 100x, 250x, 500x and 1000x required to accurately identify variants present at 10%, 5%, 2.5% and 1% respectively. 
 
 # [3] muse
 
 
 # [4] somaticsniper
+# Returns high level of false positives and many of these are not in agreement with other InDel callers.
 
 
 ### in your opinion, which method would be most applicable to breast/pancreatic cancer? i.e. look at literature
@@ -161,6 +165,8 @@ A 2013 study by Stead et al evaluated several somatic mutation callers including
 #  x
 #
 # else if input == 2
+
+# should avoid for loops in R
 
 pipelines <- c("muse", "varscan2", "somaticsniper", "mutect2");
 
