@@ -181,34 +181,38 @@ pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 # for each methods, create a file of all the mutations
 # I will be using R specific vectorised functions instead of "for" loops
 # as these run faster
-vapply(pipeline_options, function(pipe)){
+for(pipe in pipeline_options){
 
 	# for each method (pipe) obtain the mutation data
   # we create an object called mut.data which downloads the mutation data for each pipeline option
-  # for BRCA (as we defined tumor.type to be BRCA)
-  # it is saved as a csv format
-  # and the pipelines variable pipe means it will do this for each "pipeline option"
-	mut.data <- GDCquery_Maf(tumor = tumor.type, save.csv = TRUE, pipelines = pipe);
+  # tumor is picking BRCA (as we defined tumor.type to be BRCA)
+  # save.csv means it is saved as a csv format
+  # pipelines = pipe, means for each "pipeline option" it will download the whole BRCA data
+	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, save.csv = TRUE);
 
 	# identify all genes (symbol) reported as mutated
   # unique means it will return each gene name without any duplicates
   # hugo symbol means the standardised gene name by human genome organsaiton (HUGO)
 	unique.genes <- unique(mut.data$Hugo_Symbol);
 
-	# create input data matrix to collect information about the most reported genes
-	all.mut <- matrix(data=0, nrow=length(unique.genes), ncol=1, dimnames=list(rownames=unique.genes, colnames="no_reports"));
+	# create an empty data matrix to serve as our "input data matrix"
+  # i.e. this is where we will collect information about the most reported genes
+  # when we run the analysis pipline on the BRCA dataset we just downloaded for each pipline
+  # now we just have a list of gene names and then one column on its right with the "number_of_reports" listed in it
+  # there is no title for the gene names and this isn't counted as a column
+	all.mut <- matrix(data=0, nrow=length(unique.genes), ncol=1, dimnames=list(rownames=unique.genes, colnames="number_of_reports"));
 
 	# identify position of each gene and populate the matrix
 	all.positions <- NULL;
 
-	for(gene in unique.genes) {
+  for(gene in unique.genes) {
 		gene.position <- which(mut.data$Hugo_Symbol == gene);
-		all.mut[gene, "no_reports"] <- length(gene.position);
+		all.mut[gene, "number_of_reports"] <- length(gene.position);
 		all.positions <- c(all.positions, gene.position );
 	}
 
 	# order by most reported gene
-	all.mut.ordered <- all.mut[ order(all.mut[, "no_reports"], decreasing=TRUE),];
+	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], decreasing=TRUE),];
 
 	# define the "top" 20 genes to be used in the visualisation process and subset mutation data
 	top.mut.genes <- names( all.mut.ordered[ 1:20 ] );
