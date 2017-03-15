@@ -79,8 +79,8 @@ clin.data <- GDCquery_clinic( "TCGA-BRCA", "clinical" );
 # 1097 number of rows, 39 collumns
 dim(clin.data)
 
-# Define type of tumour e.g. BRCA (breast)
-tumour.type <-  "BRCA"
+# Define type of tumor e.g. BRCA (breast)
+tumor.type <-  "BRCA"
 
 # Write clinical data to outfile - this is your target file
 # write.table writes the data matrix to a file (called the target file)
@@ -90,7 +90,7 @@ tumour.type <-  "BRCA"
 # clin.data is the name of the object that represents the data matrix written into the file
 # so we can handle the data from the object data matrix by using the object name "clin.data"
 
-write.table( clin.data, file = paste(tumour.type,"_", ProjectName, "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
+write.table( clin.data, file = paste(tumor.type,"_", ProjectName, "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
 
 # what clinical information do you want to appear in your figure?
 # can view the options by seeing the collumn names of our data matrix object "clin.data"
@@ -127,34 +127,41 @@ dim(clin.data.slimmed) #1097 9
 # The TCGAbiolinks package has four inbuilt InDel pipelines provided
 # below, we provide a summary of each one to inform and let users pick which
 # pipeline will be most effective for their research purposes.
+# all pipelines generate VCF output
 
 # [1] mutect2
 # * Applies Bayesian classifier to detect somatic mutations with very low allele fractions
 # requires only a few supporting reads however is confounded by low tumor purity.
 # * Has high sensitivity and calls mutations with allelic fractions as low as 0.1 and below
 # * Low specifiticity
-# * Carefully tuned filters that ensures high specificity
-# * Gene Variant Call Formaat (GVCF) generation is not available in MuTect2.
+# * Applies carefully tuned hard filters to compensate partially specificity issues
 
 # [2] Varscan2
-# * Varscan2 circumvents confounding factor of tumour purity and extreme read depth
-# as does not use probabilistic framework to detect variants and assess confidence in them
-# but uses a robust heuristic/statistic approach to call variants that meet desired thresholds 
-# for read depth, base quality, variant allele frequency, and statistical significance.
+# * Is generally outperformed by MuSE and MuTect2
 # * Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
 # as supresses mutations below allelic threshold
 # * Sensitivity can be improved but this drastically drops specificitiy and returns high levels of false positives
-# * Has good VCF compatability / output
-# * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%at
+# * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%
 # at sequencing depths of 100x, 250x, 500x and 1000x respectively (Stead et al, 2013).
 
+# * However, Varscan2 circumvents confounding factor of tumor purity and extreme read depth
+# as does not use probabilistic framework to detect variants and assess confidence in them
+# but uses a robust heuristic/statistic approach to call variants that meet desired thresholds 
+# for read depth, base quality, variant allele frequency, and statistical significance.
 
-# [3] muse
+# [3] MuSE
+# * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates Model parameters 
+# * Variants are classified into somatic, germ-line, and reversal to the homozygous reference
+# by comparing the somatic variant allele fraction (π) between the paired tumor–normal samples.
+# * A sample-specific error model to account for tumor heterogeneity and identify cutoffs is built.
+# * Filters reduce the number of false positives by considering the sequence context surrounding the point mutations. 
 
 
-# [4] somaticsniper
+# [4] SomaticSniper
 # Returns high level of false positives and many of these are not in agreement with other InDel callers.
 
+#* TCGA-BRCA analysis is suitable with Mutect2 or MuSE. Ideally both should be run and the results correlated.
+#* TCGA-PAAD analysis would only be feisable with Varscan2 due to low tumor purity.
 
 ### in your opinion, which method would be most applicable to breast/pancreatic cancer? i.e. look at literature
 
@@ -168,15 +175,24 @@ dim(clin.data.slimmed) #1097 9
 
 # should avoid for loops in R
 
-pipelines <- c("muse", "varscan2", "somaticsniper", "mutect2");
+#establishing the pipline options object
+pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 
 # for each methods, create a file of all the mutations
-for(pipe in pipelines){
+# I will be using R specific vectorised functions instead of "for" loops
+# as these run faster
+vapply(pipeline_options, function(pipe)){
 
 	# for each method (pipe) obtain the mutation data
-	mut.data <- GDCquery_Maf( tumour = tumour.type, save.csv = TRUE, pipelines = pipe );
+  # we create an object called mut.data which downloads the mutation data for each pipeline option
+  # for BRCA (as we defined tumor.type to be BRCA)
+  # it is saved as a csv format
+  # and the pipelines variable pipe means it will do this for each "pipeline option"
+	mut.data <- GDCquery_Maf(tumor = tumor.type, save.csv = TRUE, pipelines = pipe);
 
 	# identify all genes (symbol) reported as mutated
+  # unique means it will return each gene name without any duplicates
+  # hugo symbol means the standardised gene name by human genome organsaiton (HUGO)
 	unique.genes <- unique(mut.data$Hugo_Symbol);
 
 	# create input data matrix to collect information about the most reported genes
