@@ -163,9 +163,7 @@ dim(clin.data.slimmed) #1097 9
 #* TCGA-BRCA analysis is suitable with Mutect2 or MuSE. Ideally both should be run and the results correlated.
 #* TCGA-PAAD analysis would only be feisable with Varscan2 due to low tumor purity.
 
-### in your opinion, which method would be most applicable to breast/pancreatic cancer? i.e. look at literature
-
-### should we give users the option to choose what method they want to apply?
+### To give users the option to choose what method they want to apply:
 # input = readline('Please key in the pipline of choice [1] mutect2, [2] varscan, [3] muse, or [4] somaticsniper: ')
 #
 # if input == 1
@@ -173,14 +171,14 @@ dim(clin.data.slimmed) #1097 9
 #
 # else if input == 2
 
-# should avoid for loops in R
-
 #establishing the pipline options object
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 
 # for each methods, create a file of all the mutations
-# I will be using R specific vectorised functions instead of "for" loops
-# as these run faster
+# I will consider using R specific vectorised functions instead of "for" loops
+# as these run faster. For example:
+# vapply(pipeline_options, function(pipe)){
+
 for(pipe in pipeline_options){
 
 	# for each method (pipe) obtain the mutation data
@@ -191,31 +189,45 @@ for(pipe in pipeline_options){
 	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, save.csv = TRUE);
 
 	# identify all genes (symbol) reported as mutated
-  # unique means it will return each gene name without any duplicates
+  # unique means it will return each gene name WITHOUT ANY OF THE DUPLICATES
+  # so to clarify Hugo_symbol has all of the genes including duplicates whereas gene.names only has the unique genes
   # hugo symbol means the standardised gene name by human genome organsaiton (HUGO)
-	unique.genes <- unique(mut.data$Hugo_Symbol);
+	genes.names <- unique(mut.data$Hugo_Symbol);
 
 	# create an empty data matrix to serve as our "input data matrix"
   # i.e. this is where we will collect information about the most reported genes
   # when we run the analysis pipline on the BRCA dataset we just downloaded for each pipline
   # now we just have a list of gene names and then one column on its right with the "number_of_reports" listed in it
-  # there is no title for the gene names and this isn't counted as a column
-	all.mut <- matrix(data=0, nrow=length(unique.genes), ncol=1, dimnames=list(rownames=unique.genes, colnames="number_of_reports"));
+  # there is no title for the gene names and this isn't 'counted' as a column
+  # so ncol = 1 means theres one column (number of reports) to the right of the names
+	all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, dimnames=list(rownames=genes.names, colnames="number_of_reports"));
 
 	# identify position of each gene and populate the matrix
+  # first, in order to assign the gene position values into a list
+  # we make the object all.positions
+  # then when we get the index values (in gene.positions) we assign it to this obejct to make it into a list
 	all.positions <- NULL;
-
-  for(gene in unique.genes) {
+  # now we've defined gene as the individual parts of gene.names
+  # now we are collecting the indicies of where the unique genes (from gene.names)  are within the total list of genes (from hugo_symbol)
+  # the which function returns indicides for the events where the event is TRUE
+  # as in, where the gene name in hugo_symbol equals the unique gene name, we get an index value
+  # then we define the length of our "gene.names" and "number of reports" columns to that of the length of the indicies list we just obtained
+  
+  for(gene in genes.names) {
 		gene.position <- which(mut.data$Hugo_Symbol == gene);
 		all.mut[gene, "number_of_reports"] <- length(gene.position);
 		all.positions <- c(all.positions, gene.position );
 	}
 
-	# order by most reported gene
+	# order the whole all.mut matrix by the most reported gene highest to lowest
 	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], decreasing=TRUE),];
 
-	# define the "top" 20 genes to be used in the visualisation process and subset mutation data
+	# define the "top" 20 genes to be used in the visualisation process
 	top.mut.genes <- names( all.mut.ordered[ 1:20 ] );
+
+
+  # Subset mutation data; we are extracting only the genes we indexed from the whole mut.data vector
+  # (question: are we losing any data since we are removing duplicates?)
 	top.mut.data <- mut.data[ all.positions, ];
 
 	# make sure barcodes in the clinical data correspond to those in the mutation data
@@ -232,6 +244,8 @@ for(pipe in pipeline_options){
 	rownames(top.mut.bar)<- top.mut.bar[,1];
 	unique.bar <- unique(rownames(top.mut.bar));
 	top.clin.data <- clin.data.slimmed[ , unique.bar]
+
+
 
 	# visualise mutation data using oncoprint using ComplexHeatmap package
 	TCGAvisualize_oncoprint(
@@ -254,3 +268,4 @@ for(pipe in pipeline_options){
 ## Look up commonly mutated genes in breast cancer and amend the code so that it:
 ### reads in a user-supplied gene list
 ### generates the plot for these genes of interest
+
