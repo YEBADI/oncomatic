@@ -129,18 +129,18 @@ dim(clin.data.slimmed) #1097 9
 # pipeline will be most effective for their research purposes.
 # all pipelines generate VCF output
 
-# [1] mutect2
+# [1] MuTect2
 # * Applies Bayesian classifier to detect somatic mutations with very low allele fractions
 # requires only a few supporting reads however is confounded by low tumor purity.
-# * Has high sensitivity and calls mutations with allelic fractions as low as 0.1 and below
-# * Low specifiticity
-# * Applies carefully tuned hard filters to compensate partially specificity issues
+# * Has high sensitivity and calls mutations with allelic fractions as low as 0.1 and below.
+# * Low specifiticity.
+# * Applies carefully tuned hard filters to compensate partially specificity issues.
 
 # [2] Varscan2
-# * Is generally outperformed by MuSE and MuTect2
+# * Is generally outperformed by MuSE and MuTect2.
 # * Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
-# as supresses mutations below allelic threshold
-# * Sensitivity can be improved but this drastically drops specificitiy and returns high levels of false positives
+# as supresses mutations below allelic threshold.
+# * Sensitivity can be improved but this drastically drops specificitiy and returns high levels of false positives.
 # * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%
 # at sequencing depths of 100x, 250x, 500x and 1000x respectively (Stead et al, 2013).
 
@@ -150,7 +150,8 @@ dim(clin.data.slimmed) #1097 9
 # for read depth, base quality, variant allele frequency, and statistical significance.
 
 # [3] MuSE
-# * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates Model parameters 
+# * Has outperformed MuTect2 on calling variants from ACC TCGA data.
+# * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates Model parameters. 
 # * Variants are classified into somatic, germ-line, and reversal to the homozygous reference
 # by comparing the somatic variant allele fraction (π) between the paired tumor–normal samples.
 # * A sample-specific error model to account for tumor heterogeneity and identify cutoffs is built.
@@ -159,10 +160,13 @@ dim(clin.data.slimmed) #1097 9
 
 # [4] SomaticSniper
 # Returns high level of false positives and many of these are not in agreement with other InDel callers.
+# Most of the literature shows it is outperformed by most other variant callers.
 
-#* TCGA-BRCA analysis is suitable with Mutect2 or MuSE. Ideally both should be run and the results correlated.
-#* TCGA-PAAD analysis would only be feisable with Varscan2 due to low tumor purity.
+# Verdict
+#* TCGA-BRCA analysis is suitable with either Mutect2 or MuSE. Ideally both should be run and the results correlated / contrasted.
+#* TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly low tumor purity (circa 40%).
 
+# GIVING USERS ABILITY TO CHOOSE PIPELINE OPTION
 ### To give users the option to choose what method they want to apply:
 # input = readline('Please key in the pipline of choice [1] mutect2, [2] varscan, [3] muse, or [4] somaticsniper: ')
 #
@@ -178,6 +182,7 @@ pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 # I will consider using R specific vectorised functions instead of "for" loops
 # as these run faster. For example:
 # vapply(pipeline_options, function(pipe)){
+# I've tried to do this but haven't gotten it to work yet
 
 for(pipe in pipeline_options){
 
@@ -205,14 +210,15 @@ for(pipe in pipeline_options){
 	# identify position of each gene and populate the matrix
   # first, in order to assign the gene position values into a list
   # we make the object all.positions
-  # then when we get the index values (in gene.positions) we assign it to this obejct to make it into a list
+  # then when we get the index values (in gene.positions) it comes in a non-list format (what is this called?)
+  # so we assign it to our all.positions obejct to make it into a list
 	all.positions <- NULL;
+
   # now we've defined gene as the individual parts of gene.names
   # now we are collecting the indicies of where the unique genes (from gene.names)  are within the total list of genes (from hugo_symbol)
   # the which function returns indicides for the events where the event is TRUE
   # as in, where the gene name in hugo_symbol equals the unique gene name, we get an index value
   # then we define the length of our "gene.names" and "number of reports" columns to that of the length of the indicies list we just obtained
-  
   for(gene in genes.names) {
 		gene.position <- which(mut.data$Hugo_Symbol == gene);
 		all.mut[gene, "number_of_reports"] <- length(gene.position);
@@ -222,13 +228,21 @@ for(pipe in pipeline_options){
 	# order the whole all.mut matrix by the most reported gene highest to lowest
 	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], decreasing=TRUE),];
 
-	# define the "top" 20 genes to be used in the visualisation process
+	# We isolate the character strings (i.e. the gene "names") from the top 20 genes
+  # these will be used in the visualisation process
 	top.mut.genes <- names( all.mut.ordered[ 1:20 ] );
-
 
   # Subset mutation data; we are extracting only the genes we indexed from the whole mut.data vector
   # (question: are we losing any data since we are removing duplicates?)
 	top.mut.data <- mut.data[ all.positions, ];
+
+
+
+
+
+################################## I couldn't follow what's specifically happening from here ###################
+
+
 
 	# make sure barcodes in the clinical data correspond to those in the mutation data
 	top.mut.bar <- NULL;
@@ -245,13 +259,11 @@ for(pipe in pipeline_options){
 	unique.bar <- unique(rownames(top.mut.bar));
 	top.clin.data <- clin.data.slimmed[ , unique.bar]
 
-
-
 	# visualise mutation data using oncoprint using ComplexHeatmap package
 	TCGAvisualize_oncoprint(
 		mut = top.mut.data,
 		genes = top.mut.data$Hugo_Symbol, 
-		filename = paste("oncoprint_", tumour.type, "_", pipe,".pdf", sep=""),
+		filename = paste("oncoprint_", tumor.type, "_", pipe,".pdf", sep=""),
 		annotation = top.clin.data,
 		color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
 		rows.font.size = 8,
@@ -260,12 +272,53 @@ for(pipe in pipeline_options){
 		dist.col = 0,
 		label.font.size = 6
 	);
+
+
+
+user.gene.request = readline('Please type the genes of interest in capital letters, separated by a comma (e.g. ATM, BRCA1 ): ')
+user.gene.list <- user.gene.request(as.vector(unlist(strsplit(str,",")),mode="list"))
+
+  TCGAvisualize_oncoprint(
+    mut = top.mut.data,
+    genes = top.mut.data$user.gene.list, 
+    filename = paste("oncoprint_", tumour.type, "_", pipe,".pdf", sep=""),
+    annotation = top.clin.data,
+    color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
+    rows.font.size = 8,
+    width = 5,
+    heatmap.legend.side = "right",
+    dist.col = 0,
+    label.font.size = 6
+  );
+
+
+
+
 	dev.off();
 
 }
+
+
+
+################################## I couldn't follow what's specifically happening to here ###################
+
+
+# COMMONLY MUTATED BREAST CANCER GENES
+#    ATM.
+#    p53
+#    BRCA1.
+#    BRCA2.
+#    PTEN
+#    CHEK2
+#    PALB2
+#    STK11
+#    BARD1.
+#    BRIP1.
+#    CASP8.
+#    CDH1.
+#    CHEK2.
 
 ## [Yusef: now imagine that I am a researcher interested in specific genes]
 ## Look up commonly mutated genes in breast cancer and amend the code so that it:
 ### reads in a user-supplied gene list
 ### generates the plot for these genes of interest
-
