@@ -100,7 +100,9 @@ colnames(clin.data);
 # after checking this I identified the following as useful:
 
 # race = useful states if "black or african american" or "white" or "asian"
-# year_of_birth = very useful
+# *** year_of_birth 
+# *** actually should use days to birth or age of age of diagnosis*
+
 # bcr_patient_barcode = very useful (but is it the same as submitter Id?)
 # disease = it's all just BRCA, i guess it confirms you picked the right group since this will be soft coded
 # gender = very useful, mostly female but some male (can see data trends possibly)
@@ -111,7 +113,11 @@ colnames(clin.data);
 
 # Subsetting the clinical data to covariates of interest
 # we assign the collumn names to the object "clin.covariates"
-clin.covariates <- c("race", "year_of_birth", "bcr_patient_barcode", "disease", "gender", "tissue_or_organ_of_origin", "morphology", "vital_status", "tumor_stage");
+clin.covariates.for.oncodata <- c("race", "gender", "vital_status", "tumor_stage");
+
+forvisual <- clin.data[ , clin.covariates.for.oncodata]
+# forvisual[ , "morphology"]
+
 # now we produce a new data matrix with only the collumns that we choose, leaving the rows as they are
 clin.data.slimmed <- clin.data[ , clin.covariates ];
 # checking the dimensions of our new "slimmed down" data matrix to confirm that we only have 9 rows
@@ -191,7 +197,7 @@ for(pipe in pipeline_options){
   # tumor is picking BRCA (as we defined tumor.type to be BRCA)
   # save.csv means it is saved as a csv format
   # pipelines = pipe, means for each "pipeline option" it will download the whole BRCA data
-	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, save.csv = TRUE);
+	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = "mutect2", save.csv = TRUE);
 
 	# identify all genes (symbol) reported as mutated
   # unique means it will return each gene name WITHOUT ANY OF THE DUPLICATES
@@ -237,6 +243,7 @@ for(pipe in pipeline_options){
 	top.mut.data <- mut.data[ all.positions, ];
 
 
+# follow tcga mutation matrix and annotation data has been accessed / downloaded follow guidebook
 
 
 
@@ -244,27 +251,27 @@ for(pipe in pipeline_options){
 
 
 
-	# make sure barcodes in the clinical data correspond to those in the mutation data
-	top.mut.bar <- NULL;
+#	# make sure barcodes in the clinical data correspond to those in the mutation data
+#	top.mut.bar <- NULL;
 
-	# if you look at what I am printing 
-	for( i in 1:length(top.mut.data$Tumor_Sample_Barcode) ){
-		tmp.bar.split <- unlist(strsplit(top.mut.data$Tumor_Sample_Barcode[i], split="-", fixed=TRUE));
-		tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", tmp.bar.split[3], sep = "")
-		cat("\n", tmp.bar.split, "\t", tmp.bar.join);
-		top.mut.bar <- rbind(top.mut.bar, tmp.bar.join)
-	}
+#	# if you look at what I am printing 
+#	for( i in 1:length(top.mut.data$Tumor_Sample_Barcode) ){
+#		tmp.bar.split <- unlist(strsplit(top.mut.data$Tumor_Sample_Barcode[i], split="-", fixed=TRUE));
+#		tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", tmp.bar.split[3], sep = "")
+#		cat("\n", tmp.bar.split, "\t", tmp.bar.join);
+#		top.mut.bar <- rbind(top.mut.bar, tmp.bar.join)
+#	}
 
-	rownames(top.mut.bar)<- top.mut.bar[,1];
-	unique.bar <- unique(rownames(top.mut.bar));
-	top.clin.data <- clin.data.slimmed[ , unique.bar]
+#	rownames(top.mut.bar)<- top.mut.bar[,1];
+#	unique.bar <- unique(rownames(top.mut.bar));
+#	top.clin.data <- clin.data.slimmed[ , unique.bar]
 
 	# visualise mutation data using oncoprint using ComplexHeatmap package
 	TCGAvisualize_oncoprint(
 		mut = top.mut.data,
 		genes = top.mut.data$Hugo_Symbol, 
 		filename = paste("oncoprint_", tumor.type, "_", pipe,".pdf", sep=""),
-		annotation = top.clin.data,
+		annotation = clin.data,
 		color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
 		rows.font.size = 8,
 		width = 5,
@@ -274,13 +281,12 @@ for(pipe in pipeline_options){
 	);
 
 
-
 user.gene.request = readline('Please type the genes of interest in capital letters, separated by a comma (e.g. ATM, BRCA1 ): ')
 user.gene.list <- user.gene.request(as.vector(unlist(strsplit(str,",")),mode="list"))
 
   TCGAvisualize_oncoprint(
     mut = top.mut.data,
-    genes = top.mut.data$user.gene.list, 
+    genes = mut.data$user.gene.list, 
     filename = paste("oncoprint_", tumour.type, "_", pipe,".pdf", sep=""),
     annotation = top.clin.data,
     color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
