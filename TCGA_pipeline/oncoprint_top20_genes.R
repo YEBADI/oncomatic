@@ -4,7 +4,7 @@
 #                                             for top 20 mutated genes.
 ### DESCRIPTION ################################################################
 #  R pipeline to download TCGAbiolinks data for tumor type
-# and produce an oncoprint for the top 20 most mutated genes.
+#  and produce an oncoprint for the top 20 most mutated genes.
 ### PARAMETERS #################################################################
 # 
 ### FUNCTIONS ##################################################################
@@ -136,15 +136,15 @@ for(pipe in pipeline_options){
 		all.mut[gene, "number_of_reports"] <- length(gene.position);
 		all.positions <- c(all.positions, gene.position );
 	}
-	# Order the whole all.mut matrix by the most reported gene highest to lowest
+	# Order the whole all.mut matrix by the most reported gene highest to lowest.
 	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
                                     decreasing=TRUE),];
-	# Isolate top 20 gene names
+	# Isolate top 20 gene names.
 	top.mut.genes <- names( all.mut.ordered[ 1:20 ] );
   # Subset mutation data
 	top.mut.data <- mut.data[ all.positions, ];
 }
-# oncoprint of top 20 genes
+# Oncoprint of top 20 genes.
 for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
