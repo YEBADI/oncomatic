@@ -6,7 +6,7 @@
 #  R pipeline to download TCGAbiolinks data for tumor type
 #  and produce an oncoprint for the top 20 most mutated genes.
 ### PARAMETERS #################################################################
-# 
+#  I need to pass in paramaters of gene names from the console
 ### FUNCTIONS ##################################################################
 
 # Set working directory to home.
