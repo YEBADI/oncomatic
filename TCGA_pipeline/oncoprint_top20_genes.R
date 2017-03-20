@@ -113,9 +113,9 @@ colnames(clin.data);
 
 # Subsetting the clinical data to covariates of interest
 # we assign the collumn names to the object "clin.covariates"
-clin.covariates.for.oncodata <- c("race", "gender", "vital_status", "tumor_stage");
+clin.covariates.for.oncodata <- c("race", "gender", "vital_status", "tumor_stage", "bcr_patient_barcode");
 
-forvisual <- clin.data[ , clin.covariates.for.oncodata]
+clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
 # forvisual[ , "morphology"]
 
 # now we produce a new data matrix with only the collumns that we choose, leaving the rows as they are
@@ -124,8 +124,8 @@ clin.data.slimmed <- clin.data[ , clin.covariates ];
 dim(clin.data.slimmed) #1097 9
 
 # we now have our slimmed down clinical data matrix
-
-
+# Only the tastiest, flakiest Montre.
+# Tastes like Montre never tasted before.
 # ACCESS AND DOWNLOAD THE MUTATION DATA
 # now that we have the clinical data for the BRCA samples, we need to obtain the mutation data
 
@@ -197,7 +197,7 @@ for(pipe in pipeline_options){
   # tumor is picking BRCA (as we defined tumor.type to be BRCA)
   # save.csv means it is saved as a csv format
   # pipelines = pipe, means for each "pipeline option" it will download the whole BRCA data
-	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = "mutect2", save.csv = TRUE);
+	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, save.csv = TRUE);
 
 	# identify all genes (symbol) reported as mutated
   # unique means it will return each gene name WITHOUT ANY OF THE DUPLICATES
@@ -211,7 +211,7 @@ for(pipe in pipeline_options){
   # now we just have a list of gene names and then one column on its right with the "number_of_reports" listed in it
   # there is no title for the gene names and this isn't 'counted' as a column
   # so ncol = 1 means theres one column (number of reports) to the right of the names
-	all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+	all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, dimnames=list(rownames=genes.names, colnames="number_of_reports"));
 
 	# identify position of each gene and populate the matrix
   # first, in order to assign the gene position values into a list
@@ -242,89 +242,27 @@ for(pipe in pipeline_options){
   # (question: are we losing any data since we are removing duplicates?)
 	top.mut.data <- mut.data[ all.positions, ];
 
-
-# follow tcga mutation matrix and annotation data has been accessed / downloaded follow guidebook
-
+}
 
 
-################################## I couldn't follow what's specifically happening from here ###################
-
-
-
-#	# make sure barcodes in the clinical data correspond to those in the mutation data
-#	top.mut.bar <- NULL;
-
-#	# if you look at what I am printing 
-#	for( i in 1:length(top.mut.data$Tumor_Sample_Barcode) ){
-#		tmp.bar.split <- unlist(strsplit(top.mut.data$Tumor_Sample_Barcode[i], split="-", fixed=TRUE));
-#		tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", tmp.bar.split[3], sep = "")
-#		cat("\n", tmp.bar.split, "\t", tmp.bar.join);
-#		top.mut.bar <- rbind(top.mut.bar, tmp.bar.join)
-#	}
-
-#	rownames(top.mut.bar)<- top.mut.bar[,1];
-#	unique.bar <- unique(rownames(top.mut.bar));
-#	top.clin.data <- clin.data.slimmed[ , unique.bar]
-
-	# visualise mutation data using oncoprint using ComplexHeatmap package
-	TCGAvisualize_oncoprint(
-		mut = top.mut.data,
-		genes = top.mut.data$Hugo_Symbol, 
-		filename = paste("oncoprint_", tumor.type, "_", pipe,".pdf", sep=""),
-		annotation = clin.data,
-		color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
-		rows.font.size = 8,
-		width = 5,
-		heatmap.legend.side = "right",
-		dist.col = 0,
-		label.font.size = 6
-	);
-
-
-user.gene.request = readline('Please type the genes of interest in capital letters, separated by a comma (e.g. ATM, BRCA1 ): ')
-user.gene.list <- user.gene.request(as.vector(unlist(strsplit(str,",")),mode="list"))
-
+# oncoprint of top 20 genes
+# fixed the issue I had by using a for loop to generate an oncoprint for each pipeline
+for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
-    mut = top.mut.data,
-    genes = mut.data$user.gene.list, 
-    filename = paste("oncoprint_", tumour.type, "_", pipe,".pdf", sep=""),
-    annotation = top.clin.data,
-    color = c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
-    rows.font.size = 8,
-    width = 5,
-    heatmap.legend.side = "right",
-    dist.col = 0,
-    label.font.size = 6
-  );
-
-
+      mut = top.mut.data,
+      genes = top.mut.genes,
+      filename = paste("oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple","INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+}
 
 
 	dev.off();
 
 }
-
-
-
-################################## I couldn't follow what's specifically happening to here ###################
-
-
-# COMMONLY MUTATED BREAST CANCER GENES
-#    ATM.
-#    p53
-#    BRCA1.
-#    BRCA2.
-#    PTEN
-#    CHEK2
-#    PALB2
-#    STK11
-#    BARD1.
-#    BRIP1.
-#    CASP8.
-#    CDH1.
-#    CHEK2.
-
-## [Yusef: now imagine that I am a researcher interested in specific genes]
-## Look up commonly mutated genes in breast cancer and amend the code so that it:
-### reads in a user-supplied gene list
-### generates the plot for these genes of interest
