@@ -9,6 +9,18 @@
 # 
 ### FUNCTIONS ##################################################################
 
+################################ SELECT GENES ##################################
+
+# Before running the script: run this (will soon make this args from cmd line)
+user.gene.request = readline('Please type the genes of interest in capital 
+       letters, separated by " - " with NO SPACE (e.g. " ATM-BRCA1-CHEK2 "): ')
+
+# COMMONLY MUTATED BREAST CANCER GENES
+# ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2
+user.gene.list <- unlist(strsplit(user.gene.request,"-"))
+
+################################### MAIN #######################################
+
 # Set working directory to home.
 setwd(home)
 
@@ -124,11 +136,6 @@ dim(clin.data.slimmed) #1097 9
 # Download mutations data & visualise clinical & mutations data in an oncoprint
 
 # Oncoprint of user requested genes
-user.gene.request = readline('Please type the genes of interest in capital 
-       letters, separated by " ; " with NO SPACE (e.g. " ATM;BRCA1;CHEK2 "): ')
-# COMMONLY MUTATED BREAST CANCER GENES
-# ATM;p53;BRCA1;BRCA2;PTEN;CHEK2;PALB2;STK11;BARD1;BRIP1;CASP8;CDH1;CHEK2
-user.gene.list <- unlist(strsplit(user.gene.request,";"))
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 for(pipe in pipeline_options){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = "mutect2", 
@@ -145,21 +152,22 @@ for(pipe in pipeline_options){
                                       "number_of_reports"], decreasing=TRUE),];
   user.choice.gene.names <- names( mut.data.matrix.ordered[ 1:20 ] );
   user.choice.mut.data <- mut.data[ all.gene.positions, ];
-  for(pipe in pipeline_options){
-    TCGAvisualize_oncoprint(
-        mut = user.choice.mut.data,
-        genes = user.choice.gene.names,
-        filename = paste("oncoprint_", tumor.type, user.gene.request, 
-                                        "_", pipe, ".pdf", sep=""),
-        annotation = clin.forvisual,
-        color=c("background"="#CCCCCC","DEL"="purple",
-                      "INS"="yellow","SNP"="brown"),
-        rows.font.size= 8,
-        width = 5,
-        heatmap.legend.side = "right",
-        dist.col = 0,
-        label.font.size = 6
+}
+for(pipe in pipeline_options){
+  TCGAvisualize_oncoprint(
+      mut = user.choice.mut.data,
+      genes = user.choice.gene.names,
+      filename = paste("oncoprint_", tumor.type, "-", user.gene.request, 
+                                      "_", pipe, ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple",
+                    "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
       );
-  }
+}
   dev.off();
 }
