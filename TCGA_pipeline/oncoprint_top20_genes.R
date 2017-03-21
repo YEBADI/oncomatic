@@ -127,7 +127,7 @@ for(pipe in pipeline_options){
 	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
                            save.csv = TRUE);
 	genes.names <- unique(mut.data$Hugo_Symbol);
-	all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+	all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
             dimnames=list(rownames=genes.names, colnames="number_of_reports"));
 	# Identify position of each gene and populate the matrix
 	all.positions <- NULL;
@@ -149,7 +149,7 @@ for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
       genes = top.mut.genes,
-      filename = paste("oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
+      filename = paste("top20_oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
@@ -159,5 +159,6 @@ for(pipe in pipeline_options){
       dist.col = 0,
       label.font.size = 6
     );
+}
 	dev.off();
 }
