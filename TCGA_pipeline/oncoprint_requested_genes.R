@@ -138,7 +138,7 @@ dim(clin.data.slimmed) #1097 9
 # Oncoprint of user requested genes
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 for(pipe in pipeline_options){
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = "mutect2", 
+  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
                            save.csv = TRUE);
   mut.data.matrix <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
           dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
