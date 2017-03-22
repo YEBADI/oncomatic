@@ -1,17 +1,39 @@
 ### HISTORY ####################################################################
 # Version		Date			    Coder			          Comments
-# 3.0 			20/03/2017		Yusef + Emanuela		Functionally produces oncoprint
+# 4.0 			22/03/2017		Yusef + Emanuela		Functionally produces oncoprint
 #                                             for top 20 mutated genes.
 ### DESCRIPTION ################################################################
 #  R pipeline to download TCGAbiolinks data for tumor type
 #  and produce an oncoprint for the top 20 most mutated genes.
 ### PARAMETERS #################################################################
-#  I need to pass in paramaters of gene names from the console
+#  User gives one param either "BRCA" or "PAAD" to pick tumor type.
 ### FUNCTIONS ##################################################################
 
-# Set working directory to home.
-setwd(home)
+################################ USER INPUT ####################################
+# To place in README.txt.
+# Please give one param:
+# 1. Tumor type, in capital letters; either "BRCA" or "PAAD".
+#
+################################################################################
 
+#args <- commandArgs()
+
+args <- "BRCA"
+#args <- "PAAD"
+
+if(args[1] == "BRCA" ){
+  ProjectID <- "TCGA-BRCA"
+  # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
+  tumor.type <-  "BRCA"
+} else{
+  ProjectID <- "TCGA-PAAD"
+  tumor.type <-  "PAAD"
+}
+
+#############################  MAIN  ###########################################
+#===============================================================================
+#    Preparation of environment
+#===============================================================================
 # Identify and install missing libraries.
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
@@ -24,13 +46,9 @@ if(length(new.libs)) {
 library("TCGAbiolinks")
 library("SummarizedExperiment")
 
-#############################  MAIN  ###########################################
-#===============================================================================
-#    Preparation of environment
-#===============================================================================
 # Define variables.
 ProjectDir <- "mutations";
-ProjectID <- "TCGA-BRCA"; # The dataset name as defined by TCGAbiolinks.
+; # The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
 # Create and enter "mutations" directory.
@@ -47,12 +65,10 @@ setwd(ProjectDir);
 #    Note: tumor can be softcoded as param input from command line.
 #    Note: can develop program and let user pick clin.data terms.
 #===============================================================================
-# Biolinks command to download the general clinical data for all BRCA samples
-clin.data <- GDCquery_clinic( "TCGA-BRCA", "clinical" );
+# Biolinks command to download the general clinical data for all tumor samples
+clin.data <- GDCquery_clinic( ProjectID, "clinical" );
 # Check dimensions
 dim(clin.data)
-# Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
-tumor.type <-  "BRCA"
 
 # Write clinical data matrix to target file
 write.table( clin.data, file = paste(tumor.type,"_", ProjectName, 
