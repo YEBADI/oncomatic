@@ -19,11 +19,13 @@
 ################################################################################
 
 #args <- commandArgs()
-#args[1] <- "BRCA"
-args[1] <- "PAAD"
-args[2] <- "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
+# when we implement actual args then we can replace the args1 with args[1] etc.
+# for now I'll hard code in the args...
+args1 <- "BRCA"
+#args1 <- "PAAD"
+args2 <- "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
 
-if(args[1] == "BRCA" ){
+if(args1 == "BRCA" ){
   ProjectID <- "TCGA-BRCA"
   # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
   tumor.type <-  "BRCA"
@@ -32,7 +34,7 @@ if(args[1] == "BRCA" ){
   tumor.type <-  "PAAD"
 }
 
-user.gene.request <- args[2]
+user.gene.request <- args2
 user.gene.list <- unlist(strsplit(user.gene.request,"-"))
 
 ################################### MAIN #######################################
@@ -78,18 +80,13 @@ clin.data <- GDCquery_clinic( ProjectID, "clinical" );
 # Check dimensions
 dim(clin.data)
 
-# Write clinical data matrix to target file
-write.table( clin.data, file = paste(tumor.type,"_", ProjectName, 
-                          "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
-
 # Subsetting the clinical data to covariates of interest to new data matrix
 clin.covariates.for.oncodata <- c("race", "gender", "vital_status", 
                                           "tumor_stage", "bcr_patient_barcode");
 clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
-clin.data.slimmed <- clin.data[ , clin.covariates ];
 
 # Check dimensions of slimmed data matrix
-dim(clin.data.slimmed) #1097 9
+dim(clin.forvisual) #1097 5
 
 #===============================================================================
 #    Access and download the mutation data for tumor type and
