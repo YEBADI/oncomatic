@@ -1,12 +1,13 @@
 ### HISTORY ####################################################################
 # Version		Date			    Coder			          Comments
-# 4.0 			22/03/2017		Yusef + Emanuela		Functionally produces oncoprint
-#                                             for top 20 mutated genes.
+# 5.0 			23/03/2017		Yusef + Emanuela		Functionally produces oncoprint
+#                                             for top number of mutated genes.
 ### DESCRIPTION ################################################################
 #  R pipeline to download TCGAbiolinks data for tumor type
 #  and produce an oncoprint for the top 20 most mutated genes.
 ### PARAMETERS #################################################################
 #  User gives one param either "BRCA" or "PAAD" to pick tumor type.
+# User gives param to select number of top genes to show
 ### FUNCTIONS ##################################################################
 
 ################################ USER INPUT ####################################
@@ -17,11 +18,13 @@
 ################################################################################
 
 #args <- commandArgs()
+# for now will hard code in args1, args2 etc. but will replace with args[1] etc.
+args1 <- "BRCA"
+#args1 <- "PAAD"
 
-args <- "BRCA"
-#args <- "PAAD"
+args2 <- 20 # top number of genes to display (e.g. top 20)
 
-if(args[1] == "BRCA" ){
+if(args1 == "BRCA" ){
   ProjectID <- "TCGA-BRCA"
   # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
   tumor.type <-  "BRCA"
@@ -70,18 +73,13 @@ clin.data <- GDCquery_clinic( ProjectID, "clinical" );
 # Check dimensions
 dim(clin.data)
 
-# Write clinical data matrix to target file
-write.table( clin.data, file = paste(tumor.type,"_", ProjectName, 
-                          "_clinical.txt", sep=""), sep="\t", row.names=FALSE );
-
 # Subsetting the clinical data to covariates of interest to new data matrix
 clin.covariates.for.oncodata <- c("race", "gender", "vital_status", 
                                           "tumor_stage", "bcr_patient_barcode");
 clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
-clin.data.slimmed <- clin.data[ , clin.covariates ];
 
 # Check dimensions of slimmed data matrix
-dim(clin.data.slimmed) #1097 9
+dim(clin.forvisual) #1097 5
 
 #===============================================================================
 #    Access and download the mutation data for tumor type and
@@ -156,7 +154,7 @@ for(pipe in pipeline_options){
 	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
                                     decreasing=TRUE),];
 	# Isolate top 20 gene names.
-	top.mut.genes <- names( all.mut.ordered[ 1:20 ] );
+	top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
   # Subset mutation data
 	top.mut.data <- mut.data[ all.positions, ];
 }
@@ -165,7 +163,7 @@ for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
       genes = top.mut.genes,
-      filename = paste("top20_oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
+      filename = paste("top", args2,"_oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
