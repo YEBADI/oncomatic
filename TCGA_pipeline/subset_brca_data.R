@@ -27,7 +27,7 @@
 args1 <- "BRCA"
 #args1 <- "PAAD"
 
-args2 <- 20 # top number of genes to display (e.g. top 20)
+args2 = 20 # top number of genes to display (e.g. top 20)
 
 if(args1 == "BRCA" ){
   ProjectID <- "TCGA-BRCA"
@@ -112,6 +112,10 @@ clin.basl <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode
 clin.norml <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
                                    %in% norml),]
 
+# downloading mutation data
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
+                           save.csv = TRUE);
+
 # subsetting mutation data
 
 mut.data.barcodes <- NULL;
@@ -186,44 +190,49 @@ norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
 # low tumor purity (circa 40%).
 
 # Download mutations data and generate oncoprint of top no. genes for all pipes.
+# this entire process for each subtype of breast cancer
+
+subtype.data <- list(lumA.mut.data, lumB.mut.data, her2.mut.data, norml.mut.data, basl.mut.data)
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
-for(pipe in pipeline_options){
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
-                           save.csv = TRUE);
-  genes.names <- unique(mut.data$Hugo_Symbol);
-  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-  # Identify position of each gene and populate the matrix
-  all.positions <- NULL;
-  for(gene in genes.names) {
-    gene.position <- which(mut.data$Hugo_Symbol == gene);
-    all.mut[gene, "number_of_reports"] <- length(gene.position);
-    all.positions <- c(all.positions, gene.position );
+
+for(subtype in subtype.data){
+  for(pipe in pipeline_options){
+    genes.names <- unique(subtype$Hugo_Symbol);
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+              dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(subtype$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+    # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
+    # Subset mutation data
+    top.mut.data <- subtype[ all.positions, ];
   }
-  # Order the whole all.mut matrix by the most reported gene highest to lowest.
-  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                    decreasing=TRUE),];
-  # Isolate top 20 gene names.
-  top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
-  # Subset mutation data
-  top.mut.data <- mut.data[ all.positions, ];
 }
 
 # Oncoprint of top 20 genes.
-for(pipe in pipeline_options){
-  TCGAvisualize_oncoprint(
-      mut = top.mut.data,
-      genes = top.mut.genes,
-      filename = paste("top", args2,"_oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
-      annotation = clin.forvisual,
-      color=c("background"="#CCCCCC","DEL"="purple",
-              "INS"="yellow","SNP"="brown"),
-      rows.font.size= 8,
-      width = 5,
-      heatmap.legend.side = "right",
-      dist.col = 0,
-      label.font.size = 6
-    );
+for(subtype in subtype.data){
+  for(pipe in pipeline_options){
+    TCGAvisualize_oncoprint(
+        mut = top.mut.data,
+        genes = top.mut.genes,
+        filename = paste("top", args2,"_oncoprint_", subtype.data, "_", tumor.type, "_", pipe, ".pdf", sep=""),
+        annotation = clin.forvisual,
+        color=c("background"="#CCCCCC","DEL"="purple",
+                "INS"="yellow","SNP"="brown"),
+        rows.font.size= 8,
+        width = 5,
+        heatmap.legend.side = "right",
+        dist.col = 0,
+        label.font.size = 6
+      );
+  }
 }
-  dev.off();
-}
+dev.off()
