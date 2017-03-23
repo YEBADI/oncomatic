@@ -1,10 +1,15 @@
 ### HISTORY ####################################################################
 # Version   Date          Coder               Comments
-# 5.0       23/03/2017    Yusef + Emanuela    Functionally produces oncoprint
-#                                             for top number of mutated genes.
+# 1.0       23/03/2017    Yusef + Emanuela    Functionally produces oncoprint
+#                                             for top number of mutated genes
+#                                             for BRCA with subtypes based on
+#                                             2012 nature paper 
+#                                             (doi:10.1038/nature11412).
 ### DESCRIPTION ################################################################
-#  R pipeline to download TCGAbiolinks data for tumor type
-#  and produce an oncoprint for the top 20 most mutated genes.
+#  R pipeline to download TCGAbiolinks data for BRCA tumor type
+#  and produce an oncoprint for the top user-defined-number most mutated genes
+#  and produces oncoprint for each subtype based on 2012 nature paper 
+#  (doi:10.1038/nature11412).
 ### PARAMETERS #################################################################
 #  User gives one param either "BRCA" or "PAAD" to pick tumor type.
 # User gives param to select number of top genes to show
@@ -26,7 +31,7 @@ args2 <- 20 # top number of genes to display (e.g. top 20)
 
 if(args1 == "BRCA" ){
   ProjectID <- "TCGA-BRCA"
-  # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
+# Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
   tumor.type <-  "BRCA"
 } else{
   ProjectID <- "TCGA-PAAD"
@@ -85,34 +90,46 @@ dim(clin.forvisual) #1097 5
 # subsetting clinical data for BRCA subtype
 
 brca.subtype.data <- TCGAquery_subtype(tumor = "BRCA")
-lumA <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA == "Luminal A"),1]
-lumB <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA == "Luminal B"),1]
-her2 <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA == "HER2-enriched"),1]
-basl <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA == "Basal-like"),1]
-norml <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA == "Normal-like"),1]
+lumA <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Luminal A"),1]
+lumB <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Luminal B"),1]
+her2 <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "HER2-enriched"),1]
+basl <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Basal-like"),1]
+norml <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                 == "Normal-like"),1]
 
-clin.lumA <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode %in% lumA),]
-clin.lumB <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode %in% lumB),]
-clin.her2 <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode %in% her2),]
-clin.basl <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode %in% basl),]
-clin.norml <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode %in% norml),]
+clin.lumA <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
+                                  %in% lumA),]
+clin.lumB <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
+                                  %in% lumB),]
+clin.her2 <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode
+                                   %in% her2),]
+clin.basl <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
+                                  %in% basl),]
+clin.norml <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
+                                   %in% norml),]
 
 # subsetting mutation data
 
 mut.data.barcodes <- NULL;
 
 for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
-  tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], split="-", fixed=TRUE));
-  tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", tmp.bar.split[3], sep = "")
-  cat("\n", tmp.bar.split, "\t", tmp.bar.join); # just to see that it's producing a barcode
+  tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
+                                   split="-", fixed=TRUE));
+  tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                        tmp.bar.split[3], sep = "")
+  cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
   mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
 }
 
-lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA)]
-
-
-
-
+lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
+lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
+her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
+basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
+norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
 
 #===============================================================================
 #    Access and download the mutation data for tumor type and
@@ -168,12 +185,7 @@ lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA)]
 #* TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly
 # low tumor purity (circa 40%).
 
-
-
-
-
-
-# Download mutations data and generate oncoprint of top 20 genes for all pipes.
+# Download mutations data and generate oncoprint of top no. genes for all pipes.
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
 for(pipe in pipeline_options){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
@@ -196,6 +208,7 @@ for(pipe in pipeline_options){
   # Subset mutation data
   top.mut.data <- mut.data[ all.positions, ];
 }
+
 # Oncoprint of top 20 genes.
 for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
