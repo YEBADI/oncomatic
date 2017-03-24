@@ -157,13 +157,12 @@ for(pipe in pipeline_options){
 	top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
   # Subset mutation data
 	top.mut.data <- mut.data[ all.positions, ];
-}
-# Oncoprint of top 20 genes.
-for(pipe in pipeline_options){
+  # Oncoprint of top 20 genes.
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
       genes = top.mut.genes,
-      filename = paste("top", args2,"_oncoprint_", tumor.type, "_", pipe, ".pdf", sep=""),
+      filename = paste("top", args2,"_oncoprint_", tumor.type, "_", 
+                       pipe, ".pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
@@ -174,5 +173,5 @@ for(pipe in pipeline_options){
       label.font.size = 6
     );
 }
-	dev.off();
-}
+
+dev.off();
