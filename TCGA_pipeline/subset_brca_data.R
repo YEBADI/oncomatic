@@ -112,29 +112,6 @@ clin.basl <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode
 clin.norml <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
                                    %in% norml),]
 
-# downloading mutation data
-mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
-                           save.csv = TRUE);
-
-# subsetting mutation data
-
-mut.data.barcodes <- NULL;
-
-for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
-  tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
-                                   split="-", fixed=TRUE));
-  tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
-                        tmp.bar.split[3], sep = "")
-  cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
-  mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
-}
-
-lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
-lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
-her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
-basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
-norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
-
 #===============================================================================
 #    Access and download the mutation data for tumor type and
 #    generate an oncoprint for each pipeline
@@ -191,9 +168,33 @@ norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
 
 # Download mutations data and generate oncoprint of top no. genes for all pipes.
 # this entire process for each subtype of breast cancer
-
-subtype.data <- list(lumA.mut.data, lumB.mut.data, her2.mut.data, norml.mut.data, basl.mut.data)
 pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
+
+# downloading mutation data
+for(pipe in pipeline_options){
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
+                           save.csv = TRUE);
+}
+
+# subsetting mutation data
+mut.data.barcodes <- NULL;
+
+for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
+  tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
+                                   split="-", fixed=TRUE));
+  tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                        tmp.bar.split[3], sep = "")
+  cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
+  mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
+}
+
+lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
+lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
+her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
+basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
+norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
+
+subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, her2=her2.mut.data, normlike=norml.mut.data, basallike=basl.mut.data)
 
 for(subtype in subtype.data){
   for(pipe in pipeline_options){
@@ -217,13 +218,20 @@ for(subtype in subtype.data){
   }
 }
 
+# Assign titles to use in filename
+comment(subtype.data$luminalA) <- "luminalA"
+comment(subtype.data$luminalB) <- "luminalB"
+comment(subtype.data$her2) <- "her2"
+comment(subtype.data$normlike) <- "normlike"
+comment(subtype.data$basallike) <- "basallike"
+
 # Oncoprint of top 20 genes.
 for(subtype in subtype.data){
   for(pipe in pipeline_options){
     TCGAvisualize_oncoprint(
         mut = top.mut.data,
         genes = top.mut.genes,
-        filename = paste("top", args2,"_oncoprint_", subtype.data, "_", tumor.type, "_", pipe, ".pdf", sep=""),
+        filename = paste("oncoprint_top_", args2, "_", comment(subtype), "_", tumor.type, "_", pipe, ".pdf", sep=""),
         annotation = clin.forvisual,
         color=c("background"="#CCCCCC","DEL"="purple",
                 "INS"="yellow","SNP"="brown"),
