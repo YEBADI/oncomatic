@@ -161,8 +161,6 @@ for(pipe in pipeline_options){
                                       "number_of_reports"], decreasing=TRUE),];
   user.choice.gene.names <- names( mut.data.matrix.ordered[ 1:20 ] );
   user.choice.mut.data <- mut.data[ all.gene.positions, ];
-}
-for(pipe in pipeline_options){
   TCGAvisualize_oncoprint(
       mut = user.choice.mut.data,
       genes = user.choice.gene.names,
