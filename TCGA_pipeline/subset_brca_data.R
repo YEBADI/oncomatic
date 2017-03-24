@@ -1,42 +1,32 @@
 ### HISTORY ####################################################################
 # Version   Date          Coder               Comments
-# 1.0       23/03/2017    Yusef + Emanuela    Functionally produces oncoprint
-#                                             for top number of mutated genes
-#                                             for BRCA with subtypes based on
-#                                             2012 nature paper 
+# 2.0       24/03/2017    Yusef + Emanuela    Functionally produces oncoprint
+#                                             for top no. (no. chosen by user) 
+#                                             of most to least mutated genes
+#                                             for BRCA for each subtype (subtype
+#                                             banding of patient-samples based
+#                                             on 2012 nature paper. 
 #                                             (doi:10.1038/nature11412).
+#                                             Produces oncoprint for all pipes.
 ### DESCRIPTION ################################################################
+#  This script only runs on BRCA data as uses specific BRCA subtypes 
 #  R pipeline to download TCGAbiolinks data for BRCA tumor type
 #  and produce an oncoprint for the top user-defined-number most mutated genes
-#  and produces oncoprint for each subtype based on 2012 nature paper 
+#  and produces oncoprint for each BRCA subtype based on 2012 nature paper 
 #  (doi:10.1038/nature11412).
 ### PARAMETERS #################################################################
-#  User gives one param either "BRCA" or "PAAD" to pick tumor type.
 # User gives param to select number of top genes to show
+#
 ### FUNCTIONS ##################################################################
 
 ################################ USER INPUT ####################################
 # To place in README.txt.
 # Please give one param:
-# 1. Tumor type, in capital letters; either "BRCA" or "PAAD".
-#
-################################################################################
+# 1. User selects number of genes to show
+################################# PARAMETERS ###################################
 
 #args <- commandArgs()
-# for now will hard code in args1, args2 etc. but will replace with args[1] etc.
-args1 <- "BRCA"
-#args1 <- "PAAD"
-
-args2 = 20 # top number of genes to display (e.g. top 20)
-
-if(args1 == "BRCA" ){
-  ProjectID <- "TCGA-BRCA"
-# Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
-  tumor.type <-  "BRCA"
-} else{
-  ProjectID <- "TCGA-PAAD"
-  tumor.type <-  "PAAD"
-}
+args1 = 20 # top number of genes to display (e.g. top 20)
 
 #############################  MAIN  ###########################################
 #===============================================================================
@@ -73,6 +63,10 @@ setwd(ProjectDir);
 #    Note: tumor can be softcoded as param input from command line.
 #    Note: can develop program and let user pick clin.data terms.
 #===============================================================================
+# Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
+tumor.type <-  "BRCA"
+ProjectID <- "TCGA-BRCA"
+
 # Biolinks command to download the general clinical data for all tumor samples
 clin.data <- GDCquery_clinic( ProjectID, "clinical" );
 # Check dimensions
@@ -88,7 +82,6 @@ dim(clin.forvisual) #1097 5
 
 
 # subsetting clinical data for BRCA subtype
-
 brca.subtype.data <- TCGAquery_subtype(tumor = "BRCA")
 lumA <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
                                 == "Luminal A"),1]
@@ -194,29 +187,8 @@ her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
 basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
 norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
 
-subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, her2=her2.mut.data, normlike=norml.mut.data, basallike=basl.mut.data)
-
-for(subtype in subtype.data){
-  for(pipe in pipeline_options){
-    genes.names <- unique(subtype$Hugo_Symbol);
-    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-              dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-    # Identify position of each gene and populate the matrix
-    all.positions <- NULL;
-    for(gene in genes.names) {
-      gene.position <- which(subtype$Hugo_Symbol == gene);
-      all.mut[gene, "number_of_reports"] <- length(gene.position);
-      all.positions <- c(all.positions, gene.position );
-    }
-    # Order the whole all.mut matrix by the most reported gene highest to lowest.
-    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                      decreasing=TRUE),];
-    # Isolate top 20 gene names.
-    top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
-    # Subset mutation data
-    top.mut.data <- subtype[ all.positions, ];
-  }
-}
+subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, 
+           her2=her2.mut.data, normlike=norml.mut.data, basallike=basl.mut.data)
 
 # Assign titles to use in filename
 comment(subtype.data$luminalA) <- "luminalA"
@@ -224,14 +196,31 @@ comment(subtype.data$luminalB) <- "luminalB"
 comment(subtype.data$her2) <- "her2"
 comment(subtype.data$normlike) <- "normlike"
 comment(subtype.data$basallike) <- "basallike"
-
-# Oncoprint of top 20 genes.
 for(subtype in subtype.data){
   for(pipe in pipeline_options){
+    genes.names <- unique(subtype$Hugo_Symbol);
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(subtype$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+  # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args1 ] );
+    # Subset mutation data
+    top.mut.data <- subtype[ all.positions, ];
+# Oncoprint of top 20 genes.
     TCGAvisualize_oncoprint(
         mut = top.mut.data,
         genes = top.mut.genes,
-        filename = paste("oncoprint_top_", args2, "_", comment(subtype), "_", tumor.type, "_", pipe, ".pdf", sep=""),
+        filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
+                         "_", tumor.type, "_", pipe, ".pdf", sep=""),
         annotation = clin.forvisual,
         color=c("background"="#CCCCCC","DEL"="purple",
                 "INS"="yellow","SNP"="brown"),
@@ -243,4 +232,5 @@ for(subtype in subtype.data){
       );
   }
 }
+
 dev.off()
