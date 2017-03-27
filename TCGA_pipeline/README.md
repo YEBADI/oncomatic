@@ -1,5 +1,56 @@
 #The Cancer Genome Atlas
 
+# Pipeline Options
+
+### [1] MuTect2
+* Applies Bayesian classifier to detect somatic mutations with very low allele 
+ fractions and requires only a few supporting reads however is confounded by 
+ low tumor purity.
+* Has high sensitivity and calls mutations with allelic fractions as low as 
+ 0.1 and below.
+* Low specifiticity.
+* Applies carefully tuned hard filters to compensate for specificity issues.
+
+### [2] Varscan2
+* Is generally outperformed by MuSE and MuTect2.
+* Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
+ as supresses mutations below allelic threshold.
+* Sensitivity can be improved but this drastically drops specificitiy and 
+ returns high levels of false positives.
+* Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%
+ at sequencing depths of 100x, 250x, 500x and 1000x respectively.
+* See (Stead et al, 2013).
+* However, Varscan2 circumvents confounding factor of tumor purity and extreme
+ read depth as does not use probabilistic framework to detect variants and
+ assess confidence in them but uses a robust heuristic/statistic approach to 
+ call variants that meet desired thresholds for read depth, base quality, 
+ variant allele frequency, and statistical significance.
+
+### [3] MuSE
+* Has outperformed MuTect2 on calling variants from ACC TCGA data.
+ * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates 
+ Model parameters. 
+* Variants are classified into somatic, germ-line, and reversal to the 
+ homozygous reference by comparing the somatic variant allele fraction (π) 
+ between the paired tumor–normal samples.
+* A sample-specific error model to account for tumor heterogeneity and 
+ identify cutoffs is built.
+* Filters reduce the number of false positives by considering the sequence 
+context surrounding the point mutations. 
+
+### [4] SomaticSniper
+* Returns high level of false positives and many of these are not in agreement 
+ with other InDel callers.
+* Most of the literature shows it is outperformed by most other variant callers.
+
+## Verdict
+* TCGA-BRCA analysis is suitable with either Mutect2 or MuSE. Ideally both 
+ hould be run and the results correlated / contrasted.
+* TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly
+ low tumor purity (circa 40%).
+
+
+
 This is the TCGA readme.
 
 ## How to use bioconductor TCGA biolinks to download and analyse data
