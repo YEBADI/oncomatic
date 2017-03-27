@@ -50,7 +50,7 @@ library("TCGAbiolinks")
 library("SummarizedExperiment")
 
 # Define variables.
-ProjectDir <- "TCGA-BRCA_subtyped_mutations";
+ProjectDir <- "TCGA-BRCA_subtyped_mutations_selected_genes";
 # The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
