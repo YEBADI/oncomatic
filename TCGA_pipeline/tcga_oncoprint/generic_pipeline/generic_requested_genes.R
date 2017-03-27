@@ -16,7 +16,7 @@
 #
 # 2. The genes of interest in capital letters, separated by " - " with NO SPACE 
 # (e.g. " ATM-BRCA1-CHEK2 "): ')
-#
+# 3. The pipeline of choice; "mutect2", "varscan2", "muse", or "somaticsniper".
 ########################## PARAMETER INPUT #####################################
 cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
