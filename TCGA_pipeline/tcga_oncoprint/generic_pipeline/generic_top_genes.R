@@ -16,11 +16,7 @@
 # Please give one param:
 # 1. Tumor type, in capital letters; either "BRCA" or "PAAD".
 #
-################################################################################
-
-#args <- commandArgs()
-# for now will hard code in args1, args2 etc. but will replace with args[1] etc.
-
+########################## PARAMETER INPUT #####################################
 cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
