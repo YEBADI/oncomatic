@@ -6,8 +6,9 @@
 #  R pipeline to download TCGAbiolinks data for tumor type
 #  and produce an oncoprint for the top 20 most mutated genes.
 ### PARAMETERS #################################################################
-#  User gives one param either "BRCA" or "PAAD" to pick tumor type.
-# User gives param to select number of top genes to show
+# User gives param either "BRCA" or "PAAD" to pick tumor type.
+# User gives param to select number of top genes to show.
+# User gives param to choose pipeline.
 ### FUNCTIONS ##################################################################
 
 ################################ USER INPUT ####################################
@@ -19,10 +20,17 @@
 
 #args <- commandArgs()
 # for now will hard code in args1, args2 etc. but will replace with args[1] etc.
-args1 <- "BRCA"
-#args1 <- "PAAD"
 
-args2 <- 20 # top number of genes to display (e.g. top 20)
+cat("-- reading arguments\n", sep = "");
+cmd_args = commandArgs(trailingOnly=TRUE);
+for (arg in cmd_args) cat("  ", arg, "\n", sep="");
+
+args1 <- cmd_args[1] # "BRCA" or "PAAD"
+
+args2 <- cmd_args[2] # 20 # top number of genes to display (e.g. 20)
+
+# Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
+args3 <- cmd_args[3] # "mutect2"
 
 if(args1 == "BRCA" ){
   ProjectID <- "TCGA-BRCA"
@@ -51,7 +59,7 @@ library("SummarizedExperiment")
 
 # Define variables.
 ProjectDir <- "mutations";
-; # The dataset name as defined by TCGAbiolinks.
+# The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
 # Create and enter "mutations" directory.
@@ -83,95 +91,43 @@ dim(clin.forvisual) #1097 5
 
 #===============================================================================
 #    Access and download the mutation data for tumor type and
-#    generate an oncoprint for each pipeline
-#    Note: As mentioned before, should be softcoded to let user decide cancer
-#    type as well as pick pipeline option (passed in as parameter).
+#    generate an oncoprint using chosen pipeline.
 #===============================================================================
 
-# [1] MuTect2
-# * Applies Bayesian classifier to detect somatic mutations with very low allele 
-# fractions and requires only a few supporting reads however is confounded by 
-# low tumor purity.
-# * Has high sensitivity and calls mutations with allelic fractions as low as 
-# 0.1 and below.
-# * Low specifiticity.
-# * Applies carefully tuned hard filters to compensate for specificity issues.
-
-# [2] Varscan2
-# * Is generally outperformed by MuSE and MuTect2.
-# * Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
-# as supresses mutations below allelic threshold.
-# * Sensitivity can be improved but this drastically drops specificitiy and 
-# returns high levels of false positives.
-# * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%
-# at sequencing depths of 100x, 250x, 500x and 1000x respectively.
-# * See (Stead et al, 2013).
-# * However, Varscan2 circumvents confounding factor of tumor purity and extreme
-# read depth as does not use probabilistic framework to detect variants and
-# assess confidence in them but uses a robust heuristic/statistic approach to 
-# call variants that meet desired thresholds for read depth, base quality, 
-# variant allele frequency, and statistical significance.
-
-# [3] MuSE
-# * Has outperformed MuTect2 on calling variants from ACC TCGA data.
-# * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates 
-# Model parameters. 
-# * Variants are classified into somatic, germ-line, and reversal to the 
-# homozygous reference by comparing the somatic variant allele fraction (π) 
-# between the paired tumor–normal samples.
-# * A sample-specific error model to account for tumor heterogeneity and 
-# identify cutoffs is built.
-# * Filters reduce the number of false positives by considering the sequence 
-# context surrounding the point mutations. 
-
-# [4] SomaticSniper
-# Returns high level of false positives and many of these are not in agreement 
-# with other InDel callers.
-# Most of the literature shows it is outperformed by most other variant callers.
-
-# Verdict
-#* TCGA-BRCA analysis is suitable with either Mutect2 or MuSE. Ideally both 
-# should be run and the results correlated / contrasted.
-#* TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly
-# low tumor purity (circa 40%).
-
 # Download mutations data and generate oncoprint of top 20 genes for all pipes.
-pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
-for(pipe in pipeline_options){
-	mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
-                           save.csv = TRUE);
-	genes.names <- unique(mut.data$Hugo_Symbol);
-	all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-	# Identify position of each gene and populate the matrix
-	all.positions <- NULL;
-  for(gene in genes.names) {
-		gene.position <- which(mut.data$Hugo_Symbol == gene);
-		all.mut[gene, "number_of_reports"] <- length(gene.position);
-		all.positions <- c(all.positions, gene.position );
-	}
-	# Order the whole all.mut matrix by the most reported gene highest to lowest.
-	all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                    decreasing=TRUE),];
-	# Isolate top 20 gene names.
-	top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
-  # Subset mutation data
-	top.mut.data <- mut.data[ all.positions, ];
-  # Oncoprint of top 20 genes.
-  TCGAvisualize_oncoprint(
-      mut = top.mut.data,
-      genes = top.mut.genes,
-      filename = paste("top", args2,"_oncoprint_", tumor.type, "_", 
-                       pipe, ".pdf", sep=""),
-      annotation = clin.forvisual,
-      color=c("background"="#CCCCCC","DEL"="purple",
-              "INS"="yellow","SNP"="brown"),
-      rows.font.size= 8,
-      width = 5,
-      heatmap.legend.side = "right",
-      dist.col = 0,
-      label.font.size = 6
-    );
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args3, 
+                         save.csv = TRUE);
+genes.names <- unique(mut.data$Hugo_Symbol);
+all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+# Identify position of each gene and populate the matrix
+all.positions <- NULL;
+for(gene in genes.names) {
+	gene.position <- which(mut.data$Hugo_Symbol == gene);
+	all.mut[gene, "number_of_reports"] <- length(gene.position);
+	all.positions <- c(all.positions, gene.position );
 }
+# Order the whole all.mut matrix by the most reported gene highest to lowest.
+all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                  decreasing=TRUE),];
+# Isolate top 20 gene names.
+top.mut.genes <- names( all.mut.ordered[ 1:args2 ] );
+# Subset mutation data
+top.mut.data <- mut.data[ all.positions, ];
+# Oncoprint of top 20 genes.
+TCGAvisualize_oncoprint(
+    mut = top.mut.data,
+    genes = top.mut.genes,
+    filename = paste("top", args2,"_oncoprint_", tumor.type, "_", 
+                     args3, ".pdf", sep=""),
+    annotation = clin.forvisual,
+    color=c("background"="#CCCCCC","DEL"="purple",
+            "INS"="yellow","SNP"="brown"),
+    rows.font.size= 8,
+    width = 5,
+    heatmap.legend.side = "right",
+    dist.col = 0,
+    label.font.size = 6
+  );
 
 dev.off();
