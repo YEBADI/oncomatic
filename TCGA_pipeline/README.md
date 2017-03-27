@@ -1,4 +1,4 @@
-#The Cancer Genome Atlas
+# The Cancer Genome Atlas
 
 # Pipeline Options
 
@@ -36,7 +36,7 @@
 * A sample-specific error model to account for tumor heterogeneity and 
  identify cutoffs is built.
 * Filters reduce the number of false positives by considering the sequence 
-context surrounding the point mutations. 
+ context surrounding the point mutations. 
 
 ### [4] SomaticSniper
 * Returns high level of false positives and many of these are not in agreement 
@@ -49,9 +49,6 @@ context surrounding the point mutations.
 * TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly
  low tumor purity (circa 40%).
 
-
-
-This is the TCGA readme.
 
 ## How to use bioconductor TCGA biolinks to download and analyse data
 http://bioconductor.org/packages/devel/bioc/vignettes/TCGAbiolinks/inst/doc/tcgaBiolinks.html
