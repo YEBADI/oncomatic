@@ -7,7 +7,8 @@
 #                                             banding of patient-samples based
 #                                             on 2012 nature paper. 
 #                                             (doi:10.1038/nature11412).
-#                                             Produces oncoprint for all pipes.
+#                                             Users can pick pipe and no. of 
+#                                             top genes to include, at start.
 ### DESCRIPTION ################################################################
 #  This script only runs on BRCA data as uses specific BRCA subtypes 
 #  R pipeline to download TCGAbiolinks data for BRCA tumor type
@@ -15,18 +16,22 @@
 #  and produces oncoprint for each BRCA subtype based on 2012 nature paper 
 #  (doi:10.1038/nature11412).
 ### PARAMETERS #################################################################
-# User gives param to select number of top genes to show
-#
+# User gives param to select number of top genes to show.
+# User gives param to pick which pipeline to use.
 ### FUNCTIONS ##################################################################
 
 ################################ USER INPUT ####################################
 # To place in README.txt.
 # Please give one param:
-# 1. User selects number of genes to show
+# 1. User selects number of genes to show.
+# 2. User selects which pipeline to use.
 ################################# PARAMETERS ###################################
 
 #args <- commandArgs()
 args1 = 20 # top number of genes to display (e.g. top 20)
+# pipeline_options are "muse", "varscan2", "somaticsniper", "mutect2"
+# please pick one, we suggest mutect2 or muse for BRCA data.
+args2 = "mutect2"
 
 #############################  MAIN  ###########################################
 #===============================================================================
@@ -45,7 +50,7 @@ library("TCGAbiolinks")
 library("SummarizedExperiment")
 
 # Define variables.
-ProjectDir <- "mutations";
+ProjectDir <- "TCGA-BRCA_subtyped_mutations";
 ; # The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
@@ -80,8 +85,22 @@ clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
 # Check dimensions of slimmed data matrix
 dim(clin.forvisual) #1097 5
 
+#===============================================================================
+#    Access and download the mutation data for tumor type and
+#    generate an oncoprint for each pipeline
+#    Note: As mentioned before, should be softcoded to let user decide cancer
+#    type as well as pick pipeline option (passed in as parameter).
+#    Note: Please see README.txt for more information on each pipeline.
+#===============================================================================
 
-# subsetting clinical data for BRCA subtype
+# Download mutations data and generate oncoprint of top genes for chosen pipe
+# this entire process for each subtype of breast cancer
+
+# Downloading mutation data
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
+                           save.csv = TRUE);
+
+# subsetting mutation data for BRCA subtype
 brca.subtype.data <- TCGAquery_subtype(tumor = "BRCA")
 lumA <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
                                 == "Luminal A"),1]
@@ -93,83 +112,6 @@ basl <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA
                                 == "Basal-like"),1]
 norml <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
                                  == "Normal-like"),1]
-
-clin.lumA <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
-                                  %in% lumA),]
-clin.lumB <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
-                                  %in% lumB),]
-clin.her2 <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode
-                                   %in% her2),]
-clin.basl <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
-                                  %in% basl),]
-clin.norml <- clin.forvisual[which(clin.forvisual$bcr_patient_barcode 
-                                   %in% norml),]
-
-#===============================================================================
-#    Access and download the mutation data for tumor type and
-#    generate an oncoprint for each pipeline
-#    Note: As mentioned before, should be softcoded to let user decide cancer
-#    type as well as pick pipeline option (passed in as parameter).
-#===============================================================================
-
-# [1] MuTect2
-# * Applies Bayesian classifier to detect somatic mutations with very low allele 
-# fractions and requires only a few supporting reads however is confounded by 
-# low tumor purity.
-# * Has high sensitivity and calls mutations with allelic fractions as low as 
-# 0.1 and below.
-# * Low specifiticity.
-# * Applies carefully tuned hard filters to compensate for specificity issues.
-
-# [2] Varscan2
-# * Is generally outperformed by MuSE and MuTect2.
-# * Low sensitivity and fails to pick up somatic SNVs of low allelic fraction
-# as supresses mutations below allelic threshold.
-# * Sensitivity can be improved but this drastically drops specificitiy and 
-# returns high levels of false positives.
-# * Outperformed MuTect to identify variants present at 10%, 5%, 2.5% and 1%
-# at sequencing depths of 100x, 250x, 500x and 1000x respectively.
-# * See (Stead et al, 2013).
-# * However, Varscan2 circumvents confounding factor of tumor purity and extreme
-# read depth as does not use probabilistic framework to detect variants and
-# assess confidence in them but uses a robust heuristic/statistic approach to 
-# call variants that meet desired thresholds for read depth, base quality, 
-# variant allele frequency, and statistical significance.
-
-# [3] MuSE
-# * Has outperformed MuTect2 on calling variants from ACC TCGA data.
-# * Maximum likelihood or the Markov chain Monte Carlo (MCMC) method estimates 
-# Model parameters. 
-# * Variants are classified into somatic, germ-line, and reversal to the 
-# homozygous reference by comparing the somatic variant allele fraction (π) 
-# between the paired tumor–normal samples.
-# * A sample-specific error model to account for tumor heterogeneity and 
-# identify cutoffs is built.
-# * Filters reduce the number of false positives by considering the sequence 
-# context surrounding the point mutations. 
-
-# [4] SomaticSniper
-# Returns high level of false positives and many of these are not in agreement 
-# with other InDel callers.
-# Most of the literature shows it is outperformed by most other variant callers.
-
-# Verdict
-#* TCGA-BRCA analysis is suitable with either Mutect2 or MuSE. Ideally both 
-# should be run and the results correlated / contrasted.
-#* TCGA-PAAD analysis would only be advisable with Varscan2 due to significantly
-# low tumor purity (circa 40%).
-
-# Download mutations data and generate oncoprint of top no. genes for all pipes.
-# this entire process for each subtype of breast cancer
-pipeline_options <- c("muse", "varscan2", "somaticsniper", "mutect2");
-
-# downloading mutation data
-for(pipe in pipeline_options){
-mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = pipe, 
-                           save.csv = TRUE);
-}
-
-# subsetting mutation data
 mut.data.barcodes <- NULL;
 
 for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
@@ -197,40 +139,38 @@ comment(subtype.data$her2) <- "her2"
 comment(subtype.data$normlike) <- "normlike"
 comment(subtype.data$basallike) <- "basallike"
 for(subtype in subtype.data){
-  for(pipe in pipeline_options){
-    genes.names <- unique(subtype$Hugo_Symbol);
-    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-    # Identify position of each gene and populate the matrix
-    all.positions <- NULL;
-    for(gene in genes.names) {
-      gene.position <- which(subtype$Hugo_Symbol == gene);
-      all.mut[gene, "number_of_reports"] <- length(gene.position);
-      all.positions <- c(all.positions, gene.position );
-    }
-  # Order the whole all.mut matrix by the most reported gene highest to lowest.
-    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                      decreasing=TRUE),];
-    # Isolate top 20 gene names.
-    top.mut.genes <- names( all.mut.ordered[ 1:args1 ] );
-    # Subset mutation data
-    top.mut.data <- subtype[ all.positions, ];
-# Oncoprint of top 20 genes.
-    TCGAvisualize_oncoprint(
-        mut = top.mut.data,
-        genes = top.mut.genes,
-        filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
-                         "_", tumor.type, "_", pipe, ".pdf", sep=""),
-        annotation = clin.forvisual,
-        color=c("background"="#CCCCCC","DEL"="purple",
-                "INS"="yellow","SNP"="brown"),
-        rows.font.size= 8,
-        width = 5,
-        heatmap.legend.side = "right",
-        dist.col = 0,
-        label.font.size = 6
-      );
+  genes.names <- unique(subtype$Hugo_Symbol);
+  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+  all.positions <- NULL;
+  for(gene in genes.names) {
+    gene.position <- which(subtype$Hugo_Symbol == gene);
+    all.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
   }
+# Order the whole all.mut matrix by the most reported gene highest to lowest.
+  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.mut.genes <- names( all.mut.ordered[ 1:args1 ] );
+  # Subset mutation data
+  top.mut.data <- subtype[ all.positions, ];
+# Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.mut.data,
+      genes = top.mut.genes,
+      filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
+                       "_", tumor.type, "_", args2, ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
 }
 
 dev.off()
