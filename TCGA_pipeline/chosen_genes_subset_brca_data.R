@@ -1,0 +1,171 @@
+### HISTORY ####################################################################
+# Version   Date          Coder               Comments
+# 1.0       27/03/2017    Yusef + Emanuela    
+#
+### DESCRIPTION ################################################################
+#  Produce an oncoprint for the top user-picked number of most mutated 
+# user-picked genes for each BRCA subtype (based on 2012 nature paper) 
+#  (doi:10.1038/nature11412).
+
+################################ USER INPUT ####################################
+# To place in README.txt.
+# Please give params for:
+# 1. User selects number of genes to show.
+# 2. User selects which pipeline to use.
+# 3. User picks which genes to display oncoprint for
+#
+################################# PARAMETERS ###################################
+
+#args <- commandArgs()
+args1 = 20 # top number of genes to display (e.g. top 20)
+# pipeline_options are "muse", "varscan2", "somaticsniper", "mutect2"
+# please pick one, we suggest mutect2 or muse for BRCA data.
+args2 = "mutect2"
+
+#args3 <- "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
+args3 <- "ATM-P53-BRCA1"
+user.gene.request <- args3
+user.gene.list <- unlist(strsplit(user.gene.request,"-"))
+
+#############################  MAIN  ###########################################
+#===============================================================================
+#    Preparation of environment
+#===============================================================================
+# Identify and install missing libraries.
+TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
+new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
+if(length(new.libs)) {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(new.libs)
+}
+
+# Load in the libraries to R.
+library("TCGAbiolinks")
+library("SummarizedExperiment")
+
+# Define variables.
+ProjectDir <- "TCGA-BRCA_subtyped_mutations";
+; # The dataset name as defined by TCGAbiolinks.
+ProjectName <-  "mutations";
+
+# Create and enter "mutations" directory.
+if (file.exists(ProjectDir)){
+  cat( paste("\nFolder with project [", ProjectName, "] already exists. The 
+             requested data will be stored in [", ProjectDir, "]\n", sep=" ") );
+} else {
+  dir.create(ProjectDir);
+}
+setwd(ProjectDir);
+
+#===============================================================================
+#    Data query and download clincal data
+#    Note: tumor can be softcoded as param input from command line.
+#    Note: can develop program and let user pick clin.data terms.
+#===============================================================================
+# Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
+tumor.type <-  "BRCA"
+ProjectID <- "TCGA-BRCA"
+
+# Biolinks command to download the general clinical data for all tumor samples
+clin.data <- GDCquery_clinic( ProjectID, "clinical" );
+# Check dimensions
+dim(clin.data)
+
+# Subsetting the clinical data to covariates of interest to new data matrix
+clin.covariates.for.oncodata <- c("race", "gender", "vital_status", 
+                                          "tumor_stage", "bcr_patient_barcode");
+clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
+
+# Check dimensions of slimmed data matrix
+dim(clin.forvisual) #1097 5
+
+#===============================================================================
+#    Access and download the mutation data for tumor type and
+#    generate an oncoprint for each pipeline
+#    Note: As mentioned before, should be softcoded to let user decide cancer
+#    type as well as pick pipeline option (passed in as parameter).
+#    Note: Please see README.txt for more information on each pipeline.
+#===============================================================================
+
+# Download mutations data and generate oncoprint of top genes for chosen pipe
+# this entire process for each subtype of breast cancer
+
+# Downloading mutation data
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
+                           save.csv = TRUE);
+
+# subsetting mutation data for BRCA subtype
+brca.subtype.data <- TCGAquery_subtype(tumor = "BRCA")
+lumA <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Luminal A"),1]
+lumB <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Luminal B"),1]
+her2 <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "HER2-enriched"),1]
+basl <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                == "Basal-like"),1]
+norml <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
+                                 == "Normal-like"),1]
+mut.data.barcodes <- NULL;
+
+for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
+  tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
+                                   split="-", fixed=TRUE));
+  tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                        tmp.bar.split[3], sep = "")
+  cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
+  mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
+}
+
+lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
+lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
+her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
+basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
+norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
+
+subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, 
+           her2=her2.mut.data, basallike=basl.mut.data, normlike=norml.mut.data)
+
+# Assign titles to use in filename
+comment(subtype.data$luminalA) <- "luminalA"
+comment(subtype.data$luminalB) <- "luminalB"
+comment(subtype.data$her2) <- "her2"
+comment(subtype.data$normlike) <- "normlike"
+comment(subtype.data$basallike) <- "basallike"
+
+# oncoprint generation for selected genes for each subtype
+for(subtype in subtype.data){
+  all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+          dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+  all.positions <- NULL;
+  for(gene in user.gene.list) {
+    gene.position <- which(subtype$Hugo_Symbol %in% user.gene.list);
+    all.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
+  }
+# Order the whole all.mut matrix by the most reported gene highest to lowest.
+  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.mut.genes <- names( all.mut.ordered[ 1:args1 ] );
+  # Subset mutation data
+  top.mut.data <- subtype[ all.positions, ];
+# Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.mut.data,
+      genes = top.mut.genes,
+      filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
+                       "_", tumor.type, "_", args2, ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+}
+
+dev.off()
