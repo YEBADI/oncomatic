@@ -11,20 +11,26 @@
 # To place in README.txt.
 # Please give params for:
 # 1. User selects number of genes to show.
-# 2. User selects which pipeline to use.
-# 3. User picks which genes to display oncoprint for
+# 2. User picks which genes to display oncoprint for
+# 3. User selects which pipeline to use. 
 #
 ################################# PARAMETERS ###################################
+########################## PARAMETER INPUT #####################################
+cat("-- reading arguments\n", sep = "");
+cmd_args = commandArgs(trailingOnly=TRUE);
+for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
 #args <- commandArgs()
-args1 = 20 # top number of genes to display (e.g. top 20)
+args1 = cmd_args[1] # 20 # top number of genes to display (e.g. top 20)
+
+args2 = cmd_args[2] # select genes
+#  "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
+
+args3 <- cmd_args[3] #select pipeline
 # pipeline_options are "muse", "varscan2", "somaticsniper", "mutect2"
 # please pick one, we suggest mutect2 or muse for BRCA data.
-args2 = "mutect2"
 
-#args3 <- "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
-args3 <- "ATM-P53-BRCA1"
-user.gene.request <- args3
+user.gene.request <- args2
 user.gene.list <- unlist(strsplit(user.gene.request,"-"))
 
 #############################  MAIN  ###########################################
@@ -45,7 +51,7 @@ library("SummarizedExperiment")
 
 # Define variables.
 ProjectDir <- "TCGA-BRCA_subtyped_mutations";
-; # The dataset name as defined by TCGAbiolinks.
+# The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
 # Create and enter "mutations" directory.
@@ -91,7 +97,7 @@ dim(clin.forvisual) #1097 5
 # this entire process for each subtype of breast cancer
 
 # Downloading mutation data
-mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args3, 
                            save.csv = TRUE);
 
 # subsetting mutation data for BRCA subtype
@@ -156,7 +162,7 @@ for(subtype in subtype.data){
       mut = top.mut.data,
       genes = top.mut.genes,
       filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
-                       "_", tumor.type, "_", args2, ".pdf", sep=""),
+                       "_", tumor.type, "_", args3, "_", user.gene.request, ".pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
