@@ -26,12 +26,16 @@
 # 1. User selects number of genes to show.
 # 2. User selects which pipeline to use.
 ################################# PARAMETERS ###################################
+cat("-- reading arguments\n", sep = "");
+cmd_args = commandArgs(trailingOnly=TRUE);
+for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
 #args <- commandArgs()
-args1 = 20 # top number of genes to display (e.g. top 20)
+args1 = cmd_args[1] # 20 # top number of genes to display (e.g. top 20)
+
+args2 <- cmd_args[2] # "mutect2" #select pipeline
 # pipeline_options are "muse", "varscan2", "somaticsniper", "mutect2"
 # please pick one, we suggest mutect2 or muse for BRCA data.
-args2 = "mutect2"
 
 #############################  MAIN  ###########################################
 #===============================================================================
@@ -50,8 +54,8 @@ library("TCGAbiolinks")
 library("SummarizedExperiment")
 
 # Define variables.
-ProjectDir <- "TCGA-BRCA_subtyped_mutations";
-; # The dataset name as defined by TCGAbiolinks.
+ProjectDir <- "TCGA-BRCA_subtyped_top_mutations";
+# The dataset name as defined by TCGAbiolinks.
 ProjectName <-  "mutations";
 
 # Create and enter "mutations" directory.
@@ -161,7 +165,7 @@ for(subtype in subtype.data){
       mut = top.mut.data,
       genes = top.mut.genes,
       filename = paste("oncoprint_top_", args1, "_", comment(subtype), 
-                       "_", tumor.type, "_", args2, ".pdf", sep=""),
+                       "_subtyped_BRCA_", args2, ".pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
