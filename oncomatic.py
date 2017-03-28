@@ -17,16 +17,16 @@ def run_oncomatic():
       sys.exit()
     elif len(sys.argv) == 3:
       # if only one sys.arv after the python script name
-      print # blank
+      print # a blank line
       print "##################################################################"
       print "# We noticed that you entered more than one file, oncoprint only #"
       print "# handles one input file.                                        #"
       print "##################################################################"
-      print # blank
+      print # a blank line
     else:
       # continue with analysis
       first_file  = sys.argv[1]
-      runinputcheck(first_file)
+      readinputfile(first_file)
   else:
     menu() # start the menu function instead.
 
