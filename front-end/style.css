@@ -1,1 +1,12 @@
-
+      .first {
+        color: blue;
+      }
+      #intro_header {
+        font-size: 20pt;
+      }
+      .main {
+        text-align: center;
+      }
+      .second {
+        color:green;
+      }
