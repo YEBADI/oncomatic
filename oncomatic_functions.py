@@ -13,12 +13,12 @@ def readinputfile(input):
   """
   # check if file exists - exits with error message if file cannot be found
   _ensure_file_exists(input)
-  in_file  = open(input, "r")
 
-  for words in in_file.readlines():
-    print(words)
+  with open(input, "r") as in_file:
+    input_text = in_file.readlines()
     in_file.close()
-    
+    print(input_text)
+
 def _ensure_file_exists(file):
   """
   Simply check if the input file exists. If the file is not found, then shows
