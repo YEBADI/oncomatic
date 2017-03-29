@@ -5,22 +5,21 @@
 #   using oncomatic.                                            #
 #                                                               #
 #                                                               #
-#   Oncomatic is a program designed to process one input file   #
-#   which queries TCGA data and produces an oncoprint.          #
+#   Oncomatic is a program designed to process guided queries   #
+#   to TCGA data and produce an oncoprint.       	        #
 #                                                               #
 #   Oncomatic can also produce oncoprints for each BRCA subtype #
 #   based on banding of TCGA data in a 2012 nature paper.       # 
 #   (doi:10.1038/nature11412)                                   #
 #                                                               #
-# Input file is submitted  through a menu system following      #
-# program  boot, through request prompts.                       #
+#    Query is submitted through a menu system following         #
+#    program  boot, through request prompts.                    #
 #                                                               #
-# Alternatively, input can be provided at program boot in the   #
-# following format:				                #
+#    Oncomatic is booted in the following format:	        #
 #                                                               #
-# python oncomatic.py [FILE_1.txt]                              #
+#           python oncomatic.py 				#
 #                                                               #
-# Input should be a standard ".txt" file formatted as follows:	#
+#       Input is processed as follows:                         	#
 #								#
 #								#
 #  tumor type = "BRCA" / "PAAD"					#
