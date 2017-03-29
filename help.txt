@@ -1,0 +1,44 @@
+#################################################################
+#     Welcome to oncomatic!                                     #
+#     ----------------------                                    #
+#   This is a readme help text file that will guide you through #
+#   using oncomatic.                                            #
+#                                                               #
+#                                                               #
+#   Oncomatic is a program designed to process one input file   #
+#   which queries TCGA data and produces an oncoprint.          #
+#                                                               #
+#   Oncomatic can also produce oncoprints for each BRCA subtype #
+#   based on banding of TCGA data in a 2012 nature paper.       # 
+#   (doi:10.1038/nature11412)                                   #
+#                                                               #
+# Input file is submitted  through a menu system following      #
+# program  boot, through request prompts.                       #
+#                                                               #
+# Alternatively, input can be provided at program boot in the   #
+# following format:				                #
+#                                                               #
+# python oncomatic.py [FILE_1.txt]                              #
+#                                                               #
+# Input should be a standard ".txt" file formatted as follows:	#
+#								#
+#								#
+#  tumor type = "BRCA" / "PAAD"					#
+#  show subtypes = yes / no					#
+#  pipeline = "mutect2" / "muse" / "varscan2" / "somaticsniper" #
+#  number of top genes = 20					#
+#  gene of interest = show all / "ATM-BRCA1-P53"		#
+#								#
+#								#
+#   This readme is callable at any time by typing 'help' in     #
+#   the command line.                                           #
+#								#
+#################################################################
+#                                                               #
+# Developer: Y. E. Badi, Queen Mary University of London.	#
+# Acknowledgements:  Prof Chelala, Emanuela Gadaleta. 		#
+#			Developed at;				#
+#  Chelala Lab, Bioinformatics Dept., Barts Cancer Institute.	#
+#################################################################
+This program is free use and open source, please cite accurately.
+-----------------------------------------------------------------
