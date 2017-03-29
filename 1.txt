@@ -1,0 +1,5 @@
+tumor type = "BRCA"
+show subtypes = yes
+pipeline = "mutect2"
+number of top genes = 20
+gene of interest = show all
