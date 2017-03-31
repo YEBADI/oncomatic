@@ -1,3 +1,23 @@
+args1 <- cmd_args[1] # "BRCA"
+
+# Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
+args2 <- cmd_args[2] # "mutect2"
+
+# number of genes to show
+args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
+
+args4 <- cmd_args[4] #yes #no #do you want to select genes?
+# yes or no
+
+#this one is optional
+args5 <- cmd_args[5]
+
+
+
+
+
+
+
 ### HISTORY ####################################################################
 # Version   Date          Coder               Comments
 # 2.0       24/03/2017    Yusef + Emanuela    Functionally produces oncoprint
