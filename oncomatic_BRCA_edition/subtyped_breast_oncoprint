@@ -27,13 +27,13 @@ args4 <- cmd_args[4] #yes #no #do you want to select genes?
 #this one is optional
 args5 <- cmd_args[5]
 
+################################### MAIN #######################################
 
 if(args1 == "no"){
   ProjectID <- paste("TCGA-BRCA")
   # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
   tumor.type <-  "BRCA"
 
-  ################################### MAIN #######################################
   #===============================================================================
   #    Preparation of environment
   #===============================================================================
