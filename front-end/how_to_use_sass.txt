@@ -1,0 +1,6 @@
+edit files in the components folder then open command line in front-end folder and run this:
+
+
+sass materialize.scss style.css
+
+to generate new css code
