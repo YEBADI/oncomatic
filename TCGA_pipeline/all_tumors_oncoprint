@@ -62,12 +62,11 @@ library("SummarizedExperiment")
 #    Preparation of environment
 #===============================================================================
 # Define variables.
-ProjectDir <- "mutations";
-ProjectName <-  "mutations";
+ProjectDir <- paste("oncomatic_output");
 
 # create mutations directory and go into it
 if (file.exists(ProjectDir)){
-  cat( paste("\nFolder with project [", ProjectName, "] already exists. 
+  cat( paste("\nFolder with project [", ProjectDir, "] already exists. 
          The requested data will be stored in [", ProjectDir, "]\n", sep=" ") );
 } else {
   dir.create(ProjectDir);
