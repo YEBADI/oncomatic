@@ -1,5 +1,5 @@
 # import all functions from functions file
-from oncomatic_functions import *
+from oncomaticBRCA_functions import *
 
 def run_oncomatic():
   """
@@ -26,7 +26,7 @@ def run_oncomatic():
       print # a blank line
     else:
       # continue with analysis
-      arg1  = sys.argv[1] #tumor type
+      arg1  = sys.argv[1] #subtyped or not?
       arg2  = sys.argv[2] #pipeline
       arg3  = sys.argv[3] #number of genes to show
       arg4  = sys.argv[4] #show specific genes?
