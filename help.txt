@@ -11,21 +11,27 @@
 #   Oncomatic can also produce oncoprints for each BRCA subtype #
 #   based on banding of TCGA data in a 2012 nature paper.       # 
 #   (doi:10.1038/nature11412)                                   #
+#	Please run Oncomatic BRCA edition for this option.	#
 #                                                               #
-#    Query is submitted through a menu system following         #
+#	Query can be run from command line in this fashion:	#
+# Python oncomatic.py <tumor type> <pipeline> <number of genes> #
+#                      <want to specify genes?> <specify genes> #
+#								#
+#	Follow the input formatting guide below.		#
+#								#
+#    Query can also submitted through a menu system following   #
 #    program  boot, through request prompts.                    #
-#                                                               #
-#    Oncomatic is booted in the following format:	        #
-#                                                               #
-#           python oncomatic.py 				#
-#                                                               #
-#       Input is processed as follows:                         	#
 #								#
+# 	Simply boot like this:					#
+#		python oncomatic.py 				#
+#                                                               #
+#  Oncomatic input must be in the following format:	        #
+#                                                               #
 #								#
-#  tumor type = "BRCA" / "PAAD"					#
-#  show subtypes = yes / no					#
+#  tumor type = "BRCA" / "PAAD"	/ “LUAD” 			#
 #  pipeline = "mutect2" / "muse" / "varscan2" / "somaticsniper" #
 #  number of top genes = 20					#
+#  select genes of interest? = yes / no				#
 #  gene of interest = show all / "ATM-BRCA1-P53"		#
 #								#
 #								#
@@ -35,8 +41,9 @@
 #################################################################
 #                                                               #
 # Developer: Y. E. Badi, Queen Mary University of London.	#
-# Acknowledgements:  Prof Chelala, Emanuela Gadaleta. 		#
-#			Developed at;				#
+# Acknowledgements:  Prof Chelala, Dr Emanuela Gadaleta, 	#
+#			Dr Dr Stefano Pirro.			#
+#	Developed at;						#
 #  Chelala Lab, Bioinformatics Dept., Barts Cancer Institute.	#
 #################################################################
 This program is free use and open source, please cite accurately.
