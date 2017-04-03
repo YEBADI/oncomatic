@@ -30,7 +30,7 @@
 #  Oncomatic input must be in the following format:	        #
 #                                                               #
 #								#
-#  subdued or no? = “yes” or “no”				#
+#  subtyped or no? = “yes” or “no”				#
 #  pipeline = "mutect2" / "muse" / "varscan2" / "somaticsniper" #
 #  number of top genes = 20					#
 #  select genes of interest? = yes / no				#
