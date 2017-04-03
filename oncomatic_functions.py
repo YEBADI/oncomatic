@@ -5,33 +5,10 @@
 # gene of interest = show all / "ATM-BRCA1-P53"
 import sys
 import os.path
+import subprocess
 
-def readinputfile(input):
-  """
-  Reads the input file (which must be formatted correctly). It then extracts the
-  params inside the input file and executes the appropriate script.
-  """
-  # check if file exists - exits with error message if file cannot be found
-  _ensure_file_exists(input)
-
-  with open(input, "r") as in_file:
-    input_text = in_file.readlines()
-    in_file.close()
-    print(input_text)
-
-def _ensure_file_exists(file):
-  """
-  Simply check if the input file exists. If the file is not found, then shows
-  an error message and then exits.
-  """
-  if os.path.isfile(file) == False:
-    print "####################################################################"
-    print "# IOError: The following input file was not found:                 #"
-    print "# ", file, "                                                       #"
-    print "# Please try running oncomatic.py again but ensure that all        #"
-    print "# filenames are correct.                                           #"
-    print "####################################################################"
-    sys.exit()
+def makeonco(arg1, arg2, arg3, arg4, arg5):
+  subprocess.call(['Rscript', 'all_tumors_oncoprint', arg1, arg2, arg3, arg4, arg5])
 
 
 def help(help_file="help.txt"):
@@ -53,8 +30,13 @@ def menu():
     help()
   elif option == '1':
     print # a blank line
-    first_file  = raw_input("Please enter the (full or relative) path to your input File: ")
-    readinputfile(first_file)
+    arg1  = raw_input("Please enter TCGA tumor type (e.g. 'BRCA' or 'PAAD' or 'LUAD'): ")
+    arg2  = raw_input("Please write pipeline: 'mutect2', 'varscan2', 'muse', or 'somaticsniper': ")
+    arg3  = raw_input("Please enter number of genes to show (e.g. '20' or '40'): ")
+    arg4  = raw_input("Would you like to only show specific genes? Write 'yes' or 'no': ")
+    arg5  = raw_input("If 'no', press RETURN KEY to skip. If 'yes' please write out genes in capitals seperated by a dash (e.g. 'ATM-P53-BRCA1'): ")
+
+    makeonco(arg1, arg2, arg3, arg4, arg5)
   elif option == '2':
       help()
   elif option == '3':
@@ -81,7 +63,7 @@ def menu_text():
   print # a blank line
   print "MENU"
   print "----"
-  print '[1] Print a dotplot of two input FASTA sequences.'
+  print '[1] Generate an oncoprint for top genes or specific genes of choice.'
   print '[2] or [help] Bring up help instructions.'
   print '[3] Quit the program.'
   print # a blank line
