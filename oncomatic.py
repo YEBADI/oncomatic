@@ -15,18 +15,24 @@ def run_oncomatic():
       # show the help text and exit.
       help()
       sys.exit()
-    elif len(sys.argv) == 3:
+    elif len(sys.argv) >= 7:
       # if only one sys.arv after the python script name
       print # a blank line
       print "##################################################################"
-      print "# We noticed that you entered more than one file, oncoprint only #"
-      print "# handles one input file.                                        #"
+      print "# We noticed that you entered more than 5 terms, oncoprint only  #"
+      print "# handles 5 arguments, please write 'python oncomatic.py help'   #"
+      print "# for a readme file to understand how to use oncomatic.          #"
       print "##################################################################"
       print # a blank line
     else:
       # continue with analysis
-      first_file  = sys.argv[1]
-      readinputfile(first_file)
+      arg1  = sys.argv[1] #tumor type
+      arg2  = sys.argv[2] #pipeline
+      arg3  = sys.argv[3] #number of genes to show
+      arg4  = sys.argv[4] #show specific genes?
+      arg5  = sys.argv[5] #if yes, state them
+      makeonco(arg1, arg2, arg3, arg4, arg5)
+
   else:
     menu() # start the menu function instead.
 
