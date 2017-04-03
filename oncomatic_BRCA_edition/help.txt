@@ -1,23 +1,25 @@
 #################################################################
-#     Welcome to oncomatic!                                     #
-#     ----------------------                                    #
+#     Welcome to oncomatic BRCA edition!	                #
+#     ———————————————————————————————————                       #
 #   This is a readme help text file that will guide you through #
-#   using oncomatic.                                            #
+#   using oncomatic BRCA edition.                               #
 #                                                               #
 #                                                               #
 #   Oncomatic is a program designed to process guided queries   #
 #   to TCGA data and produce an oncoprint.       	        #
 #                                                               #
-#   Oncomatic can also produce oncoprints for each BRCA subtype #
-#   based on banding of TCGA data in a 2012 nature paper.       # 
-#   (doi:10.1038/nature11412)                                   #
+#   Oncomatic BRCA edition produces oncoprints for each BRCA    #
+#  subtype based on banding of TCGA data in a 2012 nature paper # 
+#   (doi:10.1038/nature11412).                                  #
 #	Please run Oncomatic BRCA edition for this option.	#
 #                                                               #
 #	Query can be run from command line in this fashion:	#
 # Python oncomatic.py <tumor type> <pipeline> <number of genes> #
 #                      <want to specify genes?> <specify genes> #
+# Please write “none” for <specify genes> if you have answered  #
+#	“no” for <want to specify genes?>.			#
 #								#
-#	Follow the input formatting guide below.		#
+#  Follow the input formatting guide below.			#
 #								#
 #    Query can also submitted through a menu system following   #
 #    program  boot, through request prompts.                    #
@@ -28,11 +30,11 @@
 #  Oncomatic input must be in the following format:	        #
 #                                                               #
 #								#
-#  tumor type = "BRCA" / "PAAD"	/ “LUAD” 			#
+#  subdued or no? = “yes” or “no”				#
 #  pipeline = "mutect2" / "muse" / "varscan2" / "somaticsniper" #
 #  number of top genes = 20					#
 #  select genes of interest? = yes / no				#
-#  gene of interest = show all / "ATM-BRCA1-P53"		#
+#  gene of interest = “none” or show all / "ATM-BRCA1-P53"	#
 #								#
 #								#
 #   This readme is callable at any time by typing 'help' in     #
