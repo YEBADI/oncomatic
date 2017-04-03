@@ -1,15 +1,9 @@
-# tumor type = "BRCA" / "PAAD"
-# show subtypes = yes / no
-# pipeline = "mutect2" / "muse" / "varscan2" / "somaticsniper"
-# number of top genes = 20
-# gene of interest = show all / "ATM-BRCA1-P53"
 import sys
 import os.path
 import subprocess
 
 def makeonco(arg1, arg2, arg3, arg4, arg5):
-  subprocess.call(['Rscript', 'all_tumors_oncoprint', arg1, arg2, arg3, arg4, arg5])
-
+  subprocess.call(['Rscript', 'BRCA_oncoprint', arg1, arg2, arg3, arg4, arg5])
 
 def help(help_file="help.txt"):
   """
@@ -30,7 +24,7 @@ def menu():
     help()
   elif option == '1':
     print # a blank line
-    arg1  = raw_input("Please enter TCGA tumor type (e.g. 'BRCA' or 'PAAD' or 'LUAD'): ")
+    arg1  = raw_input("Would you like output to be subtyped? 'yes' or 'no': ")
     arg2  = raw_input("Please write pipeline: 'mutect2', 'varscan2', 'muse', or 'somaticsniper': ")
     arg3  = raw_input("Please enter number of genes to show (e.g. '20' or '40'): ")
     arg4  = raw_input("Would you like to only show specific genes? Write 'yes' or 'no': ")
@@ -63,7 +57,7 @@ def menu_text():
   print # a blank line
   print "MENU"
   print "----"
-  print '[1] Generate an oncoprint for top genes or specific genes of choice.'
+  print '[1] Generate an oncoprint, subtyped or not, for top BRCA genes or specific genes of choice.'
   print '[2] or [help] Bring up help instructions.'
   print '[3] Quit the program.'
   print # a blank line
