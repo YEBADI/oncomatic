@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block body %}
+<div class="card s12">
+    <div class="card-content">
+        <h4>Home Page</h4>
+        <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
+        <div class="row">
+            <form class="col s12" action="/result" method="post">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="icon_prefix" name="first_name" type="text" class="validate">
+                        <label for="icon_prefix">First Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">phone</i>
+                        <input id="icon_telephone"  name="telephone" type="tel" class="validate">
+                        <label for="icon_telephone">Telephone</label>
+                    </div>
+                </div>
+                <button class="waves-effect waves-light btn" type="submit" ><i class="material-icons right">cloud</i>button</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
