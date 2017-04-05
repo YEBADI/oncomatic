@@ -25,7 +25,7 @@ def results_page():
                            genenumber = genenumber, tumortype = tumortype, 
                            pipeline = pipeline)
 
-    subprocess.call(['Rscript', 'oncoprint_tool/oncomatic_oncoprint_generic_edition/all_tumors_oncoprint.R', 
+    subprocess.call(['Rscript', 'oncoprint_tool/oncomatic_oncoprint_generic_edition/all_tumors_oncoprint', 
                     tumortype, pipeline, genenumber, pickgenes, genelist])
 
 
