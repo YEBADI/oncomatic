@@ -12,10 +12,15 @@ def about_page():
 @app.route('/result', methods=['POST'])
 def results_page():
     print(request.form)
-    name = request.form['first_name']
-    telephone = request.form['telephone']
+    tumortype = request.form['tumor_type']
+    pipeline = request.form['pipeline']
+    genenumber = request.form['genenumber']
+    pickgenes = request.form['pickgenes']
+    genelist = request.form['genelist']
+
+
     return render_template('results.html', 
-                           name = name, tel = telephone)
+                           pickgenes=pickgenes, genelist=genelist, genenumber = genenumber, tumortype = tumortype, pipeline = pipeline)
 
 
 # Sample HTTP error handling

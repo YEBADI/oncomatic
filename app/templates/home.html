@@ -54,19 +54,19 @@
             <form class="col s12" action="/result" method="post">
                 <div class="row" style="padding-top: 30px;">
                     <div class="input-field col s6">
-                        <select>
+                        <select name="tumor_type">
                             <option value="" disabled selected>Please select a tumor type</option>
-                            <option value="mutect2">Breast (BRCA) - NO SUBTYPING</option>
-                            <option value="mutect2">Breast (BRCA) - SUBTYPING</option>
-                            <option value="muse">Pancreatic (PAAD)</option>
-                            <option value="varscan2">Lung (LUAD)</option>
+                            <option value="1,BRCA">Breast (BRCA) - NO SUBTYPING</option>
+                            <option value="2,BRCA">Breast (BRCA) - SUBTYPING</option>
+                            <option value="2,PAAD">Pancreatic (PAAD)</option>
+                            <option value="2,LUAD">Lung (LUAD)</option>
                         </select>
                         <label>Tumor type</label>
                     </div>
                   </div>
                     <div class="row">
                         <div class="input-field col s6">
-                            <select>
+                            <select name="pipeline">
                                 <option value="" disabled selected>Choose your pipeline option</option>
                                 <option value="mutect2">MuTect2</option>
                                 <option value="muse">MuSE</option>
@@ -81,13 +81,13 @@
                     <div class="row">
                         <h6 style="padding-left: 30px;">Number of genes to show:</h6>
                         <p class="range-field">
-                            <input type="range" id="test5" min="0" max="40" />
+                            <input type="range" name="genenumber" id="test5" min="0" max="40" />
                         </p>
                     </div>
 
                     <div class="row">
                         <div class="input-field col s6">
-                            <select>
+                            <select name= "pickgenes">
                                 <option value="" disabled selected>Please pick an answer</option>
                                 <option value="yes">yes</option>
                                 <option value="no">no</option>
@@ -95,16 +95,19 @@
                             <label>Show only specific genes?</label>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <select>
-                                <option value="" disabled selected>Please pick an answer</option>
-                                <option value="yes">yes</option>
-                                <option value="no">no</option>
-                            </select>
-                            <label>Subtype the data?</label>
-                        </div>
-                    </div>
+                    
+
+
+
+                    
+    
+<div class="row">
+        <div class="input-field col s12">
+          <textarea name= "genelist" id="textarea1" class="materialize-textarea"></textarea>
+          <label for="textarea1">Please enter gene names in capital letters seperated by dashes (e.g. "ATM-P53-BRCA1").</label>
+        </div>
+      </div>
+
 
                 </div>
                 <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Generate Oncoprint" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
