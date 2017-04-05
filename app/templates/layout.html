@@ -6,12 +6,14 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/materialize.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" type="text/javascript" href="{{ url_for('static', filename='css/materialize.js') }}">
+    <link rel="stylesheet" type="text/javascript" href="{{ url_for('static', filename='css/materialize.min.js') }}">
 </head>
 
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo" style="font-size: 50px;"><i class="material-icons" style="font-size: 100px; padding-left: 100px">donut_small</i>Oncomatic</a>
+            <a href="/" class="brand-logo" style="font-size: 50px;"><i class="material-icons" style="font-size: 80px; padding-left: 100px;">donut_small</i>Oncomatic</a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="sass.html"><i class="material-icons">search</i></a></li>
                 <li><a href="badges.html"><i class="material-icons">view_module</i></a></li>
@@ -26,17 +28,7 @@
     {% endblock %}
 
     </div>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
-    <script type="text/javascript">
-    $(document).ready(function(){
-      $('tabs').tabs();
-    });
-
-    </script>
-</body>
-
-<footer class="page-footer">
+    <footer class="page-footer">
     <div class="container">
         <div class="row">
             <div class="col l6 s12">
@@ -46,20 +38,34 @@
             <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
-                    <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                    <li><a class="grey-text text-lighten-3" href="http://bioinformatics.breastcancertissuebank.org/">Breast Cancer Now Tissue Bank - Bioinformatics Portal</a></li>
+                    <li><a class="grey-text text-lighten-3" href="http://www.bci.qmul.ac.uk/staff/item/claude-chelala-2">The Prof Chelala Lab</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://cancergenome.nih.gov/">The Cancer Genome Atlas</a></li>
+                    <li><a class="grey-text text-lighten-3" href="https://github.com/YEBADI">My GitHub</a></li>
                 </ul>
             </div>
         </div>
     </div>
     <div class="footer-copyright">
         <div class="container">
-            2017 - Yusef Eamon Badi
-            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+            Init. 2017, updated April 2017.
+            <a class="grey-text text-lighten-4 right" href="https://github.com/YEBADI">Website and tools developed by Yusef Eamon Badi</a>
         </div>
     </div>
 </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+      $('tabs').tabs();
+      $('select').material_select();
+    });
+
+    </script>
+</body>
+
+
 
 </html>

@@ -1,73 +1,179 @@
-{% extends "layout.html" %} {% block body %}
-  <nav>
+{% extends"layout.html" %} {% block body %}
+<nav>
     <div class="nav-wrapper" style="padding-left: 30px;"">
       <div class="col s12">
         <a href="/" class="breadcrumb">Home</a>
       </div>
     </div>
   </nav>
-
 <div class="card s12">
     <div class="card-content">
         <h4>Welcome to Oncomatic</h4>
         <p>I am a very simple tool to let you input a query to data from The Cancer Genome Atlas (TCGA) and automatically generate analytical visualisations in a streamlined manner.</p>
-
-<p style=" text-align: center;"><i class="large material-icons" >album polymer insert_chart perm_identity</i> </p><p style=" text-align: center;">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Oncoprint &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Transcriptomics  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Analytics &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Patient Analysis  </p>
-              
-
+        <p style=" text-align: center;"><i class="large material-icons">album polymer insert_chart perm_identity</i> </p>
+        <p style=" text-align: center;">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Oncoprint &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Transcriptomics &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Analytics &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Patient Analysis </p>
+    </div>
 </div>
-</div>
+
+
+  <ul class="collapsible" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header"><i class="material-icons">album</i>Generate Oncoprint</div>
+      <div class="collapsible-body"><span>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="card s12">
     <div class="card-content">
-    <h4><i class="large material-icons " >album</i>
-    Generate Oncoprint</h4>
+        <h4><i class="large material-icons" >album</i>  Generate Oncoprint</h4>
         <p>Streamlined oncoprint generation; simply prepare a query to TCGA data and I'll automatically generate an oncoprint visualisation.</p>
         <div class="row">
             <form class="col s12" action="/result" method="post">
-                <div class="row">
+                <div class="row" style="padding-top: 30px;">
                     <div class="input-field col s6">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input id="icon_prefix" name="first_name" type="text" class="validate">
-                        <label for="icon_prefix">Tumor type</label>
+                        <select>
+                            <option value="" disabled selected>Please select a tumor type</option>
+                            <option value="mutect2">Breast (BRCA) - NO SUBTYPING</option>
+                            <option value="mutect2">Breast (BRCA) - SUBTYPING</option>
+                            <option value="muse">Pancreatic (PAAD)</option>
+                            <option value="varscan2">Lung (LUAD)</option>
+                        </select>
+                        <label>Tumor type</label>
                     </div>
-                    <div class="input-field col s6">
-                        <i class="material-icons prefix">phone</i>
-                        <input id="icon_telephone" name="telephone" type="tel" class="validate">
-                        <label for="icon_telephone">Pipeline choice</label>
+                  </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select>
+                                <option value="" disabled selected>Choose your pipeline option</option>
+                                <option value="mutect2">MuTect2</option>
+                                <option value="muse">MuSE</option>
+                                <option value="varscan2">VarScan2</option>
+                                <option value="somaticsniper">SomaticSniper</option>
+                            </select>
+                            <label>Variant Caller Pipeline</label>
+                        </div>
                     </div>
+
+
+                    <div class="row">
+                        <h6 style="padding-left: 30px;">Number of genes to show:</h6>
+                        <p class="range-field">
+                            <input type="range" id="test5" min="0" max="40" />
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select>
+                                <option value="" disabled selected>Please pick an answer</option>
+                                <option value="yes">yes</option>
+                                <option value="no">no</option>
+                            </select>
+                            <label>Show only specific genes?</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select>
+                                <option value="" disabled selected>Please pick an answer</option>
+                                <option value="yes">yes</option>
+                                <option value="no">no</option>
+                            </select>
+                            <label>Subtype the data?</label>
+                        </div>
+                    </div>
+
                 </div>
                 <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Generate Oncoprint" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
                 </button>
             </form>
         </div>
     </div>
-</div>
 
 
-<div class="card s12">
-    <div class="card-content">
-    <h4><i class="large material-icons " >polymer</i> Transcriptional analysis</h4>
-        <p>Streamlined transcriptional analysis; simply prepare a query to TCGA data and I'll automatically perform transcriptional analysis and produce visualisation.</p>
-        <div class="row">
-            <form class="col s12" action="/result" method="post">
-                <div class="row">
-                    <div class="input-field col s6">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input id="icon_prefix" name="first_name" type="text" class="validate">
-                        <label for="icon_prefix">Tumor type</label>
+
+
+
+</span></div>
+    </li>
+
+
+
+    
+    <li>
+      <div class="collapsible-header"><i class="material-icons">polymer</i>Transcriptional analysis</div>
+      <div class="collapsible-body"><span>
+        
+
+
+
+
+
+
+
+
+    <div class="card s12">
+        <div class="card-content">
+            <h4><i class="large material-icons" >polymer</i> Transcriptional analysis</h4>
+            <p>Streamlined transcriptional analysis; simply prepare a query to TCGA data and I'll automatically perform transcriptional analysis and produce visualisation.</p>
+            <div class="row">
+                <form class="col s12" action="/result" method="post">
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input id="transcriptome" name="transcript" type="text" class="validate">
+                            <label for="transcriptome">Tumor type</label>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <select>
+                                    <option value="" disabled selected>Choose your pipeline option</option>
+                                    <option value="mutect2">MuTect2</option>
+                                    <option value="muse">MuSE</option>
+                                    <option value="varscan2">VarScan2</option>
+                                    <option value="somaticsniper">SomaticSniper</option>
+                                </select>
+                                <label>Variant Caller Pipeline</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-field col s6">
-                        <i class="material-icons prefix">phone</i>
-                        <input id="icon_telephone" name="telephone" type="tel" class="validate">
-                        <label for="icon_telephone">Age</label>
-                    </div>
-                </div>
-                <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Perform analysis" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">polymer</i> Submit
-                </button>
+            </div>
+            <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Perform analysis" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">polymer</i> Submit
+            </button>
             </form>
         </div>
     </div>
 </div>
 
+
+      </span></div>
+    </li>
+
+  </ul>
+
 {% endblock %}
+
+
