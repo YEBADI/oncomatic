@@ -1,5 +1,6 @@
 from flask import render_template, request
 from app import app 
+import subprocess
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -24,7 +25,8 @@ def results_page():
                            genenumber = genenumber, tumortype = tumortype, 
                            pipeline = pipeline)
 
-    subprocess.call('Rscript', 'oncoprint_tool/oncomatic_oncoprint_generic_edition.R', tumortype=tumortype, pipeline=pipeline, genenumber=genenumber, pickgenes=pickgenes, genelist=genelist)
+    subprocess.call(['Rscript', 'oncoprint_tool/oncomatic_oncoprint_generic_edition/all_tumors_oncoprint.R', 
+                    tumortype, pipeline, genenumber, pickgenes, genelist])
 
 
 # Sample HTTP error handling
