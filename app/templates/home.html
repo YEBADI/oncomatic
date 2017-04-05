@@ -1,8 +1,53 @@
 {% extends "layout.html" %} {% block body %}
+  <nav>
+    <div class="nav-wrapper" style="padding-left: 30px;"">
+      <div class="col s12">
+        <a href="/" class="breadcrumb">Home</a>
+      </div>
+    </div>
+  </nav>
+
 <div class="card s12">
     <div class="card-content">
-        <h4>Home Page</h4>
-        <p>I am a very simple card. I am good at containing small bits of information. I am convenient because I require little markup to use effectively.</p>
+        <h4>Welcome to Oncomatic</h4>
+        <p>I am a very simple tool to let you input a query to data from The Cancer Genome Atlas (TCGA) and automatically generate analytical visualisations in a streamlined manner.</p>
+
+<p style=" text-align: center;"><i class="large material-icons" >album polymer insert_chart perm_identity</i> </p><p style=" text-align: center;">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Oncoprint &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Transcriptomics  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Analytics &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Patient Analysis  </p>
+              
+
+</div>
+</div>
+
+<div class="card s12">
+    <div class="card-content">
+    <h4>Generate Oncoprint</h4>
+        <p>Streamlined oncoprint generation; simply prepare a query to TCGA data and I'll automatically generate an oncoprint visualisation.</p>
+        <div class="row">
+            <form class="col s12" action="/result" method="post">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">account_circle</i>
+                        <input id="icon_prefix" name="first_name" type="text" class="validate">
+                        <label for="icon_prefix">Tumor type</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <i class="material-icons prefix">phone</i>
+                        <input id="icon_telephone" name="telephone" type="tel" class="validate">
+                        <label for="icon_telephone">Pipeline choice</label>
+                    </div>
+                </div>
+                <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Generate Oncoprint" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="card s12">
+    <div class="card-content">
+    <h4>Transcriptional analysis</h4>
+        <p>Streamlined transcriptional analysis; simply prepare a query to TCGA data and I'll automatically perform transcriptional analysis and produce visualisation.</p>
         <div class="row">
             <form class="col s12" action="/result" method="post">
                 <div class="row">
@@ -13,13 +58,15 @@
                     </div>
                     <div class="input-field col s6">
                         <i class="material-icons prefix">phone</i>
-                        <input id="icon_telephone"  name="telephone" type="tel" class="validate">
+                        <input id="icon_telephone" name="telephone" type="tel" class="validate">
                         <label for="icon_telephone">Telephone</label>
                     </div>
                 </div>
-                <button class="waves-effect waves-light btn" type="submit" ><i class="material-icons right">cloud</i>button</button>
+                <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Perform analysis" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
+                </button>
             </form>
         </div>
     </div>
 </div>
+
 {% endblock %}
