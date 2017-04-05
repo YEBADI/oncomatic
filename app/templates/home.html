@@ -56,10 +56,10 @@
                     <div class="input-field col s6">
                         <select name="tumor_type">
                             <option value="" disabled selected>Please select a tumor type</option>
-                            <option value="1,BRCA">Breast (BRCA) - NO SUBTYPING</option>
-                            <option value="2,BRCA">Breast (BRCA) - SUBTYPING</option>
-                            <option value="2,PAAD">Pancreatic (PAAD)</option>
-                            <option value="2,LUAD">Lung (LUAD)</option>
+                            <option value="BRCA">Breast (BRCA) - NO SUBTYPING</option>
+                            <option value="BRCA,subtyping">Breast (BRCA) - SUBTYPING</option>
+                            <option value="PAAD">Pancreatic (PAAD)</option>
+                            <option value="LUAD">Lung (LUAD)</option>
                         </select>
                         <label>Tumor type</label>
                     </div>
@@ -104,7 +104,7 @@
 <div class="row">
         <div class="input-field col s12">
           <textarea name= "genelist" id="textarea1" class="materialize-textarea"></textarea>
-          <label for="textarea1">Please enter gene names in capital letters seperated by dashes (e.g. "ATM-P53-BRCA1").</label>
+          <label for="textarea1">If no, type no. Else please enter specific gene names in capital letters seperated by dashes (e.g. "ATM-P53-BRCA1").</label>
         </div>
       </div>
 

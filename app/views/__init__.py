@@ -20,7 +20,11 @@ def results_page():
 
 
     return render_template('results.html', 
-                           pickgenes=pickgenes, genelist=genelist, genenumber = genenumber, tumortype = tumortype, pipeline = pipeline)
+                           pickgenes=pickgenes, genelist=genelist, 
+                           genenumber = genenumber, tumortype = tumortype, 
+                           pipeline = pipeline)
+
+    subprocess.call('Rscript', 'oncoprint_tool/oncomatic_oncoprint_generic_edition.R', tumortype=tumortype, pipeline=pipeline, genenumber=genenumber, pickgenes=pickgenes, genelist=genelist)
 
 
 # Sample HTTP error handling
