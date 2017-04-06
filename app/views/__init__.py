@@ -25,7 +25,7 @@ def results_page():
                      genenumber = genenumber, tumortype = tumortype, 
                      pipeline = pipeline)
 
-    return subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
+    subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
                     tumortype, pipeline, genenumber, pickgenes, genelist])
 
 
