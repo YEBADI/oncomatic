@@ -19,14 +19,17 @@ def results_page():
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-    render_template('results.html', 
+    if tumortype == 'BRCA,subtyping':
+      subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
+                    'yes', pipeline, genenumber, pickgenes, genelist])
+    else:
+      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
+                    tumortype, pipeline, genenumber, pickgenes, genelist])
+
+    return render_template('results.html', 
                          pickgenes=pickgenes, genelist=genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
-
-    subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
-                    tumortype, pipeline, genenumber, pickgenes, genelist])
-
 
 # Sample HTTP error handling
 @app.errorhandler(404)
