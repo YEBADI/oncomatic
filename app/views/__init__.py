@@ -19,13 +19,12 @@ def results_page():
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-
     render_template('results.html', 
-                     pickgenes=pickgenes, genelist=genelist, 
-                     genenumber = genenumber, tumortype = tumortype, 
-                     pipeline = pipeline)
+                         pickgenes=pickgenes, genelist=genelist, 
+                         genenumber = genenumber, tumortype = tumortype, 
+                         pipeline = pipeline)
 
-    subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
+    return subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
                     tumortype, pipeline, genenumber, pickgenes, genelist])
 
 
