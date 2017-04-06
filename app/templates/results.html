@@ -13,11 +13,16 @@
     </div>
     <div class="card-content grey lighten-4">
         <div id="test4">
-        <a href="{{ url_for('static', filename='app/static/results/oncoprint.pdf') }}">                        
-        <img src="{{ url_for('static', filename='app/static/results/oncoprint.pdf') }}" alt="oncoprint" style="width:100%"/></a>
+        <div style="text-align: center;">
+        <a href="{{ url_for('static', filename='results/oncoprint.pdf') }}">                        
+        <img src="{{ url_for('static', filename='results/oncoprint.pdf') }}" alt="oncoprint" style="width:100%"/></a>
                             
-                        <h4>oncoprint</h4></div>
-
+                        <h4>Oncoprint</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>Tumor type: {{tumortype}}</h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+</div>
 
 
 
