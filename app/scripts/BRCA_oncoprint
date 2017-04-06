@@ -185,7 +185,7 @@ if(args1 == "no"){
     library("SummarizedExperiment")
 
     # Define variables.
-    ProjectDir <- "oncomatic_BRCA_output_subtyped_selected_genes";
+    ProjectDir <- "app/static/results";
     # The dataset name as defined by TCGAbiolinks.
     ProjectName <-  "mutations";
 
@@ -295,8 +295,8 @@ if(args1 == "no"){
       TCGAvisualize_oncoprint(
           mut = top.mut.data,
           genes = top.mut.genes,
-          filename = paste("oncoprint_top_", args3, "_", comment(subtype), 
-                           "_", tumor.type, "_", args2, "_", user.gene.request, ".pdf", sep=""),
+          filename = paste("oncoprint_", comment(subtype), 
+                          ".pdf", sep=""),
           annotation = clin.forvisual,
           color=c("background"="#CCCCCC","DEL"="purple",
                   "INS"="yellow","SNP"="brown"),
@@ -325,7 +325,7 @@ if(args1 == "no"){
     library("SummarizedExperiment")
 
     # Define variables.
-    ProjectDir <- "oncomatic_BRCA_output_subtyped_nonselectedgenes";
+    ProjectDir <- "app/static/results";
     # The dataset name as defined by TCGAbiolinks.
     ProjectName <-  "mutations";
 

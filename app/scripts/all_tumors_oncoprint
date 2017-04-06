@@ -122,8 +122,7 @@ if(args4 == "yes"){
   TCGAvisualize_oncoprint(
       mut = user.choice.mut.data,
       genes = user.choice.gene.names,
-      filename = paste("oncoprint_top", args3, tumor.type, "-", user.gene.request, 
-                                      "_", args2, ".pdf", sep=""),
+      filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
                     "INS"="yellow","SNP"="brown"),
