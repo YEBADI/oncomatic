@@ -54,7 +54,7 @@ if(args1 == "no"){
   #    Preparation of environment
   #===============================================================================
   # Define variables.
-  ProjectDir <- paste("oncomatic_BRCA_output_nonsubtyped");
+  ProjectDir <- paste("app/static/results");
 
   # create mutations directory and go into it
   if (file.exists(ProjectDir)){
@@ -434,8 +434,8 @@ if(args1 == "no"){
       TCGAvisualize_oncoprint(
           mut = top.mut.data,
           genes = top.mut.genes,
-          filename = paste("oncoprint_top_", args3, "_", comment(subtype), 
-                           "_subtyped_BRCA_", args2, ".pdf", sep=""),
+          filename = paste("oncoprint_", comment(subtype), 
+                           ".pdf", sep=""),
           annotation = clin.forvisual,
           color=c("background"="#CCCCCC","DEL"="purple",
                   "INS"="yellow","SNP"="brown"),

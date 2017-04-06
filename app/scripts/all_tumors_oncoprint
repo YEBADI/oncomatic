@@ -62,7 +62,7 @@ library("SummarizedExperiment")
 #    Preparation of environment
 #===============================================================================
 # Define variables.
-ProjectDir <- paste("oncomatic_output");
+ProjectDir <- paste("app/static/results");
 
 # create mutations directory and go into it
 if (file.exists(ProjectDir)){
@@ -158,8 +158,7 @@ if(args4 == "yes"){
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
       genes = top.mut.genes,
-      filename = paste("top", args3,"_oncoprint_", tumor.type, "_", 
-                       args2, ".pdf", sep=""),
+      filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
