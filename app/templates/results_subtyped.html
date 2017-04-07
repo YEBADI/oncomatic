@@ -1,0 +1,39 @@
+{% extends "layout.html" %} {% block body %}
+<div class="card s12">
+    <div class="card-content">
+        <h4>Results</h4>
+        <p> Below is an oncopront produced for {{tumortype}} using the {{pipeline}} pipeline, showing the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
+    </div>
+    <div class="card-tabs">
+        <ul class="tabs tabs-fixed-width">
+            <li class="tab"><a href="#test4">Test 1</a></li>
+            <li class="tab"><a class="active" href="#test5">Test 2</a></li>
+            <li class="tab"><a href="#test6">Test 3</a></li>
+        </ul>
+    </div>
+    <div class="card-content grey lighten-4">
+        <div id="test4">
+        <div style="text-align: center;">
+
+<embed src="http://0.0.0.0:8080/static/results/oncoprint.pdf" width="700" height="500">
+
+                            
+                        <h4>Oncoprint</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>Tumor type: {{tumortype}}</h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+</div>
+
+
+
+                    </div>
+                </div>
+
+
+
+        <div id="test5">Test 2</div>
+        <div id="test6">Test 3</div>
+    </div>
+</div>
+{% endblock %}
