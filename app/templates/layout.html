@@ -10,19 +10,20 @@
     <link rel="stylesheet" type="text/javascript" href="{{ url_for('static', filename='css/materialize.min.js') }}">
 </head>
 
+
+
+
 <body>
-    <nav>
+    <nav class="nav">
         <div class="nav-wrapper">
-            <a href="/" class="brand-logo" style="font-size: 50px;"><i class="material-icons" style="font-size: 80px; padding-left: 100px;">donut_small</i>Oncomatic</a>
-            <img src="{{ url_for('static', filename='images/logo.png') }}" ALIGN="right"/>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="sass.html"><i class="material-icons">search</i></a></li>
-                <li><a href="badges.html"><i class="material-icons">view_module</i></a></li>
-                <li><a href="collapsible.html"><i class="material-icons">refresh</i></a></li>
-                <li><a href="mobile.html"><i class="material-icons">more_vert</i></a></li>
-            </ul>
+        <div class="row">
+          <h1 class=" header center-on-small-only" href="/"  style="font-size: 50px; padding-left: 20px; padding-bottom: 50px;"> <i class="material-icons" style="font-size: 50px; padding-left: 10px; padding-top: 10px;">donut_small</i>Oncomatic
+          </h1>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" ALIGN="right" width="200px"/>
         </div>
+ 
     </nav>
+
     <div class="container" style="padding-top: 3rem;">
 
     {% block body %} 
@@ -62,6 +63,7 @@
     $(document).ready(function(){
       $('tabs').tabs();
       $('select').material_select();
+      $(".button-collapse").sideNav();
     });
 
     </script>
