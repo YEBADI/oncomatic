@@ -10,6 +10,9 @@ def home_page():
 def about_page():
     return render_template('about.html')
 
+
+
+
 @app.route('/result', methods=['POST'])
 def results_page():
     print(request.form)
@@ -19,17 +22,23 @@ def results_page():
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-   # if tumortype == 'BRCA,subtyping':
-   #   subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
-     #               'yes', pipeline, genenumber, pickgenes, genelist])
- #   else:
-#      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
-   #                 tumortype, pipeline, genenumber, pickgenes, genelist])
-
-    return render_template('results.html', 
+    if tumortype == 'BRCA,subtyping':
+     # subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
+     #              'yes', pipeline, genenumber, pickgenes, genelist])
+      
+      return render_template('results_subtyped.html', 
                          pickgenes=pickgenes, genelist=genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
+
+    else:
+    #subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
+              #     tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      return render_template('results.html', 
+                           pickgenes=pickgenes, genelist=genelist, 
+                           genenumber = genenumber, tumortype = tumortype, 
+                           pipeline = pipeline)
 
 # Sample HTTP error handling
 @app.errorhandler(404)
