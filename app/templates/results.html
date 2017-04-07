@@ -15,16 +15,8 @@
         <div id="test4">
         <div style="text-align: center;">
 
+<embed src="http://0.0.0.0:8080/static/results/oncoprint.pdf" width="700" height="500">
 
-<embed href="{{ url_for('static', filename='results/oncoprint.pdf') }}" width="800px" height="2100px" />
-
-        <object data="results/oncoprint.pdf" type="application/pdf" width="300" height="200">
-<a href="results/oncoprint.pdf">test.pdf</a>
-</object>
-
-
-        <a href="{{ url_for('static', filename='results/oncoprint.pdf') }}">                        
-        <img src="{{ url_for('static', filename='results/oncoprint.pdf') }}" alt="oncoprint" style="width:100%"/></a>
                             
                         <h4>Oncoprint</h4>
                         <h5>Top {{genenumber}} genes </h5>
