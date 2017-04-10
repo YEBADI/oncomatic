@@ -7,19 +7,88 @@
     </div>
   </nav>
 <div class="card s12">
-    <div class="card-content">
-        <h4>Welcome to Oncomatic</h4>
-        <p>I am a very simple tool to let you input a query to data from The Cancer Genome Atlas (TCGA) and automatically generate analytical visualisations in a streamlined manner.</p>
-        <p style=" text-align: center;"><i class="large material-icons">album polymer insert_chart perm_identity</i> </p>
-        <p style=" text-align: center;">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Oncoprint &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Transcriptomics &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Analytics &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Patient Analysis </p>
-    </div>
+    <div class="card-content center">
+        <h2>Welcome to Oncomatic</h2>
+        <p>User-friendly web tool for querying data from The Cancer Genome Atlas (TCGA), generating analytical visualisations in a streamlined manner.</p>
+
+<div class="row">
+
+
+
+<div class="col s12 m4">
+<div class="icon-block center">
+<h3 style="text-align: center;"> High quality</h3>
+<i class="large material-icons">insert_chart</i>
+<p>Publication level visualisations</p>
 </div>
+</div>
+
+
+<div class="col s12 m4">
+<div class="icon-block center">
+<h3 style="text-align: center;"> Fast</h3>
+<i class="large material-icons">flash_on</i>
+<p>Publication level visualisations</p>
+</div>
+</div>
+
+
+<div class="col s12 m4">
+<div class="icon-block center">
+<h3 style="text-align: center;"> Easy to use</h3>
+<i class="large material-icons">insert_chart</i>
+<p>Publication level visualisations</p>
+</div>
+</div>
+
+</div>
+</div>
+
+
+</div>
+
+
+
+<div class="card s12">
+<div class="card-content">
+
+<h2 style="text-align: center;"> Oncomatic tools</h2>
+<div class="row">
+<div class="col s12 m4">
+<div class="icon-block center">
+<h3 style="text-align: center;"> Mutation Analysis</h3>
+<i class="large material-icons">album</i>
+<p> Analyse TCGA mutation data to identify the top mutated genes between user-defined biological conditions and view results in tabular and graphical format</p>
+</div>
+</div>
+
+
+<div class="col s12 m4">
+<div  class="icon-block center">
+<h3 style="text-align: center;"> Differential Expression</h3>
+<i class="large material-icons" href="#MA">polymer</i>
+<p> Analyse TCGA sequencing data by differential gene expression (DGE) analysis to identify the most variable genes between user-defined biological conditions and view results in tabular and graphical format </p>
+</div>
+</div>
+
+
+<div class="col s12 m4">
+<div class="icon-block center">
+<h3 style="text-align: center;"> Patient Analytics</h3>
+<i class="large material-icons">perm_identity</i>
+<p>Publication level visualisations</p>
+</div>
+</div>
+
+</div>
+
+
 
 
 
   <ul class="collapsible" data-collapsible="accordion">
     <li>
-      <div class="collapsible-header"><i class="material-icons">album</i>Generate Oncoprint</div>
+      <div class="collapsible-header"><i class="material-icons">album</i> Mutation Analysis</div>
       <div class="collapsible-body"><span>
 
 
@@ -47,9 +116,9 @@
 
 
 
-<div class="card s12">
+<div id="MA" class="card s12">
     <div class="card-content">
-        <h4><i class="large material-icons" >album</i>  Generate Oncoprint</h4>
+        <h4><i class="large material-icons" >album</i>  Mutation Analysis</h4>
         <p>Streamlined oncoprint generation; simply prepare a query to TCGA data and I'll automatically generate an oncoprint visualisation.</p>
         <div class="row">
             <form id="oncoprint_form" onsubmit="ShowLoading()" class="col s12" action="/result" method="post">
@@ -138,7 +207,7 @@
 
     
     <li>
-      <div class="collapsible-header"><i class="material-icons">polymer</i>Transcriptional analysis</div>
+      <div class="collapsible-header"><i class="material-icons">polymer</i>Differential Gene Expression</div>
       <div class="collapsible-body"><span>
         
 
@@ -151,8 +220,8 @@
 
     <div class="card s12">
         <div class="card-content">
-            <h4><i class="large material-icons" >polymer</i> Transcriptional analysis</h4>
-            <p>Streamlined transcriptional analysis; simply prepare a query to TCGA data and I'll automatically perform transcriptional analysis and produce visualisation.</p>
+            <h4><i class="large material-icons" >polymer</i> Differential Gene Expression (DGE) Analysis </h4>
+            <p>Streamlined transcriptional analysis; simply prepare a query to TCGA data and I'll automatically perform DGE analysis and produce visualisations.</p>
             <div class="row">
                 <form class="col s12" action="/result" method="post">
                     <div class="row">
@@ -188,7 +257,7 @@
     </li>
 
   </ul>
-
+</div>
 
 {% endblock %}
 
