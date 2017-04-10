@@ -16,6 +16,7 @@
 </div>
 
 
+
   <ul class="collapsible" data-collapsible="accordion">
     <li>
       <div class="collapsible-header"><i class="material-icons">album</i>Generate Oncoprint</div>
@@ -51,10 +52,11 @@
         <h4><i class="large material-icons" >album</i>  Generate Oncoprint</h4>
         <p>Streamlined oncoprint generation; simply prepare a query to TCGA data and I'll automatically generate an oncoprint visualisation.</p>
         <div class="row">
-            <form class="col s12" action="/result" method="post">
+            <form id="oncoprint_form" onsubmit="ShowLoading()" class="col s12" action="/result" method="post">
                 <div class="row" style="padding-top: 30px;">
+                    
                     <div class="input-field col s6">
-                        <select name="tumor_type">
+                        <select name="tumor_type" required>
                             <option value="" disabled selected>Please select a tumor type</option>
                             <option value="BRCA">Breast (BRCA) - NO SUBTYPING</option>
                             <option value="BRCA,subtyping">Breast (BRCA) - SUBTYPING</option>
@@ -62,11 +64,15 @@
                             <option value="LUAD">Lung (LUAD)</option>
                         </select>
                         <label>Tumor type</label>
+
                     </div>
                   </div>
+
+
+
                     <div class="row">
                         <div class="input-field col s6">
-                            <select name="pipeline">
+                            <select name="pipeline" required>
                                 <option value="" disabled selected>Choose your pipeline option</option>
                                 <option value="mutect2">MuTect2</option>
                                 <option value="muse">MuSE</option>
@@ -81,13 +87,13 @@
                     <div class="row">
                         <h6 style="padding-left: 30px;">Number of genes to show:</h6>
                         <p class="range-field">
-                            <input type="range" name="genenumber" id="test5" min="0" max="40" />
+                            <input type="range" name="genenumber" id="test5" min="0" max="40"/>
                         </p>
                     </div>
 
                     <div class="row">
                         <div class="input-field col s6">
-                            <select name= "pickgenes">
+                            <select name= "pickgenes" required>
                                 <option value="" disabled selected>Please pick an answer</option>
                                 <option value="yes">yes</option>
                                 <option value="no">no</option>
@@ -110,7 +116,7 @@
 
 
                 </div>
-                <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Generate Oncoprint" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
+                <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Please pick all options" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">album</i> Submit
                 </button>
             </form>
         </div>
@@ -122,6 +128,11 @@
 
 </span></div>
     </li>
+
+
+
+
+
 
 
 
@@ -164,8 +175,9 @@
                         </div>
                     </div>
             </div>
-            <button class="btn tooltipped" data-position="bottom" data-delay="50" data-tooltip="Perform analysis" class="waves-effect waves-light btn" type="submit"><i class="material-icons right">polymer</i> Submit
+            <button id="btn30" class="btn tooltipped waves-effect waves-light" data-position="bottom" data-delay="50" data-tooltip="Please pick all options" type="submit"><i class="material-icons right">polymer</i> Submit
             </button>
+
             </form>
         </div>
     </div>
@@ -176,6 +188,7 @@
     </li>
 
   </ul>
+
 
 {% endblock %}
 

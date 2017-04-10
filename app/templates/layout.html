@@ -77,6 +77,22 @@
       $('select').material_select();
       $(".button-collapse").sideNav();
     });
+$('#btn30').click(function(){
+    $(this).addClass("disabled");
+});
+    function ShowLoading(e) {
+        var div = document.createElement('div');
+        var img = document.createElement('img');
+        img.src = "{{ url_for('static', filename='images/loading.gif') }}";
+        div.innerHTML = "<h1> Loading...</h1> <br />";
+        div.style.cssText = 'position: fixed; top: 5%; left: 40%; z-index: 5000; width: 600px; text-align: center; background: #FFFAFA; border: 7 px solid #000';
+        div.appendChild(img);
+        document.body.appendChild(div);
+        return true;
+        // These 2 lines cancel form submission, so only use if needed.
+        //window.event.cancelBubble = true;
+        //e.stopPropagation();
+    }
 
     </script>
 </body>
