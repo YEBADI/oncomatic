@@ -114,6 +114,7 @@ if(args4 == "yes"){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, save.csv = TRUE);
 
 # split the downloaded mut data according to each smoking subtype
+mut.data.barcodes <- NULL
 
     for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
     tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
@@ -245,6 +246,7 @@ for(subtype in subtype.data){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, save.csv = TRUE);
 
 # split the downloaded mut data according to each smoking subtype
+mut.data.barcodes <- NULL
 
     for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
     tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 

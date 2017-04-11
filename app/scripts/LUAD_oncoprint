@@ -26,19 +26,19 @@ cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
-args1 <- cmd_args[1] # "show subtypes 'yes' or 'no'?""
+args1 ="yes"#<- cmd_args[1] # "show subtypes 'yes' or 'no'?""
 
 # Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
-args2 <- cmd_args[2] # "mutect2"
+args2 ="mutect2"#<- cmd_args[2] # "mutect2"
 
 # number of genes to show
-args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
+args3 ="20"#<- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
 
-args4 <- cmd_args[4] #yes #no #do you want to select genes?
+args4 ="no"#<- cmd_args[4] #yes #no #do you want to select genes?
 # yes or no
 
 #this one is optional
-args5 <- cmd_args[5]
+args5 = ""#<- cmd_args[5]
 
 ################################### MAIN #######################################
 
@@ -114,6 +114,7 @@ if(args4 == "yes"){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, save.csv = TRUE);
 
 # split the downloaded mut data according to each smoking subtype
+mut.data.barcodes <- NULL
 
     for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
     tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
@@ -245,6 +246,7 @@ for(subtype in subtype.data){
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, save.csv = TRUE);
 
 # split the downloaded mut data according to each smoking subtype
+mut.data.barcodes <- NULL
 
     for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
     tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
