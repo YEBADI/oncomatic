@@ -173,8 +173,7 @@ for(subtype in subtype.data){
         label.font.size = 6
       );
   }
-}
-else {
+} else {
   #####################################################################
   user.gene.request <- args5
   user.gene.list <- unlist(strsplit(user.gene.request,"-"))
