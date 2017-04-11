@@ -10,9 +10,9 @@
 
 ################# subsetting clinical data #####################################
 
-smoking_LUAD <- read.csv("app/scripts/smoking_LUAD.csv")
+smoking_LUSC <- read.csv("app/scripts/smoking_LUSC.csv")
 # remove incomplete cases (cases with NA)
-smoke.complete.cases <- smoking_LUAD[complete.cases(smoking_LUAD["subtype_Smoking.Status"]),]
+smoke.complete.cases <- smoking_LUSC[complete.cases(smoking_LUSC["subtype_Smoking.Status"]),]
 #subset according to smoking status
 reformed.morethan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed>15yrs"),]
 reformed.lessthan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed<=15yrs"),]
@@ -273,7 +273,7 @@ smokers.mut.data <- mut.data[which(mut.data.barcodes %in% smokers),]
   comment(subtype.data$smokers) <- "smokers"
 
 
-  
+
   for(subtype in subtype.data){
     genes.names <- unique(subtype$Hugo_Symbol);
     all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
