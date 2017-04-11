@@ -1,0 +1,87 @@
+{% extends "layout.html" %} {% block body %}
+<div class="card s12">
+    <div class="card-content">
+        <h4>{{tumortype}} status subtyed, Oncoprint Results</h4>
+        <p> Below are subtyed oncoprints produced for {{tumortype}} status subtyed, for using the {{pipeline}} pipeline, showing the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
+    </div>
+</div>
+    <div class="card s12">
+    <div class="card-content">
+    <h4>Smoker Status Subtyping</h4>
+        <p> Below are oncoprints for each smoker status subtype, please navigate using the tabs. </p>
+    </div>
+    <div class="card-tabs">
+        <ul class="tabs tabs-fixed-width">
+            <li class="tab"><a class="active" href="#test4">Smokers</a></li>
+            <li class="tab"><a  href="#test5">Reformed, less than 15 years</a></li>
+            <li class="tab"><a href="#test6">Reformed, more than 15 years</a></li>
+            <li class="tab"><a href="#test7">Never Smoked</a></li>
+        </ul>
+    </div>
+    <div class="card-content grey lighten-4">
+        <div id="test4">
+        <div style="text-align: center;">
+
+<embed src="http://0.0.0.0:8080/static/results/oncoprint_smokers.pdf" width="700" height="500">
+
+                            
+                        <h4>Smokers</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+</div>
+
+
+
+      
+
+
+
+        <div id="test5">
+        <div style="text-align: center;">
+          
+          <embed src="http://0.0.0.0:8080/static/results/oncoprint_reformedlessthan15.pdf" width="700" height="500">
+
+                            
+                        <h4>Reformed, less than 15 years</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+
+        <div id="test6">
+                  <div style="text-align: center;">
+          
+          <embed src="http://0.0.0.0:8080/static/results/oncoprint_reformedmorethan15.pdf" width="700" height="500">
+
+                            
+                        <h4>Reformed, more than 15 years</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+
+
+        </div>
+        <div id="test7">
+        <div style="text-align: center;">
+          
+          <embed src="http://0.0.0.0:8080/static/results/oncoprint_neversmoked.pdf" width="700" height="500">
+
+                            
+                        <h4>Never smoked</h4>
+                        <h5>Top {{genenumber}} genes </h5>
+                        <h5>VC Pipeline: {{pipeline}}</h5>
+                        <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+
+ 
+      
+    </div>
+</div>
+
+
+
+
+
+{% endblock %}
