@@ -25,25 +25,24 @@ smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Statu
 cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
-
-args1 ="yes"#
-#args1 <- cmd_args[1] # "show subtypes 'yes' or 'no'?""
+#
+args1 <- cmd_args[1] # "show subtypes 'yes' or 'no'?""
 
 # Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
-args2 ="mutect2"#
-#args2 <- cmd_args[2] # "mutect2"
+
+args2 <- cmd_args[2] # "mutect2"
 
 # number of genes to show
-args3 ="20"#
-#args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
 
-args4 ="no"#
-#args4 <- cmd_args[4] #yes #no #do you want to select genes?
+args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
+
+
+args4 <- cmd_args[4] #yes #no #do you want to select genes?
 # yes or no
 
 #this one is optional
-args5 = ""
-#args5 <- cmd_args[5]
+
+args5 <- cmd_args[5]
 
 ################################### MAIN #######################################
 
