@@ -35,7 +35,7 @@ def results_page():
       subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
                    'yes', pipeline, genenumber, pickgenes, genelist])
 
-     elif tumortype == 'LUSC,smokers':
+    elif tumortype == 'LUSC,smokers':
       subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
                    'yes', pipeline, genenumber, pickgenes, genelist])
 
