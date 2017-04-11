@@ -14,10 +14,10 @@ smoking_LUSC <- read.csv("app/scripts/smoking_LUSC.csv")
 # remove incomplete cases (cases with NA)
 smoke.complete.cases <- smoking_LUSC[complete.cases(smoking_LUSC["subtype_Smoking.Status"]),]
 #subset according to smoking status
-reformed.morethan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed>15yrs"),]
-reformed.lessthan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed<=15yrs"),]
-never.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "NeverSmoked"),]
-smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "Smokes"),]
+reformed.morethan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed>15yrs"),1]
+reformed.lessthan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed<=15yrs"),1]
+never.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "NeverSmoked"),1]
+smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "Smokes"),1]
 
 ################################################################################
 

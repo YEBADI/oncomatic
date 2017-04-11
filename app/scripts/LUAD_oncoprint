@@ -14,10 +14,10 @@ smoking_LUAD <- read.csv("app/scripts/smoking_LUAD.csv")
 # remove incomplete cases (cases with NA)
 smoke.complete.cases <- smoking_LUAD[complete.cases(smoking_LUAD["subtype_Smoking.Status"]),]
 #subset according to smoking status
-reformed.morethan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed>15yrs"),]
-reformed.lessthan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed<=15yrs"),]
-never.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "NeverSmoked"),]
-smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "Smokes"),]
+reformed.morethan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed>15yrs"),1]
+reformed.lessthan15.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "reformed<=15yrs"),1]
+never.smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "NeverSmoked"),1]
+smokers <- smoke.complete.cases[which(smoke.complete.cases$subtype_Smoking.Status == "Smokes"),1]
 
 ################################################################################
 
@@ -26,19 +26,24 @@ cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
-args1 ="yes"#<- cmd_args[1] # "show subtypes 'yes' or 'no'?""
+args1 ="yes"#
+#args1 <- cmd_args[1] # "show subtypes 'yes' or 'no'?""
 
 # Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
-args2 ="mutect2"#<- cmd_args[2] # "mutect2"
+args2 ="mutect2"#
+#args2 <- cmd_args[2] # "mutect2"
 
 # number of genes to show
-args3 ="20"#<- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
+args3 ="20"#
+#args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
 
-args4 ="no"#<- cmd_args[4] #yes #no #do you want to select genes?
+args4 ="no"#
+#args4 <- cmd_args[4] #yes #no #do you want to select genes?
 # yes or no
 
 #this one is optional
-args5 = ""#<- cmd_args[5]
+args5 = ""
+#args5 <- cmd_args[5]
 
 ################################### MAIN #######################################
 
@@ -175,9 +180,6 @@ for(subtype in subtype.data){
       );
   }
 } else {
-  #####################################################################
-  user.gene.request <- args5
-  user.gene.list <- unlist(strsplit(user.gene.request,"-"))
 
   #############################  MAIN  ###########################################
   #===============================================================================
@@ -275,41 +277,39 @@ smokers.mut.data <- mut.data[which(mut.data.barcodes %in% smokers),]
 
 
 
-  for(subtype in subtype.data){
-    genes.names <- unique(subtype$Hugo_Symbol);
-    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-    # Identify position of each gene and populate the matrix
-    all.positions <- NULL;
-    for(gene in genes.names) {
-      gene.position <- which(subtype$Hugo_Symbol == gene);
-      all.mut[gene, "number_of_reports"] <- length(gene.position);
-      all.positions <- c(all.positions, gene.position );
-    }
-  # Order the whole all.mut matrix by the most reported gene highest to lowest.
-    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                      decreasing=TRUE),];
-    # Isolate top 20 gene names.
-    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-    # Subset mutation data
-    top.mut.data <- subtype[ all.positions, ];
-  # Oncoprint of top 20 genes.
-    TCGAvisualize_oncoprint(
-        mut = top.mut.data,
-        genes = top.mut.genes,
-        filename = paste("oncoprint_", comment(subtype), 
-                         ".pdf", sep=""),
-        annotation = clin.forvisual,
-        color=c("background"="#CCCCCC","DEL"="purple",
-                "INS"="yellow","SNP"="brown"),
-        rows.font.size= 8,
-        width = 5,
-        heatmap.legend.side = "right",
-        dist.col = 0,
-        label.font.size = 6
-      );
+for(subtype in subtype.data){
+  genes.names <- unique(subtype$Hugo_Symbol);
+  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+  all.positions <- NULL;
+  for(gene in genes.names) {
+    gene.position <- which(subtype$Hugo_Symbol == gene);
+    all.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
   }
-}
+# Order the whole all.mut matrix by the most reported gene highest to lowest.
+  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.mut.data <- subtype[ all.positions, ];
+# Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.mut.data,
+      genes = top.mut.genes,
+      filename = paste("oncoprint_", comment(subtype), 
+                       ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
 }
 
 dev.off()
