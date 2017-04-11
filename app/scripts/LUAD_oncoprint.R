@@ -267,7 +267,7 @@ smokers.mut.data <- mut.data[which(mut.data.barcodes %in% smokers),]
              neversmoked=never.smokers.mut.data, smokers=smokers.mut.data)
 
   # Assign titles to use in filename
-  comment(subtype.data$Reformedmorethan15) <- "Reformedmorethan15"
+  comment(subtype.data$Reformedmorethan15) <- "reformedmorethan15"
   comment(subtype.data$reformedlessthan15) <- "reformedlessthan15"
   comment(subtype.data$neversmoked) <- "neversmoked"
   comment(subtype.data$smokers) <- "smokers"
