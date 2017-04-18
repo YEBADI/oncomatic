@@ -1,10 +1,7 @@
-# Yusef Badi MSc Project 2017
+# 
 
+Developed as part of MSc Bioinformatics Project at QMUL-BCI, 2017.
 Supervisor(s): Dr Claude Chelala, Dr Emanuela Gadaleta, Dr Jacek Marzec, Bioinformatics Unit, Barts Cancer Institute
-
-## Dissertation
-
-This is viewable at: https://docs.google.com/document/d/1DOSYfRE8wO66_ckWI6IENAdR4p_CahEa9tEZMVhgPu4/edit?usp=sharing
 
 ## Project Summary:
 
@@ -26,5 +23,3 @@ In order to improve BCNTB and the PED we must:
  - Mutation data will be analysed to identify the top mutated genes between user-defined biological conditions and present these in tabular and graphical format
 
 ### 2.) Improve the visualisation / graphical options available in the BCNTB:bp (and PED if enough time)
-
-Note: All code will be soft-coded, generic and developed to run on the command line.
