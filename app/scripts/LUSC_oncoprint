@@ -97,7 +97,7 @@ if(args4 == "yes"){
   clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
 
   # Check dimensions of slimmed data matrix
-  dim(clin.forvisual) #1097 5
+  dim(clin.forvisual) 
 
  #===============================================================================
   #    Access and download the mutation data for tumor type and
@@ -136,7 +136,7 @@ smokers.mut.data <- mut.data[which(mut.data.barcodes %in% smokers),]
              neversmoked=never.smokers.mut.data, smokers=smokers.mut.data)
 
   # Assign titles to use in filename
-  comment(subtype.data$Reformedmorethan15) <- "Reformedmorethan15"
+  comment(subtype.data$Reformedmorethan15) <- "reformedmorethan15"
   comment(subtype.data$reformedlessthan15) <- "reformedlessthan15"
   comment(subtype.data$neversmoked) <- "neversmoked"
   comment(subtype.data$smokers) <- "smokers"
@@ -227,7 +227,7 @@ for(subtype in subtype.data){
   clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
 
   # Check dimensions of slimmed data matrix
-  dim(clin.forvisual) #1097 5
+  dim(clin.forvisual) 
 
  #===============================================================================
   #    Access and download the mutation data for tumor type and
@@ -266,48 +266,46 @@ smokers.mut.data <- mut.data[which(mut.data.barcodes %in% smokers),]
              neversmoked=never.smokers.mut.data, smokers=smokers.mut.data)
 
   # Assign titles to use in filename
-  comment(subtype.data$Reformedmorethan15) <- "Reformedmorethan15"
+  comment(subtype.data$Reformedmorethan15) <- "reformedmorethan15"
   comment(subtype.data$reformedlessthan15) <- "reformedlessthan15"
   comment(subtype.data$neversmoked) <- "neversmoked"
   comment(subtype.data$smokers) <- "smokers"
 
 
 
-  for(subtype in subtype.data){
-    genes.names <- unique(subtype$Hugo_Symbol);
-    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-    # Identify position of each gene and populate the matrix
-    all.positions <- NULL;
-    for(gene in genes.names) {
-      gene.position <- which(subtype$Hugo_Symbol == gene);
-      all.mut[gene, "number_of_reports"] <- length(gene.position);
-      all.positions <- c(all.positions, gene.position );
-    }
-  # Order the whole all.mut matrix by the most reported gene highest to lowest.
-    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                      decreasing=TRUE),];
-    # Isolate top 20 gene names.
-    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-    # Subset mutation data
-    top.mut.data <- subtype[ all.positions, ];
-  # Oncoprint of top 20 genes.
-    TCGAvisualize_oncoprint(
-        mut = top.mut.data,
-        genes = top.mut.genes,
-        filename = paste("oncoprint_", comment(subtype), 
-                         ".pdf", sep=""),
-        annotation = clin.forvisual,
-        color=c("background"="#CCCCCC","DEL"="purple",
-                "INS"="yellow","SNP"="brown"),
-        rows.font.size= 8,
-        width = 5,
-        heatmap.legend.side = "right",
-        dist.col = 0,
-        label.font.size = 6
-      );
+for(subtype in subtype.data){
+  genes.names <- unique(subtype$Hugo_Symbol);
+  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+  all.positions <- NULL;
+  for(gene in genes.names) {
+    gene.position <- which(subtype$Hugo_Symbol == gene);
+    all.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
   }
-}
+# Order the whole all.mut matrix by the most reported gene highest to lowest.
+  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.mut.data <- subtype[ all.positions, ];
+# Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.mut.data,
+      genes = top.mut.genes,
+      filename = paste("oncoprint_", comment(subtype), 
+                       ".pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c("background"="#CCCCCC","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
 }
 
 dev.off()
