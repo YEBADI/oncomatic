@@ -27,7 +27,16 @@ def results_page():
                    'yes', pipeline, genenumber, pickgenes, genelist])
       
       return render_template('results_subtyped.html', 
-                         pickgenes=pickgenes, genelist=genelist, 
+                         pickgenes = pickgenes, genelist = genelist, 
+                         genenumber = genenumber, tumortype = tumortype, 
+                         pipeline = pipeline)
+
+    elif tumortype == 'BRCA,normalsplit':
+      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint_blood_tissue_split', 
+                   'BRCA', pipeline, genenumber, pickgenes, genelist])
+
+      return render_template('results_normals_split.html', 
+                         pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
 
@@ -36,7 +45,7 @@ def results_page():
                    'yes', pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results_smokers.html', 
-                         pickgenes=pickgenes, genelist=genelist, 
+                         pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
 
@@ -46,7 +55,7 @@ def results_page():
                    'yes', pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results_smokers.html', 
-                         pickgenes=pickgenes, genelist=genelist, 
+                         pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
 
@@ -55,7 +64,7 @@ def results_page():
                    tumortype, pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results.html', 
-                           pickgenes=pickgenes, genelist=genelist, 
+                           pickgenes = pickgenes, genelist = genelist, 
                            genenumber = genenumber, tumortype = tumortype, 
                            pipeline = pipeline)
 
