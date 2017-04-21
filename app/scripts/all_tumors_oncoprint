@@ -56,7 +56,6 @@ if(length(new.libs)) {
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
-source("app/scripts/oncoprint_script")
 #############################  MAIN  ###########################################
 #===============================================================================
 #    Preparation of environment
