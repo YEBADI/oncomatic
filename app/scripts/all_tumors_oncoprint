@@ -56,7 +56,7 @@ if(length(new.libs)) {
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
-
+source("app/scripts/oncoprint_script")
 #############################  MAIN  ###########################################
 #===============================================================================
 #    Preparation of environment
@@ -119,8 +119,8 @@ if(args4 == "yes"){
                                       "number_of_reports"], decreasing=TRUE),];
   user.choice.gene.names <- names( mut.data.matrix.ordered[ 1:args3 ] );
   user.choice.mut.data <- mut.data[ all.gene.positions, ];
-  TCGAvisualize_oncoprint(
-      mut = user.choice.mut.data,
+  oncoPrint(
+      mat = user.choice.mut.data,
       genes = user.choice.gene.names,
       filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
@@ -154,8 +154,8 @@ if(args4 == "yes"){
   # Subset mutation data
   top.mut.data <- mut.data[ all.positions, ];
   # Oncoprint of top 20 genes.
-  TCGAvisualize_oncoprint(
-      mut = top.mut.data,
+  oncoPrint(
+      mat = top.mut.data,
       genes = top.mut.genes,
       filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
