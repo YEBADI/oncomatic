@@ -1,10 +1,11 @@
 ### HISTORY ####################################################################
 # Version   Date          Coder               Comments
-# 1.0       31/03/2017    Yusef               
+# 1.0       21/04/2017    Yusef               
 ### DESCRIPTION ################################################################
 #  R pipeline to download TCGAbiolinks data for tumor type
-#  and produce an oncoprint for top mutated genes. User can specify certain
-#  genes if they wish.
+#  and produce an oncoprint for top mutated genes stratified for blood and 
+# tissue normals and also intersecting between blood and tissue normals.
+# User can specify certain  genes if they wish.
 ### PARAMETERS #################################################################
 # 
 ### FUNCTIONS ##################################################################
@@ -56,7 +57,6 @@ if(length(new.libs)) {
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
-source("app/scripts/oncoprint_script")
 #############################  MAIN  ###########################################
 #===============================================================================
 #    Preparation of environment
@@ -101,63 +101,251 @@ dim(clin.forvisual) #1097 5
 # Oncoprint of user requested genes
 
 
-if(args4 == "yes"){
-# User wants to look at specific genes he has requested in args5
-  user.gene.request <- args5
-  user.gene.list <- unlist(strsplit(user.gene.request,"-"))
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
-                           save.csv = TRUE);
-  mut.data.matrix <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
-          dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
-  all.gene.positions <- NULL
-  for(gene in user.gene.list) {
-    user.gene.list.items <- which(mut.data$Hugo_Symbol %in% user.gene.list)
-    mut.data.matrix[gene, "number_of_reports"] <- length(user.gene.list.items)
-    all.gene.positions <- c(all.gene.positions, user.gene.list.items)
+mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
+                         save.csv = TRUE);
+
+
+tumor.barcodes <- NULL;
+for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
+      tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
+                                       split="-", fixed=TRUE));
+      tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                            tmp.bar.split[3], sep = "")
+      tumor.barcodes <- rbind(tumor.barcodes, tmp.bar.join)
+    }
+
+
+query.barcodes <- NULL;
+blood.barcodes <- NULL;
+tissue.barcodes <- NULL;
+
+for( i in 1:length(mut.data$Matched_Norm_Sample_Barcode) ){
+      tmp.bar.split <- unlist(strsplit(mut.data$Matched_Norm_Sample_Barcode[i], 
+                                       split="-", fixed=TRUE));
+      tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                            tmp.bar.split[3], "-", tmp.bar.split[4], "-", tmp.bar.split[5], "-", tmp.bar.split[6], "-", tmp.bar.split[7], sep = "")
+      for(type in tmp.bar.split[4]) {
+        if ("10A" %in% type) {
+          tissue.barcodes <- rbind(tissue.barcodes, tmp.bar.join)
+        }
+        if ("11A" %in% type)  {
+          blood.barcodes <- rbind(blood.barcodes, tmp.bar.join)        
+        }
+    }
+}
+
+mut.data.blood <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% blood.barcodes),]
+mut.data.blood.names <- mut.data.blood$Hugo_Symbol
+
+mut.data.tissue <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% tissue.barcodes),]
+mut.data.tissue.names <- mut.data.tissue$Hugo_Symbol
+
+mut.data.intersected.names <- intersect(mut.data.blood$Hugo_Symbol, mut.data.tissue$Hugo_Symbol)
+
+
+if(args4 == "no") {
+  ################## BLOOD ONLY NORMALS DATA #####################################
+  all.genes.names <- unique(mut.data$Hugo_Symbol);
+  blood.mut <- matrix(data=0, nrow=length(all.genes.names), ncol=1, 
+            dimnames=list(rownames=all.genes.names, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+
+  all.positions <- NULL;
+  for(gene in all.genes.names) {
+    gene.position <- which(mut.data.blood.names == gene);
+    blood.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
   }
-  mut.data.matrix.ordered <- mut.data.matrix[ order(mut.data.matrix[, 
-                                      "number_of_reports"], decreasing=TRUE),];
-  user.choice.gene.names <- names( mut.data.matrix.ordered[ 1:args3 ] );
-  user.choice.mut.data <- mut.data[ all.gene.positions, ];
-  oncoPrint(
-      mat = user.choice.mut.data,
-      genes = user.choice.gene.names,
-      filename = paste("oncoprint.pdf", sep=""),
+
+  # Order the whole blood.mut matrix by the most reported gene highest to lowest.
+  blood.mut.ordered <- blood.mut[ order(blood.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.blood.mut.genes <- names( blood.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.blood.mut.data <- mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.blood.mut.data,
+      genes = top.blood.mut.genes,
+      filename = paste("oncoprint_blood.pdf", sep=""),
       annotation = clin.forvisual,
-      color=c("background"="pink","DEL"="purple",
-                    "INS"="yellow","SNP"="brown"),
+      color=c( "background"="pink","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
       rows.font.size= 8,
       width = 5,
       heatmap.legend.side = "right",
       dist.col = 0,
       label.font.size = 6
-      );
-}else{
-# User does not want to select genes, just look at top X number of genes.
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
-                           save.csv = TRUE);
-  genes.names <- unique(mut.data$Hugo_Symbol);
-  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    );
+
+
+  ################## TISSUE ONLY NORMALS DATA ####################################
+  all.genes.names <- unique(mut.data$Hugo_Symbol);
+  tissue.mut <- matrix(data=0, nrow=length(all.genes.names), ncol=1, 
+            dimnames=list(rownames=all.genes.names, colnames="number_of_reports"));
   # Identify position of each gene and populate the matrix
+
   all.positions <- NULL;
-  for(gene in genes.names) {
-    gene.position <- which(mut.data$Hugo_Symbol == gene);
-    all.mut[gene, "number_of_reports"] <- length(gene.position);
+  for(gene in all.genes.names) {
+    gene.position <- which(mut.data.tissue.names == gene);
+    tissue.mut[gene, "number_of_reports"] <- length(gene.position);
     all.positions <- c(all.positions, gene.position );
   }
-  # Order the whole all.mut matrix by the most reported gene highest to lowest.
-  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+
+  # Order the whole tissue.mut matrix by the most reported gene highest to lowest.
+  tissue.mut.ordered <- tissue.mut[ order(tissue.mut[, "number_of_reports"], 
                                     decreasing=TRUE),];
   # Isolate top 20 gene names.
-  top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+  top.tissue.mut.genes <- names( tissue.mut.ordered[ 1:args3 ] );
   # Subset mutation data
-  top.mut.data <- mut.data[ all.positions, ];
+  top.tissue.mut.data <- mut.data[ all.positions, ];
   # Oncoprint of top 20 genes.
-  oncoPrint(
-      mat = top.mut.data,
-      genes = top.mut.genes,
-      filename = paste("oncoprint.pdf", sep=""),
+  TCGAvisualize_oncoprint(
+      mut = top.tissue.mut.data,
+      genes = top.tissue.mut.genes,
+      filename = paste("oncoprint_tissue.pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c( "background"="pink","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+
+  ################## INTERSECTED BLOOD TISSUE NORMALS DATA #######################
+  all.genes.names <- unique(mut.data$Hugo_Symbol);
+  intersected.mut <- matrix(data=0, nrow=length(all.genes.names), ncol=1, 
+            dimnames=list(rownames=all.genes.names, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+
+  all.positions <- NULL;
+  for(gene in all.genes.names) {
+    gene.position <- which(mut.data.intersected.names == gene);
+    intersected.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
+  }
+
+  # Order the whole intersected.mut matrix by the most reported gene highest to lowest.
+  intersected.mut.ordered <- intersected.mut[ order(intersected.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.intersected.mut.genes <- names( intersected.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.intersected.mut.data <- mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.intersected.mut.data,
+      genes = top.intersected.mut.genes,
+      filename = paste("oncoprint_intersected.pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c( "background"="pink","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+} else {
+  user.gene.request <- args5
+  user.gene.list <- unlist(strsplit(user.gene.request,"-"))
+
+  ################## BLOOD ONLY NORMALS DATA #####################################
+  blood.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+            dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+
+  all.positions <- NULL;
+  for(gene in user.gene.list) {
+    gene.position <- which(mut.data.blood.names == gene);
+    blood.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
+  }
+
+  # Order the whole blood.mut matrix by the most reported gene highest to lowest.
+  blood.mut.ordered <- blood.mut[ order(blood.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.blood.mut.genes <- names( blood.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.blood.mut.data <- mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.blood.mut.data,
+      genes = top.blood.mut.genes,
+      filename = paste("oncoprint_blood.pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c( "background"="pink","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+
+
+  ################## TISSUE ONLY NORMALS DATA ####################################
+  tissue.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+            dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+
+  all.positions <- NULL;
+  for(gene in user.gene.list) {
+    gene.position <- which(mut.data.tissue.names == gene);
+    tissue.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
+  }
+
+  # Order the whole tissue.mut matrix by the most reported gene highest to lowest.
+  tissue.mut.ordered <- tissue.mut[ order(tissue.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.tissue.mut.genes <- names( tissue.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.tissue.mut.data <- mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.tissue.mut.data,
+      genes = top.tissue.mut.genes,
+      filename = paste("oncoprint_tissue.pdf", sep=""),
+      annotation = clin.forvisual,
+      color=c( "background"="pink","DEL"="purple",
+              "INS"="yellow","SNP"="brown"),
+      rows.font.size= 8,
+      width = 5,
+      heatmap.legend.side = "right",
+      dist.col = 0,
+      label.font.size = 6
+    );
+
+  ################## INTERSECTED BLOOD TISSUE NORMALS DATA #######################
+  intersected.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+            dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
+  # Identify position of each gene and populate the matrix
+
+  all.positions <- NULL;
+  for(gene in user.gene.list) {
+    gene.position <- which(mut.data.intersected.names == gene);
+    intersected.mut[gene, "number_of_reports"] <- length(gene.position);
+    all.positions <- c(all.positions, gene.position );
+  }
+
+  # Order the whole intersected.mut matrix by the most reported gene highest to lowest.
+  intersected.mut.ordered <- intersected.mut[ order(intersected.mut[, "number_of_reports"], 
+                                    decreasing=TRUE),];
+  # Isolate top 20 gene names.
+  top.intersected.mut.genes <- names( intersected.mut.ordered[ 1:args3 ] );
+  # Subset mutation data
+  top.intersected.mut.data <- mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+  TCGAvisualize_oncoprint(
+      mut = top.intersected.mut.data,
+      genes = top.intersected.mut.genes,
+      filename = paste("oncoprint_intersected.pdf", sep=""),
       annotation = clin.forvisual,
       color=c( "background"="pink","DEL"="purple",
               "INS"="yellow","SNP"="brown"),

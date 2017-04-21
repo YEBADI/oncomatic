@@ -151,7 +151,7 @@ for(subtype in subtype.data){
     # Identify position of each gene and populate the matrix
     all.positions <- NULL;
     for(gene in user.gene.list) {
-      gene.position <- which(subtype$Hugo_Symbol %in% user.gene.list);
+      gene.position <- which(subtype$Hugo_Symbol %in% gene);
       all.mut[gene, "number_of_reports"] <- length(gene.position);
       all.positions <- c(all.positions, gene.position );
     }

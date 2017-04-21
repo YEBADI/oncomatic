@@ -106,20 +106,20 @@ if(args4 == "yes"){
   user.gene.list <- unlist(strsplit(user.gene.request,"-"))
   mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
                            save.csv = TRUE);
-  mut.data.matrix <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
+  all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
           dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
-  all.gene.positions <- NULL
+  all.positions <- NULL
   for(gene in user.gene.list) {
-    user.gene.list.items <- which(mut.data$Hugo_Symbol %in% user.gene.list)
-    mut.data.matrix[gene, "number_of_reports"] <- length(user.gene.list.items)
-    all.gene.positions <- c(all.gene.positions, user.gene.list.items)
+    gene.position <- which(mut.data$Hugo_Symbol %in% gene)
+    all.mut[gene, "number_of_reports"] <- length(gene.position)
+    all.positions <- c(all.positions, gene.position)
   }
-  mut.data.matrix.ordered <- mut.data.matrix[ order(mut.data.matrix[, 
+  all.mut.ordered <- all.mut[ order(all.mut[, 
                                       "number_of_reports"], decreasing=TRUE),];
-  user.choice.gene.names <- names( mut.data.matrix.ordered[ 1:args3 ] );
-  user.choice.mut.data <- mut.data[ all.gene.positions, ];
-  oncoPrint(
-      mat = user.choice.mut.data,
+  user.choice.gene.names <- names( all.mut.ordered[ 1:args3 ] );
+  user.choice.mut.data <- mut.data[ all.positions, ];
+  TCGAvisualize_oncoprint(
+      mut = user.choice.mut.data,
       genes = user.choice.gene.names,
       filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
@@ -153,8 +153,8 @@ if(args4 == "yes"){
   # Subset mutation data
   top.mut.data <- mut.data[ all.positions, ];
   # Oncoprint of top 20 genes.
-  oncoPrint(
-      mat = top.mut.data,
+  TCGAvisualize_oncoprint(
+      mut = top.mut.data,
       genes = top.mut.genes,
       filename = paste("oncoprint.pdf", sep=""),
       annotation = clin.forvisual,

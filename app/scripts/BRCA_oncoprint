@@ -103,7 +103,7 @@ if(args1 == "no"){
             dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
     all.gene.positions <- NULL
     for(gene in user.gene.list) {
-      user.gene.list.items <- which(mut.data$Hugo_Symbol %in% user.gene.list)
+      user.gene.list.items <- which(mut.data$Hugo_Symbol %in% gene)
       mut.data.matrix[gene, "number_of_reports"] <- length(user.gene.list.items)
       all.gene.positions <- c(all.gene.positions, user.gene.list.items)
     }
@@ -280,7 +280,7 @@ if(args1 == "no"){
       # Identify position of each gene and populate the matrix
       all.positions <- NULL;
       for(gene in user.gene.list) {
-        gene.position <- which(subtype$Hugo_Symbol %in% user.gene.list);
+        gene.position <- which(subtype$Hugo_Symbol %in% gene);
         all.mut[gene, "number_of_reports"] <- length(gene.position);
         all.positions <- c(all.positions, gene.position );
       }
@@ -450,14 +450,3 @@ if(args1 == "no"){
 }
 
 dev.off()
-
-
-
-
-
-
-
-
-
-
-
