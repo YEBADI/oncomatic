@@ -16,26 +16,27 @@ def about_page():
 @app.route('/result', methods=['POST'])
 def results_page():
     print(request.form)
+    splitnormals = request.form['split_normals']
     tumortype = request.form['tumor_type']
     pipeline = request.form['pipeline']
     genenumber = request.form['genenumber']
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-    if tumortype == 'BRCA,subtyping':
-      subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
-                   'yes', pipeline, genenumber, pickgenes, genelist])
-      
-      return render_template('results_subtyped.html', 
+    if splitnormals == 'yes':
+      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint_blood_tissue_split', 
+                   tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      return render_template('results_normals_split.html', 
                          pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
 
-    elif tumortype == 'BRCA,normalsplit':
-      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint_blood_tissue_split', 
-                   'BRCA', pipeline, genenumber, pickgenes, genelist])
-
-      return render_template('results_normals_split.html', 
+    elif tumortype == 'BRCA,subtyping':
+      subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
+                   'yes', pipeline, genenumber, pickgenes, genelist])
+      
+      return render_template('results_subtyped.html', 
                          pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
