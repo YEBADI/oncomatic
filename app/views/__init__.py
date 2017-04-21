@@ -23,16 +23,7 @@ def results_page():
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-    if splitnormals == 'yes':
-      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint_blood_tissue_split', 
-                   tumortype, pipeline, genenumber, pickgenes, genelist])
-
-      return render_template('results_normals_split.html', 
-                         pickgenes = pickgenes, genelist = genelist, 
-                         genenumber = genenumber, tumortype = tumortype, 
-                         pipeline = pipeline)
-
-    elif tumortype == 'BRCA,subtyping':
+    if tumortype == 'BRCA,subtyping':
       subprocess.call(['Rscript', 'app/scripts/BRCA_oncoprint', 
                    'yes', pipeline, genenumber, pickgenes, genelist])
       
@@ -56,6 +47,15 @@ def results_page():
                    'yes', pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results_smokers.html', 
+                         pickgenes = pickgenes, genelist = genelist, 
+                         genenumber = genenumber, tumortype = tumortype, 
+                         pipeline = pipeline)
+
+    elif splitnormals == 'yes':
+      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint_blood_tissue_split', 
+                   tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      return render_template('results_normals_split.html', 
                          pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
