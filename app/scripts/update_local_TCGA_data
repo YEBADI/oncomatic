@@ -1,0 +1,37 @@
+TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment");
+new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
+if(length(new.libs)) {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(new.libs)
+}
+
+# loads in the libraries to R
+library("TCGAbiolinks")
+library("SummarizedExperiment")
+
+
+
+
+####### clin data
+
+project.IDs <- c("TCGA-BRCA", "TCGA-PAAD", "TCGA-LUAD", "TCGA-LUSC")
+
+for(project.ID in project.IDs) {
+    clin.downloaded <- GDCquery_clinic( ProjectID, "clinical" );
+    filename <- paste("clin_data_",project.ID,".csv", sep="")
+    write.table(clin.downloaded, file= filename, sep=",", na="NA")
+}
+
+
+##### mut data
+
+tumor.types <- c("BRCA", "PAAD", "LUAD", "LUSC")
+pipeline.options <- c("mutect2", "varscan2", "somaticsniper", "muse")
+
+for(tumor.type in tumor.types) {
+  for(pipeline in pipeline.options) {
+    downloaded <- GDCquery_Maf(tumor = tumor.type, pipelines = pipeline, save.csv=FALSE);
+    filename <- paste("mut_data_",tumor.type,"_",pipeline,".csv", sep="")
+    write.table(downloaded, file= filename, sep=",", na="NA")
+  }
+}
