@@ -78,7 +78,10 @@ setwd(ProjectDir);
 #    Note: can develop program and let user pick clin.data terms.
 #===============================================================================
 # Biolinks command to download the general clinical data for all patient samples
-clin.data <- GDCquery_clinic( ProjectID, "clinical" );
+
+clin.data.file.name <- paste("clin_data_",ProjectID,".csv", sep="")
+clin.data <- read.csv("app/static/data/", clin.data.file.name, sep="")  
+
 # Check dimensions
 dim(clin.data)
 
@@ -104,8 +107,9 @@ if(args4 == "yes"){
 # User wants to look at specific genes he has requested in args5
   user.gene.request <- args5
   user.gene.list <- unlist(strsplit(user.gene.request,"-"))
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
-                           save.csv = TRUE);
+  mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="")  
+
   all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
           dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
   all.positions <- NULL
@@ -133,8 +137,8 @@ if(args4 == "yes"){
       );
 }else{
 # User does not want to select genes, just look at top X number of genes.
-  mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, 
-                           save.csv = TRUE);
+  mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="")  
   genes.names <- unique(mut.data$Hugo_Symbol);
   all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
             dimnames=list(rownames=genes.names, colnames="number_of_reports"));
