@@ -10,7 +10,7 @@
 
 ################# subsetting clinical data #####################################
 
-smoking_LUSC <- read.csv("app/scripts/smoking_LUSC.csv")
+smoking_LUSC <- read.csv("app/static/data/smoking_LUSC.csv")
 # remove incomplete cases (cases with NA)
 smoke.complete.cases <- smoking_LUSC[complete.cases(smoking_LUSC["subtype_Smoking.Status"]),]
 #subset according to smoking status
