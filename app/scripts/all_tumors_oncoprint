@@ -127,7 +127,9 @@ if(args4 == "yes"){
       dist.col = 0,
       label.font.size = 6
       );
-  gzip(data.file.dir)
+  mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
+  gzip(data.file.dir.new)
 }else{
 # User does not want to select genes, just look at top X number of genes.
   mut.data.file.name.gz <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
@@ -167,7 +169,9 @@ if(args4 == "yes"){
       dist.col = 0,
       label.font.size = 6
     );
-  gzip(data.file.dir)
+  mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
+  gzip(data.file.dir.new)
 }
 
 dev.off();
