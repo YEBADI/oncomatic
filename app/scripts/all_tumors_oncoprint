@@ -59,20 +59,6 @@ library("SummarizedExperiment")
 library("R.utils")
 
 #############################  MAIN  ###########################################
-#===============================================================================
-#    Preparation of environment
-#===============================================================================
-# Define variables.
-ProjectDir <- paste("app/static/results");
-
-# create mutations directory and go into it
-if (file.exists(ProjectDir)){
-  cat( paste("\nFolder with project [", ProjectDir, "] already exists. 
-         The requested data will be stored in [", ProjectDir, "]\n", sep=" ") );
-} else {
-  dir.create(ProjectDir);
-}
-setwd(ProjectDir);
 
 #===============================================================================
 #    Data query and download clincal data
@@ -111,8 +97,10 @@ if(args4 == "yes"){
   mut.data.file.name.gz <- paste("mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
   mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
   
-  gunzip("app/static/data/", mut.data.file.name.gz, sep="")
-  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="")  
+  data.file.dir.gz <- paste("app/static/data/", mut.data.file.name.gz, sep="")
+  gunzip(data.file.dir.gz)
+  data.file.dir <- paste("app/static/data/", mut.data.file.name, sep="")
+  mut.data <- read.csv(data.file.dir)  
 
   all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
           dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
@@ -129,7 +117,7 @@ if(args4 == "yes"){
   TCGAvisualize_oncoprint(
       mut = user.choice.mut.data,
       genes = user.choice.gene.names,
-      filename = paste("oncoprint.pdf", sep=""),
+      filename = paste("app/static/results/oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
       color=c("background"="#CCCCCC","DEL"="purple",
                     "INS"="yellow","SNP"="brown"),
@@ -141,11 +129,11 @@ if(args4 == "yes"){
       );
 }else{
 # User does not want to select genes, just look at top X number of genes.
-  mut.data.file.name.gz <- paste("mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
-  mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  mut.data.file.name.gz <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
+  mut.data.file.name <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv", sep="")
   
-  gunzip("app/static/data/", mut.data.file.name.gz, sep="")
-  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="") 
+  gunzip(mut.data.file.name.gz)
+  mut.data <- read.csv(mut.data.file.name) 
   
   genes.names <- unique(mut.data$Hugo_Symbol);
   all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
@@ -168,7 +156,7 @@ if(args4 == "yes"){
   TCGAvisualize_oncoprint(
       mut = top.mut.data,
       genes = top.mut.genes,
-      filename = paste("oncoprint.pdf", sep=""),
+      filename = paste("app/static/results/oncoprint.pdf", sep=""),
       annotation = clin.forvisual,
       color=c( "background"="#CCCCCC","DEL"="purple",
               "INS"="yellow","SNP"="brown"),
