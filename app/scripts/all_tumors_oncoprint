@@ -86,21 +86,19 @@ dim(clin.forvisual) #1097 5
 #    Note: As mentioned before, should be softcoded to let user decide cancer
 #    type as well as pick pipeline option (passed in as parameter).
 #===============================================================================
-# Download mutations data & visualise clinical & mutations data in an oncoprint
+# Download mutations data
+
+mut.data.file.name.gz <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
+mut.data.file.name <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv", sep="")
+
+gunzip(mut.data.file.name.gz)
+mut.data <- read.csv(mut.data.file.name) 
+
 # Oncoprint of user requested genes
-
-
 if(args4 == "yes"){
 # User wants to look at specific genes he has requested in args5
   user.gene.request <- args5
   user.gene.list <- unlist(strsplit(user.gene.request,"-"))
-  mut.data.file.name.gz <- paste("mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
-  mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
-  
-  data.file.dir.gz <- paste("app/static/data/", mut.data.file.name.gz, sep="")
-  gunzip(data.file.dir.gz)
-  data.file.dir <- paste("app/static/data/", mut.data.file.name, sep="")
-  mut.data <- read.csv(data.file.dir)  
 
   all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
           dimnames=list(rownames=user.gene.list, colnames="number_of_reports"));
@@ -127,17 +125,8 @@ if(args4 == "yes"){
       dist.col = 0,
       label.font.size = 6
       );
-  mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
-  data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
-  gzip(data.file.dir.new)
 }else{
 # User does not want to select genes, just look at top X number of genes.
-  mut.data.file.name.gz <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
-  mut.data.file.name <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv", sep="")
-  
-  gunzip(mut.data.file.name.gz)
-  mut.data <- read.csv(mut.data.file.name) 
-  
   genes.names <- unique(mut.data$Hugo_Symbol);
   all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
             dimnames=list(rownames=genes.names, colnames="number_of_reports"));
@@ -169,9 +158,10 @@ if(args4 == "yes"){
       dist.col = 0,
       label.font.size = 6
     );
-  mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
-  data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
-  gzip(data.file.dir.new)
 }
+
+mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
+gzip(data.file.dir.new)
 
 dev.off();

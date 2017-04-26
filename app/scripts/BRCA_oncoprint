@@ -48,7 +48,8 @@ if(args1 == "no"){
   # loads in the libraries to R
   library("TCGAbiolinks")
   library("SummarizedExperiment")
-
+  library("R.utils")
+  
   #############################  MAIN  ###########################################
   #===============================================================================
   #    Preparation of environment

@@ -58,22 +58,8 @@ if(length(new.libs)) {
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
+library("R.utils")
 #############################  MAIN  ###########################################
-#===============================================================================
-#    Preparation of environment
-#===============================================================================
-# Define variables.
-ProjectDir <- paste("app/static/results");
-
-# create mutations directory and go into it
-if (file.exists(ProjectDir)){
-  cat( paste("\nFolder with project [", ProjectDir, "] already exists. 
-         The requested data will be stored in [", ProjectDir, "]\n", sep=" ") );
-} else {
-  dir.create(ProjectDir);
-}
-setwd(ProjectDir);
-
 #===============================================================================
 #    Data query and download clincal data
 #    Note: tumor can be softcoded as param input from command line.
@@ -91,8 +77,6 @@ clin.forvisual <- clin.data[ , clin.covariates.for.oncodata]
 
 # Check dimensions of slimmed data matrix
 dim(clin.forvisual) #1097 5
-
-write.table(clin.forvisual, file="clin_data.csv", sep=",", na="NA", col.names = TRUE, row.names = FALSE)
 
 ##################### BANDING TUMOR STAGES #####################################
 ####### creating type i clin dataset for seperate type iv oncoprint ###########
@@ -154,10 +138,13 @@ clin.data.type.iv.banded[clin.data.type.iv.banded == "stage ivb"] <- "stage iv"
 clin.data.type.iv.banded[clin.data.type.iv.banded == "stage ivc"] <- "stage iv"
 
 joined.clin.data.banded <- rbind(clin.data.type.i.banded, clin.data.type.ii.banded, clin.data.type.iii.banded, clin.data.type.iv.banded, by= NULL)
-write.table(joined.clin.data.banded, file="lol.csv", sep=",", na="NA", col.names = TRUE, row.names = FALSE)
 
 ###### OBTAINING MUT DATA AND MATCHING THE BARCODES TO CLIN DATA
-mut.data <- GDCquery_Maf(tumor = tumor.type, pipelines = args2, save.csv = TRUE);
+mut.data.file.name.gz <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
+mut.data.file.name <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".csv", sep="")
+
+gunzip(mut.data.file.name.gz)
+mut.data <- read.csv(mut.data.file.name) 
 
 # split the downloaded mut data according to each smoking subtype
 mut.data.barcodes <- NULL
@@ -171,93 +158,190 @@ mut.data.barcodes <- NULL
     mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
   }
 
-
+if(args4 == "yes"){
 ###### ONCOPRINT FOR ALL, BANDED TUMOR STAGES ##################################
-clin.banded.mut.data <- mut.data[which(mut.data.barcodes %in% joined.clin.data.banded$bcr_patient_barcode),]
+  user.gene.request <- args5
+  genes.names <- unlist(strsplit(user.gene.request,"-"))
 
+  clin.banded.mut.data <- mut.data[which(mut.data.barcodes %in% joined.clin.data.banded$bcr_patient_barcode),]
 
-  genes.names <- unique(clin.banded.mut.data$Hugo_Symbol);
-  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-  # Identify position of each gene and populate the matrix
-  all.positions <- NULL;
-  for(gene in genes.names) {
-    gene.position <- which(clin.banded.mut.data$Hugo_Symbol == gene);
-    all.mut[gene, "number_of_reports"] <- length(gene.position);
-    all.positions <- c(all.positions, gene.position );
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(clin.banded.mut.data$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+  # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+    # Subset mutation data
+    top.mut.data <- clin.banded.mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+    TCGAvisualize_oncoprint(
+        mut = top.mut.data,
+        genes = top.mut.genes,
+        filename = paste("oncoprint_banded_", 
+                         ".pdf", sep=""),
+        annotation = joined.clin.data.banded,
+        color=c("background"="#CCCCCC","DEL"="purple",
+                "INS"="yellow","SNP"="brown"),
+        rows.font.size= 8,
+        width = 5,
+        heatmap.legend.side = "right",
+        dist.col = 0,
+        label.font.size = 6
+      );
   }
-# Order the whole all.mut matrix by the most reported gene highest to lowest.
-  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                    decreasing=TRUE),];
-  # Isolate top 20 gene names.
-  top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-  # Subset mutation data
-  top.mut.data <- clin.banded.mut.data[ all.positions, ];
-# Oncoprint of top 20 genes.
-  TCGAvisualize_oncoprint(
-      mut = top.mut.data,
-      genes = top.mut.genes,
-      filename = paste("oncoprint_banded_", 
-                       ".pdf", sep=""),
-      annotation = joined.clin.data.banded,
-      color=c("background"="#CCCCCC","DEL"="purple",
-              "INS"="yellow","SNP"="brown"),
-      rows.font.size= 8,
-      width = 5,
-      heatmap.legend.side = "right",
-      dist.col = 0,
-      label.font.size = 6
-    );
+
+  ##################### PRODUCING SEPERATE ONCOPRINTS FOR CANCER STAGES ##########
+  # now subset mutations data for each tumor stage group
+
+  clin.i.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.i$bcr_patient_barcode),]
+  clin.ii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.ii$bcr_patient_barcode),]
+  clin.iii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iii$bcr_patient_barcode),]
+  clin.iv.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iv$bcr_patient_barcode),]
+
+    subtype.data <- list(stage_i=clin.i.mut.data, stage_ii=clin.ii.mut.data, 
+               stage_iii=clin.iii.mut.data, stage_iv=clin.iv.mut.data)
+
+    # Assign titles to use in filename
+    comment(subtype.data$stage_i) <- "stage_i"
+    comment(subtype.data$stage_ii) <- "stage_ii"
+    comment(subtype.data$stage_iii) <- "stage_iii"
+    comment(subtype.data$stage_iv) <- "stage_iv"
+
+  for(subtype in subtype.data){
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(subtype$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+  # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+    # Subset mutation data
+    top.mut.data <- subtype[ all.positions, ];
+  # Oncoprint of top 20 genes.
+    TCGAvisualize_oncoprint(
+        mut = top.mut.data,
+        genes = top.mut.genes,
+        filename = paste("oncoprint_", comment(subtype), 
+                         ".pdf", sep=""),
+        annotation = clin.forvisual,
+        color=c("background"="#CCCCCC","DEL"="purple",
+                "INS"="yellow","SNP"="brown"),
+        rows.font.size= 8,
+        width = 5,
+        heatmap.legend.side = "right",
+        dist.col = 0,
+        label.font.size = 6
+      );
+  }
+} else {
+###### ONCOPRINT FOR ALL, BANDED TUMOR STAGES ##################################
+  clin.banded.mut.data <- mut.data[which(mut.data.barcodes %in% joined.clin.data.banded$bcr_patient_barcode),]
+
+    genes.names <- unique(clin.banded.mut.data$Hugo_Symbol);
+    
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(clin.banded.mut.data$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+  # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+    # Subset mutation data
+    top.mut.data <- clin.banded.mut.data[ all.positions, ];
+  # Oncoprint of top 20 genes.
+    TCGAvisualize_oncoprint(
+        mut = top.mut.data,
+        genes = top.mut.genes,
+        filename = paste("oncoprint_banded_", 
+                         ".pdf", sep=""),
+        annotation = joined.clin.data.banded,
+        color=c("background"="#CCCCCC","DEL"="purple",
+                "INS"="yellow","SNP"="brown"),
+        rows.font.size= 8,
+        width = 5,
+        heatmap.legend.side = "right",
+        dist.col = 0,
+        label.font.size = 6
+      );
+  }
+
+  ##################### PRODUCING SEPERATE ONCOPRINTS FOR CANCER STAGES ##########
+  # now subset mutations data for each tumor stage group
+
+  clin.i.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.i$bcr_patient_barcode),]
+  clin.ii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.ii$bcr_patient_barcode),]
+  clin.iii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iii$bcr_patient_barcode),]
+  clin.iv.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iv$bcr_patient_barcode),]
+
+    subtype.data <- list(stage_i=clin.i.mut.data, stage_ii=clin.ii.mut.data, 
+               stage_iii=clin.iii.mut.data, stage_iv=clin.iv.mut.data)
+
+    # Assign titles to use in filename
+    comment(subtype.data$stage_i) <- "stage_i"
+    comment(subtype.data$stage_ii) <- "stage_ii"
+    comment(subtype.data$stage_iii) <- "stage_iii"
+    comment(subtype.data$stage_iv) <- "stage_iv"
+
+  for(subtype in subtype.data){
+    genes.names <- unique(subtype$Hugo_Symbol);
+    all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+            dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+    # Identify position of each gene and populate the matrix
+    all.positions <- NULL;
+    for(gene in genes.names) {
+      gene.position <- which(subtype$Hugo_Symbol == gene);
+      all.mut[gene, "number_of_reports"] <- length(gene.position);
+      all.positions <- c(all.positions, gene.position );
+    }
+  # Order the whole all.mut matrix by the most reported gene highest to lowest.
+    all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                      decreasing=TRUE),];
+    # Isolate top 20 gene names.
+    top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+    # Subset mutation data
+    top.mut.data <- subtype[ all.positions, ];
+  # Oncoprint of top 20 genes.
+    TCGAvisualize_oncoprint(
+        mut = top.mut.data,
+        genes = top.mut.genes,
+        filename = paste("oncoprint_", comment(subtype), 
+                         ".pdf", sep=""),
+        annotation = clin.forvisual,
+        color=c("background"="#CCCCCC","DEL"="purple",
+                "INS"="yellow","SNP"="brown"),
+        rows.font.size= 8,
+        width = 5,
+        heatmap.legend.side = "right",
+        dist.col = 0,
+        label.font.size = 6
+      );
+  }
 }
 
-##################### PRODUCING SEPERATE ONCOPRINTS FOR CANCER STAGES ##########
-# now subset mutations data for each tumor stage group
+mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
+gzip(data.file.dir.new)
 
-clin.i.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.i$bcr_patient_barcode),]
-clin.ii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.ii$bcr_patient_barcode),]
-clin.iii.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iii$bcr_patient_barcode),]
-clin.iv.mut.data <- mut.data[which(mut.data.barcodes %in% clin.data.type.iv$bcr_patient_barcode),]
-
-  subtype.data <- list(stage_i=clin.i.mut.data, stage_ii=clin.ii.mut.data, 
-             stage_iii=clin.iii.mut.data, stage_iv=clin.iv.mut.data)
-
-  # Assign titles to use in filename
-  comment(subtype.data$stage_i) <- "stage_i"
-  comment(subtype.data$stage_ii) <- "stage_ii"
-  comment(subtype.data$stage_iii) <- "stage_iii"
-  comment(subtype.data$stage_iv) <- "stage_iv"
-
-for(subtype in subtype.data){
-  genes.names <- unique(subtype$Hugo_Symbol);
-  all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-          dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-  # Identify position of each gene and populate the matrix
-  all.positions <- NULL;
-  for(gene in genes.names) {
-    gene.position <- which(subtype$Hugo_Symbol == gene);
-    all.mut[gene, "number_of_reports"] <- length(gene.position);
-    all.positions <- c(all.positions, gene.position );
-  }
-# Order the whole all.mut matrix by the most reported gene highest to lowest.
-  all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                    decreasing=TRUE),];
-  # Isolate top 20 gene names.
-  top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-  # Subset mutation data
-  top.mut.data <- subtype[ all.positions, ];
-# Oncoprint of top 20 genes.
-  TCGAvisualize_oncoprint(
-      mut = top.mut.data,
-      genes = top.mut.genes,
-      filename = paste("oncoprint_", comment(subtype), 
-                       ".pdf", sep=""),
-      annotation = clin.forvisual,
-      color=c("background"="#CCCCCC","DEL"="purple",
-              "INS"="yellow","SNP"="brown"),
-      rows.font.size= 8,
-      width = 5,
-      heatmap.legend.side = "right",
-      dist.col = 0,
-      label.font.size = 6
-    );
-}
+dev.off();
