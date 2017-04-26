@@ -1,7 +1,7 @@
 # Oncomatic: the TCGA query tool
 
 Developed as part of MSc Bioinformatics Project at QMUL-BCI, 2017.
-Supervisor(s): Dr Claude Chelala, Dr Emanuela Gadaleta, Dr Jacek Marzec, Bioinformatics Unit, Barts Cancer Institute
+Supervisor(s): Dr Claude Chelala, Dr Emanuela Gadaleta, Bioinformatics Unit, Barts Cancer Institute
 
 ## Project Summary:
 
