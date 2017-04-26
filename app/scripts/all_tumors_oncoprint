@@ -56,6 +56,8 @@ if(length(new.libs)) {
 # loads in the libraries to R
 library("TCGAbiolinks")
 library("SummarizedExperiment")
+library("R.utils")
+
 #############################  MAIN  ###########################################
 #===============================================================================
 #    Preparation of environment
@@ -79,8 +81,7 @@ setwd(ProjectDir);
 #===============================================================================
 # Biolinks command to download the general clinical data for all patient samples
 
-clin.data.file.name <- paste("clin_data_",ProjectID,".csv", sep="")
-clin.data <- read.csv("app/static/data/", clin.data.file.name, sep="")  
+clin.data <- GDCquery_clinic(ProjectID, "clinical" );  
 
 # Check dimensions
 dim(clin.data)
@@ -107,7 +108,10 @@ if(args4 == "yes"){
 # User wants to look at specific genes he has requested in args5
   user.gene.request <- args5
   user.gene.list <- unlist(strsplit(user.gene.request,"-"))
+  mut.data.file.name.gz <- paste("mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
   mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+  
+  gunzip("app/static/data/", mut.data.file.name.gz, sep="")
   mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="")  
 
   all.mut <- matrix(data=0, nrow=length(user.gene.list), ncol=1, 
@@ -137,8 +141,12 @@ if(args4 == "yes"){
       );
 }else{
 # User does not want to select genes, just look at top X number of genes.
+  mut.data.file.name.gz <- paste("mut_data_",tumor.type, "_",args2,".csv.gz", sep="")
   mut.data.file.name <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
-  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="")  
+  
+  gunzip("app/static/data/", mut.data.file.name.gz, sep="")
+  mut.data <- read.csv("app/static/data/", mut.data.file.name, sep="") 
+  
   genes.names <- unique(mut.data$Hugo_Symbol);
   all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
             dimnames=list(rownames=genes.names, colnames="number_of_reports"));
