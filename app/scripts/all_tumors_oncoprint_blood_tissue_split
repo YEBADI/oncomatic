@@ -326,7 +326,7 @@ if(args4 == "no") {
                                     decreasing=TRUE),];
   # Isolate top 20 gene names.
   top.intersected.mut.genes <- names( intersected.mut.ordered[ 1:args3 ] );
-  # Subset mutation data
+  # Subset mutation data.
   top.intersected.mut.data <- mut.data[ all.positions, ];
   # Oncoprint of top 20 genes.
   TCGAvisualize_oncoprint(
