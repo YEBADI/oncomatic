@@ -78,8 +78,10 @@ for( i in 1:length(mut.data$Tumor_Sample_Barcode)) {
       tumor.barcodes <- rbind(tumor.barcodes, tmp.bar.join)
 }
 
+unique.patient.all <- unique(tumor.barcodes)
+nrow(unique.patient.all) # BRCA: 1044 patients  # PAAD: 181 patients
 
-query.barcodes <- NULL;
+
 blood.barcodes <- NULL;
 tissue.barcodes <- NULL;
 
@@ -91,10 +93,10 @@ for( i in 1:length(mut.data$Matched_Norm_Sample_Barcode) ){
                             tmp.bar.split[3], "-", tmp.bar.split[4], "-", tmp.bar.split[5], "-", tmp.bar.split[6], "-", tmp.bar.split[7], sep = "")
       for(type in tmp.bar.split[4]) {
         if ("10A" == type | "10B" == type | "10C" == type) {
-          tissue.barcodes <- rbind(tissue.barcodes, tmp.bar.join)
+          blood.barcodes <- rbind(blood.barcodes, tmp.bar.join)
         }
         if ("11A" == type | "11B" == type | "11C" == type)  {
-          blood.barcodes <- rbind(blood.barcodes, tmp.bar.join)        
+          tissue.barcodes <- rbind(tissue.barcodes, tmp.bar.join)        
         }
     }
 }
@@ -103,20 +105,55 @@ write.table(blood.barcodes, "bloodcodes.csv", sep=",")
 
 
 
+
 mut.data.blood <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% blood.barcodes),]
 mut.data.blood.names <- mut.data.blood$Hugo_Symbol
 
+
+#new.blood.barcodes <- NULL
+#mut.data.blood$Matched_Norm_Sample_Barcode <- as.character(mut.data.blood$Matched_Norm_Sample_Barcode)
+#for( i in 1:length(mut.data.blood$Matched_Norm_Sample_Barcode) ){
+#      tmp.bar.split <- unlist(strsplit(mut.data.blood$Matched_Norm_Sample_Barcode[i], 
+#                                       split="-", fixed=TRUE));
+#      tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+#                            tmp.bar.split[3], sep = "")   
+#      new.blood.barcodes <- rbind(new.blood.barcodes, tmp.bar.join)   
+#}
+ 
+#unique.patient.blood <- unique(new.blood.barcodes)
+
+#nrow(unique.patient.blood) # BRCA: 957 patients have blood normal samples # PAAD: 150 patients have blood normal samples
+
+
+
+
 mut.data.tissue <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% tissue.barcodes),]
 mut.data.tissue.names <- mut.data.tissue$Hugo_Symbol
+
+#new.tissue.barcodes <- NULL
+#mut.data.tissue$Matched_Norm_Sample_Barcode <- as.character(mut.data.tissue$Matched_Norm_Sample_Barcode)
+#for( i in 1:length(mut.data.tissue$Matched_Norm_Sample_Barcode) ){
+#      tmp.bar.split <- unlist(strsplit(mut.data.tissue$Matched_Norm_Sample_Barcode[i], 
+#                                       split="-", fixed=TRUE));
+#      tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+#                            tmp.bar.split[3], sep = "")   
+#      new.tissue.barcodes <- rbind(new.tissue.barcodes, tmp.bar.join)   
+#}
+ 
+#unique.patient.tissue <- unique(new.tissue.barcodes)
+
+#nrow(unique.patient.tissue) # BRCA: 86 patients have tissue normal samples # PAAD: 31 patients have tissue normal samples
+
+
 
 mut.data.intersected.names <- intersect(mut.data.blood$Hugo_Symbol, mut.data.tissue$Hugo_Symbol)
 write.table(mut.data.intersected.names, "intersected_blood_tissue_gene_names.csv", sep=",")
 
 
-mut.data.types <- c(mut.data.tissue, mut.data.blood)
+mut.data.types <- list(mut.data.tissue=mut.data.tissue, mut.data.blood=mut.data.blood)
 
-comment(mut.data.tissue) <- "tissue"
-comment(mut.data.blood) <- "blood"
+comment(mut.data.types$mut.data.tissue) <- "tissue"
+comment(mut.data.types$mut.data.blood) <- "blood"
 
 
 #############################  MAIN  ###########################################
@@ -222,107 +259,112 @@ if(args1 == "BRCA") {
                                   == "Basal-like"),1]
   norml <- brca.subtype.data[which(brca.subtype.data$PAM50.mRNA 
                                    == "Normal-like"),1]
-  
+
+
   for(mut.data in mut.data.types) {
-    mut.data <- get(mut.data)
-    mut.data.barcodes <- NULL;
-    for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
-      tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
-                                       split="-", fixed=TRUE));
-      tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
-                            tmp.bar.split[3], sep = "")
-      cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
-      mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
-    }
+      mut.data <- get("mut.data")
+      mut.data.barcodes <- NULL;
+      for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
+        tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
+                                         split="-", fixed=TRUE));
+        tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
+                              tmp.bar.split[3], sep = "")
+        cat("\n", tmp.bar.split, "\t", tmp.bar.join); # to see it's producing barcode
+        mut.data.barcodes <- rbind(mut.data.barcodes, tmp.bar.join)
+      }
 
-    lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
-    lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
-    her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
-    basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
-    norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
+      lumA.mut.data <- mut.data[which(mut.data.barcodes %in% lumA),]
+      lumB.mut.data <- mut.data[which(mut.data.barcodes %in% lumB),]
+      her2.mut.data <- mut.data[which(mut.data.barcodes %in% her2),]
+      basl.mut.data <- mut.data[which(mut.data.barcodes %in% basl),]
+      norml.mut.data <- mut.data[which(mut.data.barcodes %in% norml),]
 
-    subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, 
-               her2=her2.mut.data, normlike=norml.mut.data, basallike=basl.mut.data)
+      subtype.data <- list(luminalA=lumA.mut.data, luminalB=lumB.mut.data, 
+                 her2=her2.mut.data, normlike=norml.mut.data, basallike=basl.mut.data)
 
-    # Assign titles to use in filename
-    comment(subtype.data$luminalA) <- "luminalA"
-    comment(subtype.data$luminalB) <- "luminalB"
-    comment(subtype.data$her2) <- "her2"
-    comment(subtype.data$normlike) <- "normlike"
-    comment(subtype.data$basallike) <- "basallike"
-    
-    if(args4 == "no") {
-      for(subtype in subtype.data){
-        genes.names <- unique(subtype$Hugo_Symbol);
-        all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-                dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-        # Identify position of each gene and populate the matrix
-        all.positions <- NULL;
-        for(gene in genes.names) {
-          gene.position <- which(subtype$Hugo_Symbol == gene);
-          all.mut[gene, "number_of_reports"] <- length(gene.position);
-          all.positions <- c(all.positions, gene.position );
+      # Assign titles to use in filename
+      comment(subtype.data$luminalA) <- "luminalA"
+      comment(subtype.data$luminalB) <- "luminalB"
+      comment(subtype.data$her2) <- "her2"
+      comment(subtype.data$normlike) <- "normlike"
+      comment(subtype.data$basallike) <- "basallike"
+      
+      if(args4 == "no") {
+          for(subtype in subtype.data){
+            tryCatch ({
+              genes.names <- unique(subtype$Hugo_Symbol);
+              all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+                      dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+              # Identify position of each gene and populate the matrix
+              all.positions <- NULL;
+              for(gene in genes.names) {
+                gene.position <- which(subtype$Hugo_Symbol == gene);
+                all.mut[gene, "number_of_reports"] <- length(gene.position);
+                all.positions <- c(all.positions, gene.position );
+              }
+            # Order the whole all.mut matrix by the most reported gene highest to lowest.
+              all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                                decreasing=TRUE),];
+              # Isolate top 20 gene names.
+              top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+              # Subset mutation data
+              top.mut.data <- subtype[ all.positions, ];
+            # Oncoprint of top 20 genes.
+              TCGAvisualize_oncoprint(
+                  mut = top.mut.data,
+                  genes = top.mut.genes,
+                  filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
+                                   ".pdf", sep=""),
+                  annotation = clin.forvisual,
+                  color=c("background"="#CCCCCC","DEL"="purple",
+                          "INS"="yellow","SNP"="brown"),
+                  rows.font.size= 8,
+                  width = 5,
+                  heatmap.legend.side = "right",
+                  dist.col = 0,
+                  label.font.size = 6
+                ); 
+            }, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
         }
-      # Order the whole all.mut matrix by the most reported gene highest to lowest.
-        all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                          decreasing=TRUE),];
-        # Isolate top 20 gene names.
-        top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-        # Subset mutation data
-        top.mut.data <- subtype[ all.positions, ];
-      # Oncoprint of top 20 genes.
-        TCGAvisualize_oncoprint(
-            mut = top.mut.data,
-            genes = top.mut.genes,
-            filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
-                             ".pdf", sep=""),
-            annotation = clin.forvisual,
-            color=c("background"="#CCCCCC","DEL"="purple",
-                    "INS"="yellow","SNP"="brown"),
-            rows.font.size= 8,
-            width = 5,
-            heatmap.legend.side = "right",
-            dist.col = 0,
-            label.font.size = 6
-          );
-      }
-    } else {
-      user.gene.request <- args5
-      genes.names <- unlist(strsplit(user.gene.request,"-"))
-      for(subtype in subtype.data){
-      all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
-              dimnames=list(rownames=genes.names, colnames="number_of_reports"));
-      # Identify position of each gene and populate the matrix
-      all.positions <- NULL;
-      for(gene in genes.names) {
-        gene.position <- which(subtype$Hugo_Symbol == gene);
-        all.mut[gene, "number_of_reports"] <- length(gene.position);
-        all.positions <- c(all.positions, gene.position );
-      }
-    # Order the whole all.mut matrix by the most reported gene highest to lowest.
-      all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
-                                        decreasing=TRUE),];
-      # Isolate top 20 gene names.
-      top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
-      # Subset mutation data
-      top.mut.data <- subtype[ all.positions, ];
-    # Oncoprint of top 20 genes.
-      TCGAvisualize_oncoprint(
-          mut = top.mut.data,
-          genes = top.mut.genes,
-          filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
-                           ".pdf", sep=""),
-          annotation = clin.forvisual,
-          color=c("background"="#CCCCCC","DEL"="purple",
-                  "INS"="yellow","SNP"="brown"),
-          rows.font.size= 8,
-          width = 5,
-          heatmap.legend.side = "right",
-          dist.col = 0,
-          label.font.size = 6
-          );
-      }
-  }
+      } else {
+        for(subtype in subtype.data){
+            tryCatch ({
+              user.gene.request <- args5
+              genes.names <- unlist(strsplit(user.gene.request,"-"))
+              all.mut <- matrix(data=0, nrow=length(genes.names), ncol=1, 
+                      dimnames=list(rownames=genes.names, colnames="number_of_reports"));
+              # Identify position of each gene and populate the matrix
+              all.positions <- NULL;
+              for(gene in genes.names) {
+                gene.position <- which(subtype$Hugo_Symbol == gene);
+                all.mut[gene, "number_of_reports"] <- length(gene.position);
+                all.positions <- c(all.positions, gene.position );
+              }
+            # Order the whole all.mut matrix by the most reported gene highest to lowest.
+              all.mut.ordered <- all.mut[ order(all.mut[, "number_of_reports"], 
+                                                decreasing=TRUE),];
+              # Isolate top 20 gene names.
+              top.mut.genes <- names( all.mut.ordered[ 1:args3 ] );
+              # Subset mutation data
+              top.mut.data <- subtype[ all.positions, ];
+            # Oncoprint of top 20 genes.
+              TCGAvisualize_oncoprint(
+                  mut = top.mut.data,
+                  genes = top.mut.genes,
+                  filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
+                                   ".pdf", sep=""),
+                  annotation = clin.forvisual,
+                  color=c("background"="#CCCCCC","DEL"="purple",
+                          "INS"="yellow","SNP"="brown"),
+                  rows.font.size= 8,
+                  width = 5,
+                  heatmap.legend.side = "right",
+                  dist.col = 0,
+                  label.font.size = 6
+                  );
+            }, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
+          }
+    }
 } if(args1 == "LUAD"){
 
 } if(args1 == "LUSC"){
