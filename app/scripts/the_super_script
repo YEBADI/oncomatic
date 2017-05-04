@@ -70,13 +70,13 @@ mut.data <- read.csv(mut.data.file.name)
 #### splitting normals (blood and tissue)
 tumor.barcodes <- NULL;
 mut.data$Tumor_Sample_Barcode <- as.character(mut.data$Tumor_Sample_Barcode)
-for( i in 1:length(mut.data$Tumor_Sample_Barcode) ){
+for( i in 1:length(mut.data$Tumor_Sample_Barcode)) {
       tmp.bar.split <- unlist(strsplit(mut.data$Tumor_Sample_Barcode[i], 
                                        split="-", fixed=TRUE));
       tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
                             tmp.bar.split[3], sep = "")
       tumor.barcodes <- rbind(tumor.barcodes, tmp.bar.join)
-    }
+}
 
 
 query.barcodes <- NULL;
@@ -90,14 +90,18 @@ for( i in 1:length(mut.data$Matched_Norm_Sample_Barcode) ){
       tmp.bar.join <- paste(tmp.bar.split[1], "-", tmp.bar.split[2], "-", 
                             tmp.bar.split[3], "-", tmp.bar.split[4], "-", tmp.bar.split[5], "-", tmp.bar.split[6], "-", tmp.bar.split[7], sep = "")
       for(type in tmp.bar.split[4]) {
-        if ("10A" %in% type) {
+        if ("10A" == type | "10B" == type | "10C" == type) {
           tissue.barcodes <- rbind(tissue.barcodes, tmp.bar.join)
         }
-        if ("11A" %in% type)  {
+        if ("11A" == type | "11B" == type | "11C" == type)  {
           blood.barcodes <- rbind(blood.barcodes, tmp.bar.join)        
         }
     }
 }
+write.table(tissue.barcodes, "tissuecodes.csv", sep=",")
+write.table(blood.barcodes, "bloodcodes.csv", sep=",")
+
+
 
 mut.data.blood <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% blood.barcodes),]
 mut.data.blood.names <- mut.data.blood$Hugo_Symbol
