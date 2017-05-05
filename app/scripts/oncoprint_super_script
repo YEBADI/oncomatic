@@ -101,8 +101,8 @@ for( i in 1:length(mut.data$Matched_Norm_Sample_Barcode) ){
         }
     }
 }
-write.table(tissue.barcodes, "tissuecodes.csv", sep=",")
-write.table(blood.barcodes, "bloodcodes.csv", sep=",")
+#write.table(tissue.barcodes, "tissuecodes.csv", sep=",")
+#write.table(blood.barcodes, "bloodcodes.csv", sep=",")
 
 
 mut.data.blood <- mut.data[which(mut.data$Matched_Norm_Sample_Barcode %in% blood.barcodes),]
@@ -146,7 +146,7 @@ mut.data.tissue.names <- mut.data.tissue$Hugo_Symbol
 
 
 mut.data.intersected.names <- intersect(mut.data.blood$Hugo_Symbol, mut.data.tissue$Hugo_Symbol)
-write.table(mut.data.intersected.names, "intersected_blood_tissue_gene_names.csv", sep=",")
+#write.table(mut.data.intersected.names, "intersected_blood_tissue_gene_names.csv", sep=",")
 
 
 mut.data.types <- list(mut.data.tissue=mut.data.tissue, mut.data.blood=mut.data.blood)
