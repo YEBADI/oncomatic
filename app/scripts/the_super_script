@@ -1,22 +1,23 @@
 ### HISTORY ####################################################################
 # Version   Date          Coder               Comments
-# 1.0       25/04/2017    Yusef               
+# 2.0       05/05/2017    Yusef               
 ### DESCRIPTION ################################################################
 #  R pipeline to download TCGAbiolinks data for tumor type
 #  and produce an oncoprint for top mutated genes. User can specify certain
 #  genes if they wish.
 #  This also produces seperate oncoprints for each tumor stage and one for all
-#  stages together.
+#  stages together for any tumor type except BRCA or Lung.
+# BRCA will be subtyped by molecular subtype. Lung will be subtyped by smoking status.
 ### PARAMETERS #################################################################
 # 
 ### FUNCTIONS ##################################################################
 
 ################################ USER INPUT ####################################
 #
-# 1. Tumor type, in capital letters; either "BRCA" or "PAAD".
+# 1. Tumor type, in capital letters; e.g. "BRCA", "PAAD", "LUSC" etc.
 # 2. The pipeline of choice; "mutect2", "varscan2", "muse", or "somaticsniper".
-# 3. The number of genes to show
-# 4. State if you wish to show only genes of interest
+# 3. The number of genes to show e.g. "20"
+# 4. State if you wish to show only genes of interest "yes" or "no"
 # 5. Specify the actual  genes of interest, in capital letters and separated by 
 # " - " with NO SPACE (e.g. " ATM-BRCA1-CHEK2 "): ')
 #
