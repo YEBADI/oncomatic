@@ -26,19 +26,19 @@ cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
-args1 <- cmd_args[1] # "BRCA" or "PAAD"
+args1 <- "BRCA" #cmd_args[1] # "BRCA" or "PAAD"
 
 # Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
-args2 <- cmd_args[2] # "mutect2"
+args2 <- "muse" #cmd_args[2] # "mutect2"
 
 # number of genes to show
-args3 <- cmd_args[3] # 20 # top number of genes to display (e.g. 20)
+args3 <- "20" #cmd_args[3] # 20 # top number of genes to display (e.g. 20)
 
-args4 <- cmd_args[4] #yes #no #do you want to select genes?
+args4 <- "no" #cmd_args[4] #yes #no #do you want to select genes?
 # yes or no
 
 #this one is optional
-args5 <- cmd_args[5] # "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
+args5 <- #cmd_args[5] # "ATM-P53-BRCA1-BRCA2-PTEN-CHEK2-PALB2-STK11-BARD1-BRIP1-CASP8-CDH1-CHEK2"
 
 ProjectID <- paste("TCGA-", args1, sep="")
 # Define tumor type according to TCGA format e.g. BRCA (breast), PAAD (Pancreas)
@@ -364,7 +364,7 @@ if(args1 == "BRCA") {
             }, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
           }
     }
-} if(args1 == "LUAD" | args1== "LUSC"){
+} else if (args1 == "LUAD" | args1== "LUSC"){
     data.filename <- paste("app/static/data/smoking_", args1, ".csv", sep="")
     smoking_file <- read.csv(data.filename)
     smoke.complete.cases <- smoking_file[complete.cases(smoking_file["subtype_Smoking.Status"]),]
