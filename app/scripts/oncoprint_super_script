@@ -312,7 +312,7 @@ if(args1 == "BRCA") {
               TCGAvisualize_oncoprint(
                   mut = top.mut.data,
                   genes = top.mut.genes,
-                  filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
+                  filename = paste("app/static/results/oncoprint_", comment(subtype), "_", comment(mut.data),
                                    ".pdf", sep=""),
                   annotation = clin.forvisual,
                   color=c("background"="#CCCCCC","DEL"="purple",
@@ -350,7 +350,7 @@ if(args1 == "BRCA") {
               TCGAvisualize_oncoprint(
                   mut = top.mut.data,
                   genes = top.mut.genes,
-                  filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data),
+                  filename = paste("app/static/results/oncoprint_", comment(subtype), "_", comment(mut.data),
                                    ".pdf", sep=""),
                   annotation = clin.forvisual,
                   color=c("background"="#CCCCCC","DEL"="purple",
@@ -427,7 +427,7 @@ if(args1 == "BRCA") {
             TCGAvisualize_oncoprint(
                 mut = top.mut.data,
                 genes = top.mut.genes,
-                filename = paste("oncoprint_", comment(subtype), comment(mut.data),
+                filename = paste("app/static/results/oncoprint_", comment(subtype), comment(mut.data),
                                 ".pdf", sep=""),
                 annotation = clin.forvisual,
                 color=c("background"="#CCCCCC","DEL"="purple",
@@ -463,7 +463,7 @@ if(args1 == "BRCA") {
             TCGAvisualize_oncoprint(
                 mut = top.mut.data,
                 genes = top.mut.genes,
-                filename = paste("oncoprint_", comment(subtype), comment(mut.data), 
+                filename = paste("app/static/results/oncoprint_", comment(subtype), comment(mut.data), 
                                  ".pdf", sep=""),
                 annotation = clin.forvisual,
                 color=c("background"="#CCCCCC","DEL"="purple",
@@ -517,7 +517,7 @@ if(args1 == "BRCA") {
           TCGAvisualize_oncoprint(
             mut = top.mut.data,
             genes = top.mut.genes,
-            filename = paste("oncoprint_banded_", comment(mut.data), 
+            filename = paste("app/static/results/oncoprint_banded_", comment(mut.data), 
                              ".pdf", sep=""),
             annotation = joined.clin.data.banded,
             color=c("background"="#CCCCCC","DEL"="purple",
@@ -568,7 +568,7 @@ if(args1 == "BRCA") {
           TCGAvisualize_oncoprint(
               mut = top.mut.data,
               genes = top.mut.genes,
-              filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data), 
+              filename = paste("app/static/results/oncoprint_", comment(subtype), "_", comment(mut.data), 
                                ".pdf", sep=""),
               annotation = clin.forvisual,
               color=c("background"="#CCCCCC","DEL"="purple",
@@ -605,7 +605,7 @@ if(args1 == "BRCA") {
         TCGAvisualize_oncoprint(
           mut = top.mut.data,
           genes = top.mut.genes,
-          filename = paste("oncoprint_banded_", comment(mut.data),
+          filename = paste("app/static/results/oncoprint_banded_", comment(mut.data),
                            ".pdf", sep=""),
           annotation = joined.clin.data.banded,
           color=c("background"="#CCCCCC","DEL"="purple",
@@ -657,7 +657,7 @@ if(args1 == "BRCA") {
           TCGAvisualize_oncoprint(
               mut = top.mut.data,
               genes = top.mut.genes,
-              filename = paste("oncoprint_", comment(subtype), "_", comment(mut.data), 
+              filename = paste("app/static/results/oncoprint_", comment(subtype), "_", comment(mut.data), 
                                ".pdf", sep=""),
               annotation = clin.forvisual,
               color=c("background"="#CCCCCC","DEL"="purple",
