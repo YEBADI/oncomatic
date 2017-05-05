@@ -22,7 +22,7 @@ def results_page():
     pickgenes = request.form['pickgenes']
     genelist = request.form['genelist']
 
-    if tumortype == 'BRCA'
+    if tumortype == 'BRCA':
       subprocess.call(['Rscript', 'app/scripts/oncoprint_super_script', 
                   tumortype, pipeline, genenumber, pickgenes, genelist])
         
