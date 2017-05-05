@@ -132,29 +132,15 @@
                     <div class="input-field col s6">
                         <select name="tumor_type" required>
                             <option value="" disabled selected>Please select a tumor type</option>
-                            <option value="BRCA">Breast (BRCA) - NO SUBTYPING</option>
-                            <option value="BRCA,subtyping">Breast (BRCA) - SUBTYPING</option>
+                            <option value="BRCA">Breast (BRCA)</option>
                             <option value="PAAD">Pancreatic (PAAD)</option>
                             <option value="LUAD">Lung (LUAD)</option>
                             <option value="LUSC">Lung (LUSC)</option>
-                            <option value="LUAD, smoker">Lung - smoker status(LUAD)</option>
-                            <option value="LUSC, smoker">Lung - smoker status (LUSC)</option>
                         </select>
                         <label>Tumor type</label>
 
                     </div>
                   </div>
-
-                    <div class="row">
-                        <div class="input-field col s6">
-                            <select name="split_normals" required>
-                                <option value="" disabled selected>Do you want to split the normals (blood / adjacent tissue)? Intersection will also be shown.</option>
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                            <label>Split and intersect normals?</label>
-                        </div>
-                    </div>
 
                     <div class="row">
                         <div class="input-field col s6">
