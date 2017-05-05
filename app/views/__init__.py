@@ -26,7 +26,7 @@ def results_page():
       subprocess.call(['Rscript', 'app/scripts/oncoprint_super_script', 
                   tumortype, pipeline, genenumber, pickgenes, genelist])
         
-      return render_template('results_BRCA_subtyped.html', 
+      return render_template('results_subtyped.html', 
                          pickgenes = pickgenes, genelist = genelist, 
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
