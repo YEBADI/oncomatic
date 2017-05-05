@@ -26,10 +26,10 @@ cat("-- reading arguments\n", sep = "");
 cmd_args = commandArgs(trailingOnly=TRUE);
 for (arg in cmd_args) cat("  ", arg, "\n", sep="");
 
-args1 <- "BRCA" #cmd_args[1] # "BRCA" or "PAAD"
+args1 <- "PAAD" #cmd_args[1] # "BRCA" or "PAAD"
 
 # Pipeline_options are "muse", "varscan2", "somaticsniper", or "mutect2".
-args2 <- "muse" #cmd_args[2] # "mutect2"
+args2 <- "mutect2" #cmd_args[2] # "mutect2"
 
 # number of genes to show
 args3 <- "20" #cmd_args[3] # 20 # top number of genes to display (e.g. 20)
@@ -325,7 +325,8 @@ if(args1 == "BRCA") {
                 ); 
             }, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
         }
-      } else {
+      } 
+      else {
         for(subtype in subtype.data){
             tryCatch ({
               user.gene.request <- args5
@@ -364,7 +365,8 @@ if(args1 == "BRCA") {
             }, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
           }
     }
-} else if (args1 == "LUAD" | args1== "LUSC"){
+}
+ if (args1 == "LUAD" | args1== "LUSC"){
     data.filename <- paste("app/static/data/smoking_", args1, ".csv", sep="")
     smoking_file <- read.csv(data.filename)
     smoke.complete.cases <- smoking_file[complete.cases(smoking_file["subtype_Smoking.Status"]),]
@@ -476,7 +478,8 @@ if(args1 == "BRCA") {
               )}, error=function(e){cat("ERROR :",conditionMessage(e), "\n") })
         }
       }
-} else {
+} 
+if(args1!=BRCA | args1!=LUSC | args1!= LUAD) {
     for(mut.data in mut.data.types){
       mut.data <- get(mut.data)
       # split the downloaded mut data according to each smoking subtype
