@@ -1,34 +1,102 @@
 {% extends "layout.html" %} {% block body %}
 <div class="card s12">
     <div class="card-content">
-        <h4>Results</h4>
-        <p> Below is an oncopront produced for {{tumortype}} using the {{pipeline}} pipeline, showing the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
+        <h4>{{tumortype}}} Mutations analysis</h4>
+        <p> Displayed below are the mutations analysis results for TCGA {{tumortype}}} data. We have produced a set of oncoprint results with an overall output and output split up into cancer stages. This set of oncoprints was produced using the {{pipeline}} pipeline and it shows the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
+    </div>
+</div>
+
+<div class="card s12">
+    <div class="card-content">
+        <h4> {{tumortype}}} and {{tumortype}}} split into Cancer Stages</h4>
+        <p> Below are oncoprints for {{tumortype}}} and {{tumortype}}} split into cancer stages, please navigate using the tabs. </p>
     </div>
     <div class="card-tabs">
         <ul class="tabs tabs-fixed-width">
-            <li class="tab"><a href="#test4">Oncoprint</a></li>
+            <li class="tab"><a class="active" href="#test4">Overall</a></li>
+            <li class="tab"><a href="#test5">Stage i</a></li>
+            <li class="tab"><a href="#test6">Stage ii</a></li>
+            <li class="tab"><a href="#test7">Stage iii</a></li>
+            <li class="tab"><a href="#test8">Stage iv</a></li>
         </ul>
     </div>
     <div class="card-content grey lighten-4">
         <div id="test4">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_banded_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_banded_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>{{tumortype}}}</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+        <div id="test5">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_i_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_i_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>{{tumortype}}} Stage i</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+        <div id="test6">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_ii_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_ii_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>{{tumortype}}} Stage ii</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+    </div>
+    <div id="test7">
         <div style="text-align: center;">
-
-  <div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_blood.pdf" width="700" height="500"></div>
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iii_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iii_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>{{tumortype}}} Stage iii</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
+    </div>
+    <div id="test8">
+        <div style="text-align: center;">
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iv_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iv_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>{{tumortype}}} Stage iv</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
+    </div>
 </div>
-
-                            
-               
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>Tumor type: {{tumortype}}</h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
-</div>
-
-
-</div>
-</div>
-                    
 
 {% endblock %}
