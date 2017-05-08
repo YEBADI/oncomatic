@@ -1,19 +1,114 @@
 {% extends "layout.html" %} {% block body %}
 <div class="card s12">
     <div class="card-content">
-        <h4>BRCA subtyed Oncoprint Results</h4>
-        <p> Below are subtyed oncoprints produced for BRCA, for both molecular and immunohistochemistry, using the {{pipeline}} pipeline, showing the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
+        <h4>Breast Cancer (BRCA) Mutations analysis</h4>
+        <p> Displayed below are the mutations analysis results for TCGA breast cancer data. We have produced two sets of results, the first is a set of oncoprints with an overall output and output split up into cancer stages. The second set of results are oncoprints split into molecular subtypes. This set of oncoprints was produced using the {{pipeline}} pipeline and it shows the top {{genenumber}} genes. Are specific genes shown? {{pickgenes}}. {{genelist}}. </p>
     </div>
 </div>
-    <div class="card s12">
+
+<div class="card s12">
     <div class="card-content">
-    <h4>Molecular subtyping</h4>
+        <h4> BRCA and BRCA split into Cancer Stages</h4>
+        <p> Below are oncoprints for BRCA and BRCA split into cancer stages, please navigate using the tabs. </p>
+    </div>
+    <div class="card-tabs">
+        <ul class="tabs tabs-fixed-width">
+            <li class="tab"><a class="active" href="#test4">Overall</a></li>
+            <li class="tab"><a href="#test5">Stage i</a></li>
+            <li class="tab"><a href="#test6">Stage ii</a></li>
+            <li class="tab"><a href="#test7">Stage iii</a></li>
+            <li class="tab"><a href="#test8">Stage iv</a></li>
+        </ul>
+    </div>
+    <div class="card-content grey lighten-4">
+        <div id="test4">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_banded_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_banded_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+        <div id="test5">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_i_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_i_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA Stage i</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+        <div id="test6">
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_ii_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_ii_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA Stage ii</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
+    </div>
+    <div id="test7">
+        <div style="text-align: center;">
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iii_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iii_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>BRCA Stage iii</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
+    </div>
+    <div id="test8">
+        <div style="text-align: center;">
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iv_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_stage_iv_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>BRCA Stage iv</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
+    </div>
+</div>
+
+
+<div class="card s12">
+    <div class="card-content">
+        <h4>Molecular subtyping</h4>
         <p> Below are oncoprints for each breast molecular subtype, please navigate using the tabs. </p>
     </div>
     <div class="card-tabs">
         <ul class="tabs tabs-fixed-width">
             <li class="tab"><a class="active" href="#test4">Luminal-A</a></li>
-            <li class="tab"><a  href="#test5">Luminal-B</a></li>
+            <li class="tab"><a href="#test5">Luminal-B</a></li>
             <li class="tab"><a href="#test6">Her-2</a></li>
             <li class="tab"><a href="#test7">Basal-like</a></li>
             <li class="tab"><a href="#test8">Norm-like</a></li>
@@ -21,85 +116,80 @@
     </div>
     <div class="card-content grey lighten-4">
         <div id="test4">
-        <div style="text-align: center;">
-<div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalA_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalA_blood.pdf" width="700" height="500"></div>
-</div>
-
-                            
-                        <h4>BRCA Luminal-A</h4>
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
-</div>
-
-
-
-      
-
-
-
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalA_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalA_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA Luminal-A</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
+        </div>
         <div id="test5">
-        <div style="text-align: center;">
-          
-<div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalB_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalB_blood.pdf" width="700" height="500"></div>
-</div>
-                            
-                        <h4>BRCA Luminal-B</h4>
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalB_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_luminalB_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA Luminal-B</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
         </div>
-
         <div id="test6">
-                  <div style="text-align: center;">
-          
-<div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_her2_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_her2_blood.pdf" width="700" height="500"></div>
-</div>
-                            
-                        <h4>BRCA Her-2</h4>
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
+            <div style="text-align: center;">
+                <div algin="center">
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_her2_tissue.pdf" width="700" height="500">
+                    </div>
+                    <div style="display: inline-block">
+                        <embed src="http://0.0.0.0:8080/static/results/oncoprint_her2_blood.pdf" width="700" height="500">
+                    </div>
+                </div>
+                <h4>BRCA Her-2</h4>
+                <h5>Top {{genenumber}} genes </h5>
+                <h5>VC Pipeline: {{pipeline}}</h5>
+                <h5>Gene list: {{genelist}}</h5></div>
         </div>
-
-
-        </div>
-        <div id="test7">
+    </div>
+    <div id="test7">
         <div style="text-align: center;">
-          
-<div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_basallike_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_basallike_blood.pdf" width="700" height="500"></div>
-</div>
-                            
-                        <h4>BRCA Basal-like</h4>
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
-        </div>
-
- 
-        <div id="test8">
-
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_basallike_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_basallike_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>BRCA Basal-like</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
+    </div>
+    <div id="test8">
         <div style="text-align: center;">
-          
-<div algin="center">
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_normlike_tissue.pdf" width="700" height="500"></div>
-<div style="display: inline-block"><embed src="http://0.0.0.0:8080/static/results/oncoprint_normlike_blood.pdf" width="700" height="500"></div>
-</div>
-                            
-                        <h4>BRCA Norm-like</h4>
-                        <h5>Top {{genenumber}} genes </h5>
-                        <h5>VC Pipeline: {{pipeline}}</h5>
-                        <h5>Gene list: {{genelist}}</h5></div>
-        </div>
-        </div>
+            <div algin="center">
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_normlike_tissue.pdf" width="700" height="500">
+                </div>
+                <div style="display: inline-block">
+                    <embed src="http://0.0.0.0:8080/static/results/oncoprint_normlike_blood.pdf" width="700" height="500">
+                </div>
+            </div>
+            <h4>BRCA Norm-like</h4>
+            <h5>Top {{genenumber}} genes </h5>
+            <h5>VC Pipeline: {{pipeline}}</h5>
+            <h5>Gene list: {{genelist}}</h5></div>
     </div>
 </div>
 
