@@ -23,7 +23,10 @@ def results_page():
     genelist = request.form['genelist']
 
     if tumortype == 'BRCA':
-      subprocess.call(['Rscript', 'app/scripts/oncoprint_super_script', 
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_primary_script', 
+                  tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_secondary_script', 
                   tumortype, pipeline, genenumber, pickgenes, genelist])
         
       return render_template('results_subtyped.html', 
@@ -32,8 +35,11 @@ def results_page():
                          pipeline = pipeline)
 
     elif (tumortype == 'LUAD' | tumortype == 'LUSC'):
-      subprocess.call(['Rscript', 'app/scripts/oncoprint_super_script', 
-                   tumortype, pipeline, genenumber, pickgenes, genelist])
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_primary_script', 
+                  tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_secondary_script', 
+                  tumortype, pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results_smokers.html', 
                          pickgenes = pickgenes, genelist = genelist, 
@@ -41,7 +47,7 @@ def results_page():
                          pipeline = pipeline)
 
     else:
-      subprocess.call(['Rscript', 'app/scripts/all_tumors_oncoprint', 
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_primary_script', 
                    tumortype, pipeline, genenumber, pickgenes, genelist])
 
       return render_template('results.html', 
