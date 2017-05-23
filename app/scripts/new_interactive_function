@@ -1,0 +1,56 @@
+
+# check if have packages and install them if not present
+TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
+new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
+if(length(new.libs)) {
+  source("https://bioconductor.org/biocLite.R")
+  biocLite(new.libs)
+}
+
+# load in the libraries to R
+library("TCGAbiolinks")
+library("SummarizedExperiment")
+library("R.utils")
+library("BiocInstaller")
+library("iheatmapr")
+library("reshape2")
+library("data.table")
+library("plotly")
+
+# install iheatmapr
+devtools::install_github("AliciaSchep/iheatmapr")
+
+# Prepare data table from the MAF file 
+mut <- top.mut.data
+genes <- top.mut.genes
+
+rm.empty.columns <- FALSE
+information <- "Variant_Type"
+
+mut <- setDT(mut)
+str(mut)
+mut$value <- 1
+if(rm.empty.columns == FALSE) all.samples <- unique(mut$Tumor_Sample_Barcode)
+
+mut$Hugo_Symbol <- as.character(mut$Hugo_Symbol)
+if(!missing(genes) & !is.null(genes)) mut <- subset(mut, mut$Hugo_Symbol %in% genes)
+
+if(!rm.empty.columns){
+    formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ ", information)
+    suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = FALSE)})
+} else {
+    formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ ", information)
+    suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = TRUE)})
+}
+columns <- colnames(mat)[-c(1:2)]
+
+mat$value <- ""
+mat <- setDT(mat)
+for ( i in columns){
+    mat[,i] <-  replace(mat[,i,with = FALSE],mat[,i,with = FALSE]>0,paste0(i,";"))
+    mat[,i] <-  replace(mat[,i,with = FALSE],mat[,i,with = FALSE]==0,"")
+    mat[,value:=paste0(value,get(i))]
+}
+str(mat)
+
+write.table(mat, "patientmutations.csv", sep=",", row.names=FALSE)
