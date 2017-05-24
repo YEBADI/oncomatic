@@ -1,4 +1,3 @@
-
 # check if have packages and install them if not present
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
@@ -23,6 +22,7 @@ devtools::install_github("AliciaSchep/iheatmapr")
 # Prepare data table from the MAF file 
 mut <- top.mut.data
 genes <- top.mut.genes
+annotation <- joined.clin.data.banded
 
 rm.empty.columns <- FALSE
 information <- "Variant_Type"
@@ -54,3 +54,63 @@ for ( i in columns){
 str(mat)
 
 write.table(mat, "patientmutations.csv", sep=",", row.names=FALSE)
+
+mutation.type <- c()
+for (i in columns){
+    if(length(grep(i,mat$value)) > 0) mutation.type <- c(mutation.type,i)
+}
+
+mat <- setDF(dcast(mat, Tumor_Sample_Barcode~Hugo_Symbol, value.var="value",fill=""))
+    rownames(mat) <- mat[,1]
+    mat <- mat[,-1]
+
+if(rm.empty.columns == FALSE) {
+        aux <- data.frame(row.names = all.samples[!all.samples %in% rownames(mat)])
+        if(nrow(aux) > 0) {
+            aux[,colnames(mat)] <- ""
+            mat <- rbind(mat,aux)
+        }
+    }
+
+write.table(mat, "patientmutations2.csv", sep=",", row.names=FALSE)
+
+mat <- t(mat)
+
+
+
+idx <- match(substr(colnames(mat),1,12),annotation$bcr_patient_barcode)
+annotation <- annotation[idx,]
+annotation$bcr_patient_barcode <- NULL
+
+collumn.names <- c("race","gender","vital_status","tumor_stage")
+
+annotation <- annotation[collumn.names]
+
+write.table(mat, "patientmutationsfinal.csv", sep=",", row.names=TRUE, col.names=NA)
+write.table(annotation, "annotattionsfinal.csv", sep=",", row.names=TRUE, col.names=NA)
+
+
+
+
+
+annotation <- t(annotation)
+
+mat <- as.data.frame(mat)
+write.table(mat, "patientmutationsfinalnew.csv", sep=",", row.names=TRUE, col.names=NA)
+write.table(annotation, "annotattionsfinalnew.csv", sep=",", row.names=TRUE, col.names=FALSE)
+
+main_heatmap(mat, name = "Measles<br>Cases", x_categorical = FALSE,
+             font = list(size = 8)) %>%
+  add_col_groups(ifelse(1930:2001 < 1961,"No","Yes"),
+                  side = "bottom", name = "Vaccine<br>Introduced?",
+                  title = "Vaccine?",
+                  colors = c("lightgray","blue")) %>%
+  add_col_labels(ticktext = seq(1930,2000,10),font = list(size = 8)) %>%
+  add_row_labels(size = 0.3,font = list(size = 6)) %>% 
+  add_col_summary(layout = list(title = "Average<br>across<br>states"),
+                  yname = "summary")  %>%                 
+  add_col_title("Measles Cases from 1930 to 2001", side= "top") %>%
+  add_row_summary(groups = TRUE, 
+                  type = "bar",
+                  layout = list(title = "Average<br>per<br>year",
+                                font = list(size = 8)))
