@@ -1,3 +1,4 @@
+
 # check if have packages and install them if not present
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
@@ -95,22 +96,62 @@ write.table(annotation, "annotattionsfinal.csv", sep=",", row.names=TRUE, col.na
 
 annotation <- t(annotation)
 
+annotation <- as.data.frame(annotation)
+
 mat <- as.data.frame(mat)
+
+mat.colnams <- colnames(mat)
+
+colnames(annotation) <- mat.colnams
+
+
+
 write.table(mat, "patientmutationsfinalnew.csv", sep=",", row.names=TRUE, col.names=NA)
 write.table(annotation, "annotattionsfinalnew.csv", sep=",", row.names=TRUE, col.names=FALSE)
 
-main_heatmap(mat, name = "Measles<br>Cases", x_categorical = FALSE,
+montray <- rbind(mat, annotation)
+
+write.table(montray, "ultimateoncoprint.csv", sep=",", row.names=TRUE, col.names=NA)
+
+testmatrix <- read.csv("testmatrix.csv", row.names=1)
+
+
+testmatrix <- as.matrix(testmatrix)
+
+samplenames1 <- colnames(montray)
+
+samplenames <- str(samplenames1)
+
+nameofoncoprint <- paste(args1," Mutations Profile", sep="")
+
+
+
+
+
+main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = FALSE,
              font = list(size = 8)) %>%
-  add_col_groups(ifelse(1930:2001 < 1961,"No","Yes"),
-                  side = "bottom", name = "Vaccine<br>Introduced?",
-                  title = "Vaccine?",
-                  colors = c("lightgray","blue")) %>%
-  add_col_labels(ticktext = seq(1930,2000,10),font = list(size = 8)) %>%
+
+
+add_col_groups(
+  ifelse("white" %in% colnames(testmatrix),
+        "white", 
+        ifelse("black" %in% colnames(testmatrix),
+               "black", 
+               ifelse("asian" %in% colnames(testmatrix),
+                      "yellow" ,
+                      "not reported"))),
+                  side = "bottom", name = "Sample<br>Race",
+                  title = "Race",
+                  colors = c("white","brown","yellow", "grey")) %>%
+
+  add_col_labels(ticktext = samplenames,font = list(size = 8)) %>%
   add_row_labels(size = 0.3,font = list(size = 6)) %>% 
-  add_col_summary(layout = list(title = "Average<br>across<br>states"),
+  add_col_summary(layout = list(title = "Clinical<br>Patient<br>Samples"),
                   yname = "summary")  %>%                 
-  add_col_title("Measles Cases from 1930 to 2001", side= "top") %>%
+  add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
   add_row_summary(groups = TRUE, 
                   type = "bar",
                   layout = list(title = "Average<br>per<br>year",
                                 font = list(size = 8)))
+
+
