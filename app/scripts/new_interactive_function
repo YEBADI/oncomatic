@@ -1,4 +1,5 @@
 
+
 # check if have packages and install them if not present
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
@@ -128,30 +129,117 @@ nameofoncoprint <- paste(args1," Mutations Profile", sep="")
 
 
 
-main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = FALSE,
-             font = list(size = 8)) %>%
+#race
+white.pos <- grep('white', colnames(testmatrix))
+white.patients <- colnames(testmatrix)[white.pos]
+
+black.pos <- grep('black', colnames(testmatrix))
+black.patients <- colnames(testmatrix)[black.pos]
+
+asian.pos <- grep('asian', colnames(testmatrix))
+asian.patients <- colnames(testmatrix)[asian.pos]
+
+
+
+#gender
+
+female.pos <- grep('female', colnames(testmatrix))
+female.patients <- colnames(testmatrix)[female.pos]
+
+#status
+
+alive.pos <- grep('alive', colnames(testmatrix))
+alive.patients <- colnames(testmatrix)[alive.pos]
+
+dead.pos <- grep('dead', colnames(testmatrix))
+dead.patients <- colnames(testmatrix)[dead.pos]
+
+
+
+## cancer stage 
+
+si.pos <- grep('\\.i$', colnames(testmatrix))
+si.patients <- colnames(testmatrix)[si.pos]
+
+sii.pos <- grep('\\.ii$', colnames(testmatrix))
+sii.patients <- colnames(testmatrix)[sii.pos]
+
+siii.pos <- grep('\\.iii', colnames(testmatrix))
+siii.patients <- colnames(testmatrix)[siii.pos]
+
+siv.pos <- grep('\\.iv', colnames(testmatrix))
+siv.patients <- colnames(testmatrix)[siv.pos]
+
+
+# number of mutations per gene
+test = as.numeric();
+for (i in 0:nrow(testmatrix)) {
+  test[i] <- sum(testmatrix[i,] > 0)
+}
+print(test);
+
+
+#create heatmap
+main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = TRUE,
+             font = list(size = 8), colors= c("yellow", "red", "blue")) %>%
 
 
 add_col_groups(
-  ifelse("white" %in% colnames(testmatrix),
-        "white", 
-        ifelse("black" %in% colnames(testmatrix),
-               "black", 
-               ifelse("asian" %in% colnames(testmatrix),
-                      "yellow" ,
-                      "not reported"))),
+  ifelse(colnames(testmatrix) %in% white.patients,
+        "White", 
+        ifelse(colnames(testmatrix) %in% black.patients,
+               "Black", 
+               ifelse(colnames(testmatrix) %in% asian.patients,
+                      "Asian",
+                      "Not Reported"))),
                   side = "bottom", name = "Sample<br>Race",
                   title = "Race",
-                  colors = c("white","brown","yellow", "grey")) %>%
+                  colors = c('#4285f4','#34a853','#fbbc05','#ea4335')) %>%
+
+
+add_col_groups(
+  ifelse(colnames(testmatrix) %in% female.patients,
+        "female",  
+                      "male"),
+                  side = "bottom", name = "Sample<br>Gender",
+                  title = "Gender",
+                  colors = c("pink","blue")) %>%
+
+
+
+add_col_groups(
+  ifelse(colnames(testmatrix) %in% alive.patients,
+        "Alive",  
+        ifelse(colnames(testmatrix) %in% dead.patients,
+                      "Dead", 
+                      "Not Reported")),
+                  side = "bottom", name = "Sample<br>Status",
+                  title = "Status",
+                  colors = c("green","black")) %>%
+
+
+
+add_col_groups(
+  ifelse(colnames(testmatrix) %in% si.patients,
+        "Stage i",  
+        ifelse(colnames(testmatrix) %in% sii.patients,
+                      "Stage ii",
+          ifelse(colnames(testmatrix) %in% siii.patients,
+                      "Stage iii",
+                ifelse(colnames(testmatrix) %in% siv.patients,
+                      "Stage iv",
+                      "Not Reported")))),
+                  side = "bottom", name = "Sample<br>Cancer<br>Stage",
+                  title = "Status",
+                  colors = c("orange","#0084ff","#94ce08","#f5dc00")) %>%
+
 
   add_col_labels(ticktext = samplenames,font = list(size = 8)) %>%
   add_row_labels(size = 0.3,font = list(size = 6)) %>% 
-  add_col_summary(layout = list(title = "Clinical<br>Patient<br>Samples"),
-                  yname = "summary")  %>%                 
+  #add_col_summary(layout = list(title = "Clinical<br>Patient<br>Samples"),
+  #                yname = "summary")  %>%                 
   add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
-  add_row_summary(groups = TRUE, 
-                  type = "bar",
-                  layout = list(title = "Average<br>per<br>year",
-                                font = list(size = 8)))
-
+  add_row_barplot(x = test,
+                  tracename = "Number of Mutations", 
+                  layout = list(title = "Number of Mutations<br> for each Gene"))
 
