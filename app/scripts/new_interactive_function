@@ -235,9 +235,7 @@ add_col_groups(
 
 
   add_col_labels(ticktext = samplenames,font = list(size = 8)) %>%
-  add_row_labels(size = 0.3,font = list(size = 6)) %>% 
-  #add_col_summary(layout = list(title = "Clinical<br>Patient<br>Samples"),
-  #                yname = "summary")  %>%                 
+  add_row_labels(size = 0.3,font = list(size = 6)) %>%                 
   add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
   add_row_barplot(x = test,
                   tracename = "Number of Mutations", 
