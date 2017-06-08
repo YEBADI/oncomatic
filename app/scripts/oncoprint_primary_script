@@ -68,6 +68,10 @@ mut.data.file.name <- paste("app/static/data/mut_data_",tumor.type, "_",args2,".
 gunzip(mut.data.file.name.gz)
 mut.data <- read.csv(mut.data.file.name) 
 
+mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
+data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
+gzip(data.file.dir.new)
+
 #### splitting normals (blood and tissue)
 tumor.barcodes <- NULL;
 mut.data$Tumor_Sample_Barcode <- as.character(mut.data$Tumor_Sample_Barcode)
@@ -681,10 +685,5 @@ if(args1 == "BRCA") {
     }
   }
 }
-
-
-mut.data.file.name.new <- paste("mut_data_",tumor.type, "_",args2,".csv", sep="")
-data.file.dir.new <- paste("app/static/data/", mut.data.file.name.new, sep="")
-gzip(data.file.dir.new)
 
 dev.off();
