@@ -1,11 +1,14 @@
 
-# check if have packages and install them if not present
+    # check if have packages and install them if not present
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
 if(length(new.libs)) {
   source("https://bioconductor.org/biocLite.R")
   biocLite(new.libs)
 }
+
+# install iheatmapr
+devtools::install_github("AliciaSchep/iheatmapr", force=TRUE)
 
 # load in the libraries to R
 library("TCGAbiolinks")
@@ -17,8 +20,13 @@ library("reshape2")
 library("data.table")
 library("plotly")
 
-# install iheatmapr
-devtools::install_github("AliciaSchep/iheatmapr")
+
+ # remove.packages("S4Vectors")
+
+ # source("https://bioconductor.org/biocLite.R")
+ # biocLite("S4Vectors")
+
+
 
 # Prepare data table from the MAF file 
 mut <- top.mut.data
@@ -145,28 +153,14 @@ dataframe.rename.me
 remove.these <- c("race","gender","vital_status","tumor_stage")
 testmatrix <- dataframe.rename.me[!rownames(dataframe.rename.me) %in% remove.these,]
 
-write.table(testmatrix, "newnewultimateoncoprint.csv", sep=",", row.names=TRUE, col.names=NA)
 
-#testmatrix <- read.csv("testmatrix.csv", row.names=1)
+testmatrix[] <- lapply(testmatrix, function(x) as.numeric(as.character(x)))
 
-# trying to make character data frame into numeric data frame for it to work now...
-testmatrix <- as.data.frame(testmatrix)
-
-
-# this replaces the 0s with 1s for some reason... need to fix it to keep 0s
-colnamestest <- colnames(testmatrix)
-for(i in colnamestest)
- testmatrix[[paste(i)]] <- as.numeric(testmatrix[[paste(i)]])
+testmatrix <- as.matrix(testmatrix)
+str(testmatrix) 
+#write.table(testmatrix, "newnewultimateoncoprint.csv", sep=",", row.names=TRUE, col.names=NA)
 
 
-######
-###### I was here....
-######
-
-# everything below here works...
-samplenames1 <- colnames(montray)
-
-samplenames <- str(samplenames1)
 
 nameofoncoprint <- paste(args1," Mutations Profile", sep="")
 
@@ -203,37 +197,38 @@ dead.patients <- colnames(testmatrix)[dead.pos]
 
 ## cancer stage 
 
-si.pos <- grep('\\.i$', colnames(testmatrix))
+si.pos <- grep(' stage i,', colnames(testmatrix))
 si.patients <- colnames(testmatrix)[si.pos]
 
-sii.pos <- grep('\\.ii$', colnames(testmatrix))
+sii.pos <- grep(' stage ii,', colnames(testmatrix))
 sii.patients <- colnames(testmatrix)[sii.pos]
 
-siii.pos <- grep('\\.iii', colnames(testmatrix))
+siii.pos <- grep(' stage iii,', colnames(testmatrix))
 siii.patients <- colnames(testmatrix)[siii.pos]
 
-siv.pos <- grep('\\.iv', colnames(testmatrix))
+siv.pos <- grep(' stage iv,', colnames(testmatrix))
 siv.patients <- colnames(testmatrix)[siv.pos]
 
+dim(testmatrix)
 
 # number of mutations per gene
 test = as.numeric();
-for (i in 0:nrow(testmatrix)) {
+for (i in 1:nrow(testmatrix)) {
   test[i] <- sum(testmatrix[i,] > 0)
 }
 print(test);
 
 test2 = as.numeric();
-for (i in 0:ncol(testmatrix)) {
+for (i in 1:ncol(testmatrix)) {
   test2[i] <- sum(testmatrix[,i] > 0)
 }
 print(test2);
 
-typeof(testmatrix)
+
 
 #create heatmap
 main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = TRUE,
-             font = list(size = 8), colors= c("yellow", "red", "blue")) %>%
+              colors= c("white", "red", "blue")) %>%
 
 
 add_col_groups(
@@ -246,7 +241,7 @@ add_col_groups(
                       "Not Reported"))),
                   side = "bottom", name = "Sample<br>Race",
                   title = "Race",
-                  colors = c('#4285f4','#34a853','#fbbc05','#ea4335')) %>%
+                  colors = c('#ea4335','#fbbc05','#34a853','#4285f4')) %>%
 
 
 add_col_groups(
@@ -282,18 +277,18 @@ add_col_groups(
                       "Stage iv",
                       "Not Reported")))),
                   side = "bottom", name = "Sample<br>Cancer<br>Stage",
-                  title = "Status",
+                  title = "Status", 
                   colors = c("orange","#0084ff","#94ce08","#f5dc00")) %>%
 
 
-  add_col_labels(ticktext = samplenames,font = list(size = 8)) %>%
+  add_col_labels(ticktext = colnames(testmatrix), font = list(size = 8)) %>%
   add_row_labels(size = 0.3,font = list(size = 6)) %>%               
   add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
   add_row_barplot(x = test,
                   tracename = "Number of Samples", 
-                  layout = list(title = "Number of Samples<br>Presenting Mutated Gene")) %>%
+                  layout = list(title = "No. of <br>Samples<br>Presenting <br>Mutated Gene")) %>%
   add_col_barplot(y = test2,
                 tracename = "Number of Mutated Genes", 
-                layout = list(title = "Number of Mutated Genes<br>Per Sample"))
+                layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
 
-  
+
