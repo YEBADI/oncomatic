@@ -1,5 +1,4 @@
-
-    # check if have packages and install them if not present
+# check if have packages and install them if not present
 TCGA.libs <- c("TCGAbiolinks","SummarizedExperiment","BiocInstaller","data.table","reshape2","plotly");
 new.libs <- TCGA.libs[!(TCGA.libs %in% installed.packages() [,"Package"])]
 if(length(new.libs)) {
@@ -20,11 +19,6 @@ library("reshape2")
 library("data.table")
 library("plotly")
 
-
- # remove.packages("S4Vectors")
-
- # source("https://bioconductor.org/biocLite.R")
- # biocLite("S4Vectors")
 
 
 
