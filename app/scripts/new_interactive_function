@@ -20,8 +20,6 @@ library("data.table")
 library("plotly")
 
 
-
-
 # Prepare data table from the MAF file 
 mut <- top.mut.data
 genes <- top.mut.genes
@@ -222,7 +220,7 @@ print(test2);
 
 #create heatmap
 main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = TRUE,
-              colors= c("white", "red", "blue")) %>%
+              colors= c("white", "red", "blue", "green")) %>%
 
 
 add_col_groups(
@@ -235,7 +233,7 @@ add_col_groups(
                       "Not Reported"))),
                   side = "bottom", name = "Sample<br>Race",
                   title = "Race",
-                  colors = c('#ea4335','#fbbc05','#34a853','#4285f4')) %>%
+                  colors = c('#ea4335','#fbbc05','grey','#4285f4')) %>%
 
 
 add_col_groups(
@@ -272,11 +270,11 @@ add_col_groups(
                       "Not Reported")))),
                   side = "bottom", name = "Sample<br>Cancer<br>Stage",
                   title = "Status", 
-                  colors = c("orange","#0084ff","#94ce08","#f5dc00")) %>%
+                  colors = c("grey","#0084ff","#94ce08","#f5dc00", "orange")) %>%
 
 
   add_col_labels(ticktext = colnames(testmatrix), font = list(size = 8)) %>%
-  add_row_labels(size = 0.3,font = list(size = 6)) %>%               
+  add_row_labels(size = 0.3,font = list(size = 10)) %>%               
   add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
   add_row_barplot(x = test,
                   tracename = "Number of Samples", 
@@ -284,5 +282,3 @@ add_col_groups(
   add_col_barplot(y = test2,
                 tracename = "Number of Mutated Genes", 
                 layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
-
-
