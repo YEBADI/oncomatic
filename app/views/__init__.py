@@ -34,7 +34,19 @@ def results_page():
                          genenumber = genenumber, tumortype = tumortype, 
                          pipeline = pipeline)
 
-    elif (tumortype == 'LUAD' | tumortype == 'LUSC'):
+    elif tumortype == 'LUAD':
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_primary_script', 
+                  tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      subprocess.call(['Rscript', 'app/scripts/oncoprint_secondary_script', 
+                  tumortype, pipeline, genenumber, pickgenes, genelist])
+
+      return render_template('results_smokers.html', 
+                         pickgenes = pickgenes, genelist = genelist, 
+                         genenumber = genenumber, tumortype = tumortype, 
+                         pipeline = pipeline)
+
+    elif tumortype == 'LUSC':
       subprocess.call(['Rscript', 'app/scripts/oncoprint_primary_script', 
                   tumortype, pipeline, genenumber, pickgenes, genelist])
 
