@@ -1,0 +1,256 @@
+# mut <- top.mut.data
+# genes <- top.mut.genes
+# annotation <- joined.clin.data.banded
+
+
+oncomatic_oncoprint <- function (mut,
+                                 genes,
+                                 annotation
+                                 ){
+  # Prepare data table from the MAF file 
+  rm.empty.columns <- FALSE
+  information <- "Variant_Type"
+
+  mut <- setDT(mut)
+  str(mut)
+  mut$value <- 1
+  if(rm.empty.columns == FALSE) all.samples <- unique(mut$Tumor_Sample_Barcode)
+
+  mut$Hugo_Symbol <- as.character(mut$Hugo_Symbol)
+  if(!missing(genes) & !is.null(genes)) mut <- subset(mut, mut$Hugo_Symbol %in% genes)
+
+  if(!rm.empty.columns){
+      formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ ", information)
+      suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = FALSE)})
+  } else {
+      formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ ", information)
+      suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = TRUE)})
+  }
+  columns <- colnames(mat)[-c(1:2)]
+
+  mat$value <- ""
+  mat <- setDT(mat)
+  for ( i in columns){
+      mat[,i] <-  replace(mat[,i,with = FALSE],mat[,i,with = FALSE]>0,paste0(i,";"))
+      mat[,i] <-  replace(mat[,i,with = FALSE],mat[,i,with = FALSE]==0,"")
+      mat[,value:=paste0(value,get(i))]
+  }
+  str(mat)
+
+  write.table(mat, "patientmutations.csv", sep=",", row.names=FALSE)
+
+  mutation.type <- c()
+  for (i in columns){
+      if(length(grep(i,mat$value)) > 0) mutation.type <- c(mutation.type,i)
+  }
+
+  mat <- setDF(dcast(mat, Tumor_Sample_Barcode~Hugo_Symbol, value.var="value",fill=""))
+      rownames(mat) <- mat[,1]
+      mat <- mat[,-1]
+
+  if(rm.empty.columns == FALSE) {
+          aux <- data.frame(row.names = all.samples[!all.samples %in% rownames(mat)])
+          if(nrow(aux) > 0) {
+              aux[,colnames(mat)] <- ""
+              mat <- rbind(mat,aux)
+          }
+      }
+
+  write.table(mat, "patientmutations2.csv", sep=",", row.names=FALSE)
+
+  mat <- t(mat)
+
+
+
+  idx <- match(substr(colnames(mat),1,12),annotation$bcr_patient_barcode)
+  annotation <- annotation[idx,]
+  annotation$bcr_patient_barcode <- NULL
+
+  collumn.names <- c("race","gender","vital_status","tumor_stage")
+
+  annotation <- annotation[collumn.names]
+
+  write.table(mat, "patientmutationsfinal.csv", sep=",", row.names=TRUE, col.names=NA)
+  write.table(annotation, "annotattionsfinal.csv", sep=",", row.names=TRUE, col.names=NA)
+
+
+
+
+
+  annotation <- t(annotation)
+
+  annotation <- as.data.frame(annotation)
+
+  mat <- as.data.frame(mat)
+
+  mat.colnams <- colnames(mat)
+
+  colnames(annotation) <- mat.colnams
+
+
+
+  write.table(mat, "patientmutationsfinalnew.csv", sep=",", row.names=TRUE, col.names=NA)
+  write.table(annotation, "annotattionsfinalnew.csv", sep=",", row.names=TRUE, col.names=FALSE)
+
+
+  montray <- rbind(mat, annotation)
+  montray <- as.matrix(montray)
+
+  # turn montray matrix into usable testmatrix style
+  monch.SNP <- gsub("SNP;", "1", montray)
+
+
+  monch.INS <- gsub("INS;", "2", monch.SNP)
+
+
+  monch.DEL <- gsub("DEL;", "3", monch.INS)
+
+  monch.DEL[monch.DEL == ""] <- 0
+
+  monch.DEL
+
+  dataframe.rename.me <- as.data.frame(monch.DEL)
+
+  newnames <- NULL
+  for(i in names(dataframe.rename.me)){
+    waywayway <- dataframe.rename.me[[paste(i)]]
+    lvls <- levels(waywayway)
+    ggggg <- paste(toString(lvls), sep="")
+    newi <- c(i,ggggg)
+    newnewi <- toString(newi)
+    newnames <- c(newnames,newnewi)
+  }
+
+  colnames(dataframe.rename.me) <- newnames
+
+  dataframe.rename.me
+
+  remove.these <- c("race","gender","vital_status","tumor_stage")
+  testmatrix <- dataframe.rename.me[!rownames(dataframe.rename.me) %in% remove.these,]
+
+
+  testmatrix[] <- lapply(testmatrix, function(x) as.numeric(as.character(x)))
+
+  testmatrix <- as.matrix(testmatrix)
+  str(testmatrix) 
+  #write.table(testmatrix, "newnewultimateoncoprint.csv", sep=",", row.names=TRUE, col.names=NA)
+
+
+
+  nameofoncoprint <- paste(args1," Mutations Profile", sep="")
+
+
+
+
+
+  #race
+  white.pos <- grep('white', colnames(testmatrix))
+  white.patients <- colnames(testmatrix)[white.pos]
+
+  black.pos <- grep('black', colnames(testmatrix))
+  black.patients <- colnames(testmatrix)[black.pos]
+
+  asian.pos <- grep('asian', colnames(testmatrix))
+  asian.patients <- colnames(testmatrix)[asian.pos]
+
+
+
+  #gender
+
+  female.pos <- grep('female', colnames(testmatrix))
+  female.patients <- colnames(testmatrix)[female.pos]
+
+  #status
+
+  alive.pos <- grep('alive', colnames(testmatrix))
+  alive.patients <- colnames(testmatrix)[alive.pos]
+
+  dead.pos <- grep('dead', colnames(testmatrix))
+  dead.patients <- colnames(testmatrix)[dead.pos]
+
+
+
+  ## cancer stage 
+
+  si.pos <- grep(' stage i,', colnames(testmatrix))
+  si.patients <- colnames(testmatrix)[si.pos]
+
+  sii.pos <- grep(' stage ii,', colnames(testmatrix))
+  sii.patients <- colnames(testmatrix)[sii.pos]
+
+  siii.pos <- grep(' stage iii,', colnames(testmatrix))
+  siii.patients <- colnames(testmatrix)[siii.pos]
+
+  siv.pos <- grep(' stage iv,', colnames(testmatrix))
+  siv.patients <- colnames(testmatrix)[siv.pos]
+
+  dim(testmatrix)
+
+  # number of mutations per gene
+  test = as.numeric();
+  for (i in 1:nrow(testmatrix)) {
+    test[i] <- sum(testmatrix[i,] > 0)
+  }
+  print(test);
+
+  test2 = as.numeric();
+  for (i in 1:ncol(testmatrix)) {
+    test2[i] <- sum(testmatrix[,i] > 0)
+  }
+  print(test2);
+
+
+
+  #create heatmap
+  main_heatmap(testmatrix, name = "Mutations<br>Profile", x_categorical = TRUE,
+                colors= c("white", "red", "blue", "green")) %>%
+  add_col_groups(
+    ifelse(colnames(testmatrix) %in% white.patients,
+          "White", 
+          ifelse(colnames(testmatrix) %in% black.patients,
+                 "Black", 
+                 ifelse(colnames(testmatrix) %in% asian.patients,
+                        "Asian",
+                        "Not Reported"))),
+                    side = "bottom", name = "Sample<br>Race",
+                    title = "Race",
+                    colors = c('#ea4335','#fbbc05','grey','#4285f4')) %>%
+  add_col_groups(
+    ifelse(colnames(testmatrix) %in% female.patients,
+          "female",  
+                        "male"),
+                    side = "bottom", name = "Sample<br>Gender",
+                    title = "Gender",
+                    colors = c("pink","blue")) %>%
+  add_col_groups(
+    ifelse(colnames(testmatrix) %in% alive.patients,
+          "Alive",  
+          ifelse(colnames(testmatrix) %in% dead.patients,
+                        "Dead", 
+                        "Not Reported")),
+                    side = "bottom", name = "Sample<br>Status",
+                    title = "Status",
+                    colors = c("green","black")) %>%
+  add_col_groups(
+    ifelse(colnames(testmatrix) %in% si.patients,
+          "Stage i",  
+          ifelse(colnames(testmatrix) %in% sii.patients,
+                        "Stage ii",
+            ifelse(colnames(testmatrix) %in% siii.patients,
+                        "Stage iii",
+                  ifelse(colnames(testmatrix) %in% siv.patients,
+                        "Stage iv",
+                        "Not Reported")))),
+                    side = "bottom", name = "Sample<br>Cancer<br>Stage",
+                    title = "Status", 
+                    colors = c("grey","#0084ff","#94ce08","#f5dc00", "orange")) %>%
+    add_col_labels(ticktext = colnames(testmatrix), font = list(size = 8)) %>%
+    add_row_labels(size = 0.3,font = list(size = 10)) %>%               
+    add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
+    add_row_barplot(x = test,
+                    tracename = "Number of Samples", 
+                    layout = list(title = "No. of <br>Samples<br>Presenting <br>Mutated Gene")) %>%
+    add_col_barplot(y = test2,
+                  tracename = "Number of Mutated Genes", 
+                  layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
+}
