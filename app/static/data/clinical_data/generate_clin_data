@@ -1,0 +1,95 @@
+
+rm(list = ls())
+tumor.type <- "BRCA" #give this as an arg
+ProjectID <- paste("TCGA-", tumor.type, sep="")
+library("TCGAbiolinks")
+clindata <- GDCquery_clinic( ProjectID, "clinical" )
+
+# subset to get only the relevent clinical data info
+
+relvent.clin.data.types <- c("race", "gender", "vital_status", 
+                                          "tumor_stage", "bcr_patient_barcode");
+clin.slimmed <- clindata[ , relvent.clin.data.types]
+
+# check if this produces a proper clinical data file
+ write.table(clin.slimmed, "clindata.txt", sep="\t", row.names=FALSE)
+
+
+clin.stagei <- clindata[which(clindata$tumor_stage == "stage i" | 
+      clindata$tumor_stage == "stage ia" | 
+      clindata$tumor_stage == "stage ib" | 
+      clindata$tumor_stage == "stage ic"),]
+
+stagei.barcodes <- clin.stagei$bcr_patient_barcode
+
+
+clin.stageii <- clindata[which(clindata$tumor_stage == "stage ii" | 
+      clindata$tumor_stage == "stage iia" | 
+      clindata$tumor_stage == "stage iib" | 
+      clindata$tumor_stage == "stage iic"),]
+
+stageii.barcodes <- clin.stageii$bcr_patient_barcode
+
+clin.stageiii <- clindata[which(clindata$tumor_stage == "stage iii" | 
+      clindata$tumor_stage == "stage iiia" | 
+      clindata$tumor_stage == "stage iiib" | 
+      clindata$tumor_stage == "stage iiic"),]
+
+stageiii.barcodes <- clin.stageiii$bcr_patient_barcode
+
+clin.stageiv <- clindata[which(clindata$tumor_stage == "stage iv" | 
+      clindata$tumor_stage == "stage iva" | 
+      clindata$tumor_stage == "stage ivb" | 
+      clindata$tumor_stage == "stage ivc"),]
+
+stageiv.barcodes <- clin.stageiv$bcr_patient_barcode
+
+
+
+<- which(clindata$bcr_patient_barcode %in% stagei.barcodes)
+<- which(clindata$bcr_patient_barcode %in% stageii.barcodes)
+<- which(clindata$bcr_patient_barcode %in% stageiii.barcodes)
+<- which(clindata$bcr_patient_barcode %in% stageiv.barcodes)
+
+clindata$tumor_stage_banded
+
+
+
+
+
+for(i in clindata$tumor_stage){
+  if(i == "stage i" | i == "stage ia" | i == "stage ib" | i == "stage ic"){
+    rownames(which(i))
+
+    clindata$tumor_stage_banded <- "stage i"
+  } else if(i == "stage ii" | i == "stage iia" | i == "stage iib" | i == "stage iic"){
+    clindata$tumor_stage_banded <- "stage ii"
+  }
+   
+   #print(i)
+   # x=rownames(i)
+}
+
+
+
+
+
+# perfom cancer stage banding for all tumor types
+
+clindata$tumor_stage_banded
+
+
+
+
+
+
+
+
+
+# perform BRCA molecular subtyping for breast and lung
+if(ProjectID == "TCGA-BRCA"){
+
+
+} else if(ProjectID == "TCGA-LUAD" | ProjectID == "TCGA-LUSC"){
+
+}
