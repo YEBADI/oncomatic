@@ -2,7 +2,6 @@
 # genes <- top.mut.genes
 # annotation <- joined.clin.data.banded
 
-
 oncomatic_oncoprint <- function (mut,
                                  genes,
                                  annotation
@@ -97,19 +96,27 @@ oncomatic_oncoprint <- function (mut,
   montray <- as.matrix(montray)
 
   # turn montray matrix into usable testmatrix style
-  monch.SNP <- gsub("SNP;", "1", montray)
+  # this must be in this exact order, otherwise all instances of INS; including
+  # INS; in INS; SNP; will be changed resulting in '21' instead of '4'
+  step.1 <- gsub("INS;DEL;SNP;", "6", montray)
+
+  step.2 <- gsub("INS;SNP;", "4", step.1)
+
+  step.3 <- gsub("DEL;SNP;", "5", step.2)
+
+  step.4 <- gsub("SNP;", "1", step.3)
 
 
-  monch.INS <- gsub("INS;", "2", monch.SNP)
+  step.5 <- gsub("INS;", "2", step.4)
 
 
-  monch.DEL <- gsub("DEL;", "3", monch.INS)
+  step.6 <- gsub("DEL;", "3", step.5)
 
-  monch.DEL[monch.DEL == ""] <- 0
+  step.6[step.6 == ""] <- 0
 
-  monch.DEL
+  step.6
 
-  dataframe.rename.me <- as.data.frame(monch.DEL)
+  dataframe.rename.me <- as.data.frame(step.6)
 
   newnames <- NULL
   for(i in names(dataframe.rename.me)){
