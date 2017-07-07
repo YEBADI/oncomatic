@@ -1,3 +1,6 @@
+# Requirements
+# dplyr, iheatmapr, plotly
+
 # These are the inputs required: these are identical to 
 # the input taken by TCGAMAFVisualise oncoprint function
 
@@ -15,23 +18,19 @@ oncomatic_oncoprint <- function (mut,
   # The first step is preparing the data table from mut file input 
   # This using the TCGA_MAFvisualise_Oncoprint code
 
-  rm.empty.columns <- FALSE
-
   mut <- setDT(mut)
   str(mut)
   mut$value <- 1
-  if(rm.empty.columns == FALSE) all.samples <- unique(mut$Tumor_Sample_Barcode)
+  all.samples <- unique(mut$Tumor_Sample_Barcode)
 
-  mut$Hugo_Symbol <- as.character(mut$Hugo_Symbol)
-  if(!missing(genes) & !is.null(genes)) mut <- subset(mut, mut$Hugo_Symbol %in% genes)
+  #mut$Hugo_Symbol <- as.character(mut$Hugo_Symbol)
+  #if(!missing(genes) & !is.null(genes)) mut <- subset(mut, mut$Hugo_Symbol %in% genes)
 
-  if(!rm.empty.columns){
-      formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ Variant_Type")
-      suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = FALSE)})
-  } else {
-      formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ ", information)
-      suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = TRUE)})
-  }
+  
+
+  formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ Variant_Type")
+  suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = FALSE)})
+
   columns <- colnames(mat)[-c(1:2)]
 
   mat$value <- ""
@@ -52,13 +51,13 @@ oncomatic_oncoprint <- function (mut,
       rownames(mat) <- mat[,1]
       mat <- mat[,-1]
 
-  if(rm.empty.columns == FALSE) {
-          aux <- data.frame(row.names = all.samples[!all.samples %in% rownames(mat)])
-          if(nrow(aux) > 0) {
-              aux[,colnames(mat)] <- ""
-              mat <- rbind(mat,aux)
-          }
-      }
+ 
+  aux <- data.frame(row.names = all.samples[!all.samples %in% rownames(mat)])
+  if(nrow(aux) > 0) {
+      aux[,colnames(mat)] <- ""
+      mat <- rbind(mat,aux)
+  }
+      
 
   mat <- t(mat)
 
@@ -133,6 +132,16 @@ oncomatic_oncoprint <- function (mut,
   tumor.matrix <- as.matrix(tumor.matrix)
   str(tumor.matrix) 
 
+col.number <- ncol(tumor.matrix)
+
+
+# now ordering the matrix from highest mutations to lowest
+
+top.genes.list <- rev(top.mut.genes)
+tumor.matrix <- tumor.matrix[top.genes.list, ]
+
+
+
   # Here we are creating the values for the clinical heatmaps
   
   #race
@@ -150,6 +159,9 @@ oncomatic_oncoprint <- function (mut,
   #gender
   female.pos <- grep('female', colnames(tumor.matrix))
   female.patients <- colnames(tumor.matrix)[female.pos]
+
+  male.pos <- grep(' male', colnames(tumor.matrix))
+  male.patients <- colnames(tumor.matrix)[male.pos]
 
   #status
   alive.pos <- grep('alive', colnames(tumor.matrix))
@@ -209,10 +221,12 @@ oncomatic_oncoprint <- function (mut,
   add_col_groups(
     ifelse(colnames(tumor.matrix) %in% female.patients,
           "female",  
-                        "male"),
+          ifelse(colnames(tumor.matrix) %in% male.patients,
+          "male",  
+                        "Not Reported")),
                     side = "bottom", name = "Sample<br>Gender",
                     title = "Gender",
-                    colors = c("pink","blue")) %>%
+                    colors = c("pink", "grey", "blue")) %>%
   add_col_groups(
     ifelse(colnames(tumor.matrix) %in% alive.patients,
           "Alive",  
@@ -236,12 +250,12 @@ oncomatic_oncoprint <- function (mut,
                     title = "Status", 
                     colors = c("grey","#0084ff","#94ce08","#f5dc00", "orange")) %>%
     add_col_labels(ticktext = colnames(tumor.matrix), font = list(size = 8)) %>%
-    add_row_labels(size = 0.3,font = list(size = 10)) %>%               
-    add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
-    add_row_barplot(x = test,
+    add_row_labels(size = 0.3,font = list(size = 20), side="left") %>%               
+    add_col_title("TCGA Clinical Patient Samples", side= "top", font = list(size = 15)) %>%
+    add_row_barplot(x = test, color="maroon",
                     tracename = "No. of patient samples presenting mutation in this gene", 
                     layout = list(title = "No. of <br>Samples<br>Presenting <br>Mutated Gene")) %>%
-    add_col_barplot(y = test2,
+    add_col_barplot(y = test2, color="#F4A460",
                   tracename = "No. of genes mutated for this patient sample", 
                   layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
 }
