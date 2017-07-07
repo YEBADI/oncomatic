@@ -1,5 +1,5 @@
 # Requirements
-# dplyr, iheatmapr, plotly
+# iheatmapr, plotly
 
 # These are the inputs required: these are identical to 
 # the input taken by TCGAMAFVisualise oncoprint function
