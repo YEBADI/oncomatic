@@ -1,5 +1,10 @@
 # Requirements
-# iheatmapr, plotly
+# iheatmapr
+
+# install iheatmapr
+# devtools::install_github("AliciaSchep/iheatmapr")
+# loads in the library to R
+# library("iheatmapr")
 
 # These are the inputs required: these are identical to 
 # the input taken by TCGAMAFVisualise oncoprint function
@@ -16,17 +21,15 @@ oncomatic_oncoprint <- function (mut,
                                  annotation
                                  ){
   # The first step is preparing the data table from mut file input 
-  # This using the TCGA_MAFvisualise_Oncoprint code
+  
+  ##############################################################################
+  # This part primarily based off of the TCGAvisualize_oncoprint() source code #
+  ##############################################################################
 
   mut <- setDT(mut)
   str(mut)
   mut$value <- 1
   all.samples <- unique(mut$Tumor_Sample_Barcode)
-
-  #mut$Hugo_Symbol <- as.character(mut$Hugo_Symbol)
-  #if(!missing(genes) & !is.null(genes)) mut <- subset(mut, mut$Hugo_Symbol %in% genes)
-
-  
 
   formula <- paste0("Tumor_Sample_Barcode + Hugo_Symbol ~ Variant_Type")
   suppressMessages({mat <- dcast(mut, as.formula(formula),value.var = "value",fill = 0,drop = FALSE)})
@@ -65,9 +68,19 @@ oncomatic_oncoprint <- function (mut,
   annotation <- annotation[idx,]
   annotation$bcr_patient_barcode <- NULL
 
-  collumn.names <- c("race","gender","vital_status","tumor_stage")
+  # Now we have created a dataframe with the samples and mutations
 
-  annotation <- annotation[collumn.names]
+  ##############################################################################
+  #   Here onwards is my own code, using iHeatMapr R package code too          #
+  ##############################################################################
+
+  # In this part I am taking the clinical annotation dataframe and joining it
+  # to the mutations dataframe to make a matrix with both sets of data
+  # mutation and clinical for each patient sample
+
+  column.names <- c("race","gender","vital_status","tumor_stage")
+
+  annotation <- annotation[column.names]
 
   annotation <- t(annotation)
 
@@ -82,9 +95,8 @@ oncomatic_oncoprint <- function (mut,
   temp.matrix <- rbind(mat, annotation)
   temp.matrix <- as.matrix(temp.matrix)
 
-  # turn temp.matrix matrix into a usable numbered tumor.matrix
-  
-  # these steps turn the MAF mutaton string values into numbers
+  # Now here I am turning the string mutation data into a numbered matrix
+  # These steps turn the MAF mutaton string values into numbers
   # so INS; becomes '2' and so on
   # The below steps must be in this exact order
   # otherwise all instances of INS; including
@@ -109,6 +121,12 @@ oncomatic_oncoprint <- function (mut,
 
   tumor.matrix.df <- as.data.frame(step.6)
 
+# Now here I am taking the clinical data string values and adding them to 
+# each individual patient sample name as additional strings
+# then removing the actual clinical annotation rows
+# this creates a matrix with sample names annotated with clinical information
+# and a numerical mutations matrix
+
   newnames <- NULL
   for(i in names(tumor.matrix.df)){
     part.1 <- tumor.matrix.df[[paste(i)]]
@@ -123,6 +141,7 @@ oncomatic_oncoprint <- function (mut,
 
   tumor.matrix.df
 
+  # rmeove the redundant clinical information rows 
   remove.these <- c("race","gender","vital_status","tumor_stage")
   tumor.matrix <- tumor.matrix.df[!rownames(tumor.matrix.df) %in% remove.these,]
 
@@ -135,12 +154,17 @@ oncomatic_oncoprint <- function (mut,
 col.number <- ncol(tumor.matrix)
 
 
-# now ordering the matrix from highest mutations to lowest
-
+# now I am ordering the matrix from highest mutations to lowest according to the
+# top genes names input taken at the start
 top.genes.list <- rev(top.mut.genes)
 tumor.matrix <- tumor.matrix[top.genes.list, ]
 
+# Now the Tumor matrix is ready for plotting
 
+  ##############################################################################
+  #   Here onwards I am creating the clinical heatmaps using the sample names  #
+  #    to which we added the clinical annotations to.                          #
+  ##############################################################################
 
   # Here we are creating the values for the clinical heatmaps
   
@@ -155,7 +179,6 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
   asian.patients <- colnames(tumor.matrix)[asian.pos]
 
 
-
   #gender
   female.pos <- grep('female', colnames(tumor.matrix))
   female.patients <- colnames(tumor.matrix)[female.pos]
@@ -163,13 +186,13 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
   male.pos <- grep(' male', colnames(tumor.matrix))
   male.patients <- colnames(tumor.matrix)[male.pos]
 
+
   #status
   alive.pos <- grep('alive', colnames(tumor.matrix))
   alive.patients <- colnames(tumor.matrix)[alive.pos]
 
   dead.pos <- grep('dead', colnames(tumor.matrix))
   dead.patients <- colnames(tumor.matrix)[dead.pos]
-
 
 
   ## cancer stage 
@@ -186,21 +209,22 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
   siv.patients <- colnames(tumor.matrix)[siv.pos]
 
 
-  # Here we are creating the barplots for the numbers of patients and mutated genes respectively
+  # Here we are creating the barplots for the numbers of patients and mutated 
+  # genes respectively
   
   # number of mutated patient samples per gene
-  test = as.numeric();
+  barplot1 = as.numeric();
   for (i in 1:nrow(tumor.matrix)) {
-    test[i] <- sum(tumor.matrix[i,] > 0)
+    barplot1[i] <- sum(tumor.matrix[i,] > 0)
   }
-  print(test);
+  print(barplot1);
 
   # number of mutated genes per patient sample
-  test2 = as.numeric();
+  barplot2 = as.numeric();
   for (i in 1:ncol(tumor.matrix)) {
-    test2[i] <- sum(tumor.matrix[,i] > 0)
+    barplot2[i] <- sum(tumor.matrix[,i] > 0)
   }
-  print(test2);
+  print(barplot2);
 
 
 
@@ -252,10 +276,10 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
     add_col_labels(ticktext = colnames(tumor.matrix), font = list(size = 8)) %>%
     add_row_labels(size = 0.3,font = list(size = 20), side="left") %>%               
     add_col_title("TCGA Clinical Patient Samples", side= "top", font = list(size = 15)) %>%
-    add_row_barplot(x = test, color="maroon",
+    add_row_barplot(x = barplot1, color="maroon",
                     tracename = "No. of patient samples presenting mutation in this gene", 
                     layout = list(title = "No. of <br>Samples<br>Presenting <br>Mutated Gene")) %>%
-    add_col_barplot(y = test2, color="#F4A460",
+    add_col_barplot(y = barplot2, color="#F4A460",
                   tracename = "No. of genes mutated for this patient sample", 
                   layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
 }
