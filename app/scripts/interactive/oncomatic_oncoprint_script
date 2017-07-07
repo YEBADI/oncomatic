@@ -16,6 +16,9 @@
 #     PROF. CLAUDE CHELALA, DR. EMANUELA GADALETA, DR. STEFANO PIRRO           #
 #     oncomatic_oncoprint was made using iHeatMapr and TCGAvisualize_oncoprint #
 #     source code.                                                             #
+#                                                                              #
+# The oncomatic_oncoprint function defined, this can be called in other R      #
+# scripts with source("<correct directory>/oncomatic_oncoprint_script").       #
 ################################################################################
 # Requirements:
 # iheatmapr
