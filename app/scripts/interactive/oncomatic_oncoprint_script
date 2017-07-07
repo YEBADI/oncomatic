@@ -248,7 +248,7 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
 
 
   ##############################################################################
-  #   Now we create the plot using the input mutations matrix and the heatmaps #                         #
+  #   Now we create the plot using the input mutations matrix and the heatmaps #
   ##############################################################################
   
   main_heatmap(tumor.matrix, name = "Mutations<br>Profile", x_categorical = TRUE,
