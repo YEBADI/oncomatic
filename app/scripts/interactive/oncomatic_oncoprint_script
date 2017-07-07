@@ -4,7 +4,7 @@
 #                                                                              #
 #      This is a funtction which directly                                      #
 #             replaces the TCGABiolinks own oncoprint function                 #
-#                                   'TCGAvisualize_oncoprint'.                 #
+#                                   'TCGAvisualize_oncoprint()'.               #
 #                                                                              #
 #       oncomatic_oncoprint takes the exact same input,                        #
 #           yet produces a much more useful interactive output.                #
@@ -17,7 +17,7 @@
 #     oncomatic_oncoprint was made using iHeatMapr and TCGAvisualize_oncoprint #
 #     source code.                                                             #
 ################################################################################
-# Requirements
+# Requirements:
 # iheatmapr
 
 # install iheatmapr
@@ -25,8 +25,9 @@
 # loads in the library to R
 # library("iheatmapr")
 
-# These are the inputs required: these are identical to 
-# the input taken by TCGAMAFVisualise oncoprint function
+# These are the inputs required: 
+#   These are identical to the input taken by 
+#     the TCGAvisualize_oncoprint() function.
 
 # mut <- top.mut.data
 # genes <- top.mut.genes
