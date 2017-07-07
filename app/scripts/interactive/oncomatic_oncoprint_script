@@ -255,9 +255,9 @@ oncomatic_oncoprint <- function (mut,
     add_row_labels(size = 0.3,font = list(size = 10)) %>%               
     add_col_title("TCGA Clinical Patient Samples", side= "top") %>%
     add_row_barplot(x = test,
-                    tracename = "Number of Samples", 
+                    tracename = "No. of patient samples presenting mutation in this gene", 
                     layout = list(title = "No. of <br>Samples<br>Presenting <br>Mutated Gene")) %>%
     add_col_barplot(y = test2,
-                  tracename = "Number of Mutated Genes", 
+                  tracename = "No. of genes mutated for this patient sample", 
                   layout = list(title = "Number of <br>Mutated Genes<br>Per Sample"))
 }
