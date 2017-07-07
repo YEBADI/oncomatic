@@ -36,8 +36,7 @@
 # genes <- top.mut.genes
 # annotation <- joined.clin.data.banded
 
-# The oncomatic_oncoprint function defined, this can be called in other scripts
-# with source("oncomatic_oncoprint_script")
+################################################################################
 
 oncomatic_oncoprint <- function (mut,
                                  genes,
