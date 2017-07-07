@@ -1,3 +1,22 @@
+################################################################################
+#                                                                              #
+#     Welcome to oncomatic_oncoprint!                                          #
+#                                                                              #
+#      This is a funtction which directly                                      #
+#             replaces the TCGABiolinks own oncoprint function                 #
+#                                   'TCGAvisualize_oncoprint'.                 #
+#                                                                              #
+#       oncomatic_oncoprint takes the exact same input,                        #
+#           yet produces a much more useful interactive output.                #
+#                                                                              #
+#       By Yusef E. Badi, as part of an MSc Bioinformatics Project at          #
+#               Queen Mary University of London, Barts Cancer Institute.       #
+#                                                                              #
+#  Acknowledgments:                                                            #
+#     PROF. CLAUDE CHELALA, DR. EMANUELA GADALETA, DR. STEFANO PIRRO           #
+#     oncomatic_oncoprint was made using iHeatMapr and TCGAvisualize_oncoprint #
+#     source code.                                                             #
+################################################################################
 # Requirements
 # iheatmapr
 
@@ -228,7 +247,10 @@ tumor.matrix <- tumor.matrix[top.genes.list, ]
 
 
 
-  # Now we create the plot using the input mutations matrix and the heatmaps
+  ##############################################################################
+  #   Now we create the plot using the input mutations matrix and the heatmaps #                         #
+  ##############################################################################
+  
   main_heatmap(tumor.matrix, name = "Mutations<br>Profile", x_categorical = TRUE,
                 colors= c("white", "red", "blue", "green")) %>%
   add_col_groups(
